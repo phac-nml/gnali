@@ -1,0 +1,10 @@
+gNALI.R
+Genes_Short.csv
+.pybiomart.sqlite
+*.out
+gnomad-cmd-temp/
+*.pyc
+*.pyo
+notes.md
+Non*.txt
+gNALI-results/
