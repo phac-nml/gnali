@@ -19,6 +19,10 @@ from setuptools import find_packages, setup
 
 dependencies = ['pybiomart', 'numpy', 'pandas']
 
+def readme():
+    with open('README.md') as fd:
+        return fd.read()
+
 setup(
     name='gnomad-cmd',
     version = "0.1.0",
@@ -26,6 +30,7 @@ setup(
     author='Xia Liu',
     author_email='xia.liu@canada.ca',
     description='gnomAD-cmd is a tool for finding PLoF gene variants',
+    long_description=readme(),
     packages=find_packages(where='gnomad-cmd'),
     install_requires=dependencies,
     classifiers=[
