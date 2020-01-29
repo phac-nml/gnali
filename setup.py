@@ -32,7 +32,7 @@ setup(
     description='gNALI (gene nonessential and loss-of-function identifier) is a tool for finding PLoF gene variants',
     long_description=readme(),
     long_description_content_type="text/markdown",
-    packages=find_packages(where='gnali'),
+    packages=find_packages(exclude=['tests']),
     install_requires=dependencies,
     entry_points = {
         'console_scripts': ['gnali=gnali.GNALI:main'],
