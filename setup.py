@@ -24,15 +24,19 @@ def readme():
         return fd.read()
 
 setup(
-    name='gnomad-cmd',
+    name='gNALI',
     version = "0.1.0",
     license='Apache License, Version 2.0',
     author='Xia Liu',
     author_email='xia.liu@canada.ca',
-    description='gnomAD-cmd is a tool for finding PLoF gene variants',
+    description='gNALI (gene nonessential and loss-of-function identifier) is a tool for finding PLoF gene variants',
     long_description=readme(),
-    packages=find_packages(where='gnomad-cmd'),
+    long_description_content_type="text/markdown",
+    packages=find_packages(where='gnali'),
     install_requires=dependencies,
+    entry_points = {
+        'console_scripts': ['gnali=gnali.GNALI:main'],
+    },
     classifiers=[
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: Apache Software License',

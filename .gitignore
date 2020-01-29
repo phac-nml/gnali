@@ -2,6 +2,7 @@
 build/
 dist/
 *.egg-info
+*.in
 
 # Original script
 gNALI.R

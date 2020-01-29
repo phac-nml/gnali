@@ -1,13 +1,14 @@
 ## Introduction ##
 ------------------
 
-gnomad-cmd is a tool to find potential loss of function variants (HC) of genes.
+gNALI (gene nonessential and loss-of-function identifier) is a tool to find (high confidence) 
+potential loss of function variants of genes.
 
 ## Getting Started ##
 ---------------------
 
 1. Install Python 3.6 or later.
-2. From a terminal, type `python gNALI.py --help` to display options.
+2. From a terminal, type `gnali --help` to display options.
 
 ## Usage ##
 -----------
@@ -15,16 +16,16 @@ gnomad-cmd is a tool to find potential loss of function variants (HC) of genes.
 Your input file must be of format `.csv`, and should contain a list of genes
 (as HGNC symbols) to test. It should not contain any blank lines until the end of the list.
 
-If an output file name is not specified, it will use a default name and gnomad-cmd
+If an output file name is not specified, it will use a default name and gNALI
 will tell you where it is and what it's called after it finishes executing.
 
 Example commands:
 
-`python gNALI.py -i my_genes.csv`
+`gnali -i my_genes.csv`
 * An input file called `my_genes.csv` is tested for PLoF variants
 * The output file will be called `results-ID.vcf` with a randomly generated unique ID
 
-`python gNALI.py -i my_genes.csv -o my_results.vcf`
+`gnali -i my_genes.csv -o my_results.vcf`
 * Like above, an input file called `my_genes.csv` is tested for PLoF variants
 * The output file will be called `my_results.vcf`
 
