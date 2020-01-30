@@ -1,7 +1,7 @@
 ## Introduction ##
 ------------------
 
-gNALI (gene nonessential and loss-of-function identifier) is a tool to find (high confidence) 
+gNALI (gene nonessentiality and loss-of-function identifier) is a tool to find (high confidence) 
 potential loss of function variants of genes.
 
 ## Getting Started ##
@@ -13,7 +13,7 @@ potential loss of function variants of genes.
 ## Usage ##
 -----------
 
-Your input file must be of format `.csv`, and should contain a list of genes
+Your input file must be of format `.csv` or `.txt`, and should contain a list of genes
 (as HGNC symbols) to test. It should not contain any blank lines until the end of the list.
 
 If an output file name is not specified, it will use a default name and gNALI

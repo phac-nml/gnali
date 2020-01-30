@@ -29,7 +29,7 @@ setup(
     license='Apache License, Version 2.0',
     author='Xia Liu',
     author_email='xia.liu@canada.ca',
-    description='gNALI (gene nonessential and loss-of-function identifier) is a tool for finding PLoF gene variants',
+    description='gNALI (gene nonessentiality and loss-of-function identifier) is a tool for finding PLoF gene variants',
     long_description=readme(),
     long_description_content_type="text/markdown",
     packages=find_packages(exclude=['tests']),
