@@ -77,7 +77,7 @@ def open_test_file(input_file, test_genes_list):
 	except:
 		print("Something went wrong. Try again")
 		exit()
-	if(len(test_genes_list) == 0):
+	if len(test_genes_list) == 0:
 		print("No genes found in " + input_file)
 		exit()
 
@@ -134,7 +134,7 @@ def init_parser(id):
 									description=SCRIPT_INFO)
 	parser.add_argument('-i', '--input_file', 
 						required=True,
-						help='File of genes to test. Accepted formats: csv')
+						help='File of genes to test. Accepted formats: csv, txt')
 	parser.add_argument('-o', '--output_file',
 						default='results-'+str(id)+'.vcf',
 						help='Name of output file. Default: results-ID.vcf')
