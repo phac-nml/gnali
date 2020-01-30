@@ -64,12 +64,23 @@ def open_test_file(input_file, test_genes_list):
 	Args:
 		input_file: input file containing genes to find
 	"""
-	with open(input_file) as csv_file:
-		csv_reader = csv.reader(csv_file, delimiter=',')
-		for gene in csv_reader:
-			if not str(gene):
-				break
-			test_genes_list.append(", ".join(gene))
+	try:
+		with open(input_file) as csv_file:
+			csv_reader = csv.reader(csv_file, delimiter=',')
+			for gene in csv_reader:
+				if not str(gene):
+					break
+				test_genes_list.append(", ".join(gene))
+	except FileNotFoundError:
+		print("File " + input_file + " not found. Exiting")
+		exit()
+	except:
+		print("Something went wrong. Try again")
+		exit()
+	if(len(test_genes_list) == 0):
+		print("No genes found in " + input_file)
+		exit()
+
 	return test_genes_list	
 
 
@@ -91,7 +102,7 @@ def get_gnomad_vcfs(gene_descriptions, TEMP_DIR):
 def filter_plof_variants(START_DIR, TEMP_DIR):
 	# Query the gnomAD database for loss of function variants of those genes with Tabix.
 	os.chdir(TEMP_DIR.name)
-	# Change one of the "GNOMAD_EXOMES" to "gnomad_genomes" to use full gnomAD database (exomes and genomes)
+	# Change one of the "GNOMAD_EXOMES" to "GNOMAD_GENOMES" to use full gnomAD database (exomes and genomes)
 	# (This will take ~15min to run)
 	os.system("xargs -a test_locations.txt -I {} tabix -fh " + GNOMAD_EXOMES + " {} > exomes_Results_GW.vcf")
 	os.system("bgzip exomes_Results_GW.vcf")
