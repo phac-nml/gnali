@@ -13,7 +13,10 @@ class TestGNALI:
         pass
     
     def test_open_test_file(self):
-        pass
+        expected_results = ['CCR5', 'ALCAM']
+        method_results = []
+        method_results = gnali.open_test_file(TEST_INPUT_CSV, method_results)
+        assert expected_results == method_results
 
     def test_get_genes(self):
         genes_list = ['CD4', 'CCR5']
