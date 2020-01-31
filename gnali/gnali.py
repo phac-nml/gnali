@@ -27,6 +27,7 @@ import pandas as pd
 import re
 import uuid
 import tempfile
+import exceptions
 
 SCRIPT_NAME = 'gNALI'
 SCRIPT_INFO = "Given a list of genes to test, gNALI finds all potential loss of function variants of those genes."
@@ -58,12 +59,13 @@ def get_genes(genes_list):
 	return gene_descriptions
 
 
-def open_test_file(input_file, test_genes_list):
+def open_test_file(input_file):
 	"""Read genes from the input file.
 
 	Args:
 		input_file: input file containing genes to find
 	"""
+	test_genes_list = []
 	try:
 		with open(input_file) as csv_file:
 			csv_reader = csv.reader(csv_file, delimiter=',')
@@ -72,14 +74,11 @@ def open_test_file(input_file, test_genes_list):
 					break
 				test_genes_list.append(", ".join(gene))
 	except FileNotFoundError:
-		print("File " + input_file + " not found. Exiting")
-		exit()
+		print("File " + input_file + " not found")
 	except:
 		print("Something went wrong. Try again")
-		exit()
 	if len(test_genes_list) == 0:
-		print("No genes found in " + input_file)
-		exit()
+		raise exceptions.EmptyFileError 
 
 	return test_genes_list	
 
@@ -146,7 +145,6 @@ def init_parser(id):
 
 
 def main():
-	genes_to_test = []
 	id = uuid.uuid4()
 
 	arg_parser = init_parser(id)
@@ -155,7 +153,7 @@ def main():
 		arg_parser.exit()
 	args = arg_parser.parse_args()
 
-	genes = open_test_file(args.input_file, genes_to_test)
+	genes = open_test_file(args.input_file)
 	genes_df = get_genes(genes)
 	get_gnomad_vcfs(genes_df, TEMP_DIR)
 	filter_plof_variants(START_DIR, TEMP_DIR)

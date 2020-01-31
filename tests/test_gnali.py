@@ -1,9 +1,10 @@
 import pytest
 
 from gnali import gnali
-#import gnali
 from pybiomart import Dataset, Server
+import os, sys                                                                  
 
+#TEST_PATH = os.path.dirname(os.path.abspath(__file__))
 TEST_INPUT_CSV = "data/test_genes.csv"
 ENSEMBL_HOST = 'http://grch37.ensembl.org'
 
@@ -12,11 +13,18 @@ class TestGNALI:
     def setup_class(cls):
         pass
     
-    def test_open_test_file(self):
+    def test_open_test_file_happy(self):
         expected_results = ['CCR5', 'ALCAM']
-        method_results = []
-        method_results = gnali.open_test_file(TEST_INPUT_CSV, method_results)
+        method_results = gnali.open_test_file(TEST_INPUT_CSV)
         assert expected_results == method_results
+
+    def test_open_test_file_nonexistent_file(self):
+        try:
+            gnali.open_test_file("Bad_File.csv")
+            assert False
+        except Exception:
+            assert True
+    
 
     def test_get_genes(self):
         genes_list = ['CD4', 'CCR5']
