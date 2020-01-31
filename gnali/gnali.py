@@ -27,7 +27,7 @@ import pandas as pd
 import re
 import uuid
 import tempfile
-import exceptions
+from gnali import exceptions
 
 SCRIPT_NAME = 'gNALI'
 SCRIPT_INFO = "Given a list of genes to test, gNALI finds all potential loss of function variants of those genes."
@@ -75,9 +75,11 @@ def open_test_file(input_file):
 				test_genes_list.append(", ".join(gene))
 	except FileNotFoundError:
 		print("File " + input_file + " not found")
+		raise
 	except:
 		print("Something went wrong. Try again")
 	if len(test_genes_list) == 0:
+		print("Error: input file is empty")
 		raise exceptions.EmptyFileError 
 
 	return test_genes_list	
@@ -157,7 +159,7 @@ def main():
 	genes_df = get_genes(genes)
 	get_gnomad_vcfs(genes_df, TEMP_DIR)
 	filter_plof_variants(START_DIR, TEMP_DIR)
-	write_results(args.output_file)
+	#write_results(args.output_file)
 	print("Finished. Output in gNALI-results/" + args.output_file)
 
 

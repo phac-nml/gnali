@@ -1,11 +1,15 @@
 import pytest
 
 from gnali import gnali
+from gnali import exceptions
+#from gnali import exceptions
 from pybiomart import Dataset, Server
 import os, sys                                                                  
+import pathlib
 
-#TEST_PATH = os.path.dirname(os.path.abspath(__file__))
-TEST_INPUT_CSV = "data/test_genes.csv"
+TEST_PATH = pathlib.Path(__file__).parent.absolute()
+TEST_INPUT_CSV = str(TEST_PATH) + "/data/test_genes.csv"
+EMPTY_INPUT_CSV = str(TEST_PATH) + "/data/empty_file.csv"
 ENSEMBL_HOST = 'http://grch37.ensembl.org'
 
 class TestGNALI:
@@ -18,12 +22,9 @@ class TestGNALI:
         method_results = gnali.open_test_file(TEST_INPUT_CSV)
         assert expected_results == method_results
 
-    def test_open_test_file_nonexistent_file(self):
-        try:
-            gnali.open_test_file("Bad_File.csv")
-            assert False
-        except Exception:
-            assert True
+    def test_open_test_file_empty_file(self):
+        with pytest.raises(exceptions.EmptyFileError):
+            assert gnali.open_test_file(EMPTY_INPUT_CSV)
     
 
     def test_get_genes(self):
