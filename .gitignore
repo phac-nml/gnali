@@ -8,9 +8,9 @@ dist/
 gNALI.R
 
 # Test files
-*Genes_Short.csv
-*Genes_To_Test.txt
-*empty_file.csv
+*/Genes_Short.csv
+*/Genes_To_Test.txt
+*/empty_file.csv
 gnali/test_genes.csv
 
 # Swaps

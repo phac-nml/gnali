@@ -94,12 +94,14 @@ def get_gnomad_vcfs(gene_descriptions, TEMP_DIR):
 	target_list = []
 	# Format targets for Tabix
 	for i in range(gene_descriptions.shape[0]):
-		target = str(gene_descriptions.loc[gene_descriptions.index[i],'chromosome_name']) + ":" + str(gene_descriptions.loc[gene_descriptions.index[i],'start_position']) \
-																	+ "-" + str(gene_descriptions.loc[gene_descriptions.index[i],'end_position'])
+		target = str(gene_descriptions.loc[gene_descriptions.index[i],'chromosome_name']) + ":" \
+				+ str(gene_descriptions.loc[gene_descriptions.index[i],'start_position']) + "-"  \
+				+ str(gene_descriptions.loc[gene_descriptions.index[i],'end_position'])
 		target_list.append(target)
 	gene_descriptions['targets'] = target_list
 	gene_descriptions = gene_descriptions[['chromosome_name', 'targets']]
 	np.savetxt(TEMP_DIR.name + '/' + 'test_locations.txt', target_list, delimiter='\t', fmt='%s')
+	
 	
 def filter_plof_variants(START_DIR, TEMP_DIR):
 	# Query the gnomAD database for loss of function variants of those genes with Tabix.

@@ -36,14 +36,17 @@ class TestGNALI:
 		method_results = gnali.open_test_file(TEST_INPUT_CSV)
 		assert expected_results == method_results
 
+
 	def test_open_test_file_happy_txt(self):
 		expected_results = ['CCR5', 'ALCAM']
 		method_results = gnali.open_test_file(TEST_INPUT_TXT)
 		assert expected_results == method_results
 
+
 	def test_open_test_file_empty_file(self):
 		with pytest.raises(exceptions.EmptyFileError):
 			assert gnali.open_test_file(EMPTY_INPUT_CSV)
+			
 	
 	def test_get_genes(self):
 		genes_list = ['CCR5', 'ALCAM']
@@ -58,6 +61,7 @@ class TestGNALI:
 
 		assert expected_results.equals(method_results)
 
+
 	def test_get_gnomad_vcfs(self):
 		gene_descs = {'': [46843, 58454], \
 					'hgnc_symbol': ['CCR5', 'ALCAM'], \
@@ -70,11 +74,11 @@ class TestGNALI:
 		target_list = []
 		
 		method_gene_descs = gene_descs
-		# Format targets for Tabix
+
 		for i in range(method_gene_descs.shape[0]):
 			target = str(method_gene_descs.loc[method_gene_descs.index[i],'chromosome_name']) + ":" \
-						+ str(method_gene_descs.loc[method_gene_descs.index[i],'start_position'])\
-						+ "-" + str(method_gene_descs.loc[method_gene_descs.index[i],'end_position'])
+						+ str(method_gene_descs.loc[method_gene_descs.index[i],'start_position']) + "-" \
+						+ str(method_gene_descs.loc[method_gene_descs.index[i],'end_position'])
 			target_list.append(target)
 		method_gene_descs['targets'] = target_list
 		method_gene_descs = method_gene_descs[['chromosome_name', 'targets']]
@@ -83,6 +87,10 @@ class TestGNALI:
 		gnali.get_gnomad_vcfs(gene_descs, TEMP_DIR)
 		
 		assert filecmp.cmp(TEMP_DIR.name + '/' + EXPECTED_TEST_FILE, TEMP_DIR.name + '/' + METHOD_TEST_FILE, shallow=False)
+
+
+	def test_filter_plof_variants(self):
+		pass
 		
 
 	
