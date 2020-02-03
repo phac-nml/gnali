@@ -6,20 +6,31 @@ from gnali import exceptions
 from pybiomart import Dataset, Server
 import os, sys                                                                  
 import pathlib
+import tempfile
 
 TEST_PATH = pathlib.Path(__file__).parent.absolute()
+
 TEST_INPUT_CSV = str(TEST_PATH) + "/data/test_genes.csv"
+TEST_INPUT_TXT = str(TEST_PATH) + "/data/test_genes.txt"
 EMPTY_INPUT_CSV = str(TEST_PATH) + "/data/empty_file.csv"
 ENSEMBL_HOST = 'http://grch37.ensembl.org'
+
+START_DIR = os.getcwd()
+TEMP_DIR  = tempfile.TemporaryDirectory()
 
 class TestGNALI:
     @classmethod
     def setup_class(cls):
         pass
     
-    def test_open_test_file_happy(self):
+    def test_open_test_file_happy_csv(self):
         expected_results = ['CCR5', 'ALCAM']
         method_results = gnali.open_test_file(TEST_INPUT_CSV)
+        assert expected_results == method_results
+
+    def test_open_test_file_happy_txt(self):
+        expected_results = ['CCR5', 'ALCAM']
+        method_results = gnali.open_test_file(TEST_INPUT_TXT)
         assert expected_results == method_results
 
     def test_open_test_file_empty_file(self):
