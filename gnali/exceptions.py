@@ -10,4 +10,4 @@ class EmptyFileError(Exception):
         if self.message:
             return "EmptyFileError: " + format(self.message)
         else:
-            return "FileEmptyError"
+            return "EmptyFileError"

@@ -1,16 +1,14 @@
 import pytest
-
-from gnali import gnali
+import pathlib
+TEST_PATH = pathlib.Path(__file__).parent.absolute()
 from gnali import exceptions
-#from gnali import exceptions
+from gnali import gnali
+
 from pybiomart import Dataset, Server
 import os, sys                                                                  
-import pathlib
 import tempfile, filecmp
 import pandas as pd
 import numpy as np
-
-TEST_PATH = pathlib.Path(__file__).parent.absolute()
 
 TEST_INPUT_CSV = str(TEST_PATH) + "/data/test_genes.csv"
 TEST_INPUT_TXT = str(TEST_PATH) + "/data/test_genes.txt"
@@ -23,7 +21,7 @@ TEMP_DIR  = tempfile.TemporaryDirectory()
 class TestGNALI:
 	@classmethod
 	def setup_class(cls):
-		pass
+		sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 	"""
 	@pytest.fixture
 	def get_ensembl_db():
