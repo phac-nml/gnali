@@ -55,7 +55,7 @@ def get_genes(genes_list):
 	gene_descriptions.columns = ['hgnc_symbol', 'chromosome_name', 'start_position', 'end_position']	
 	gene_descriptions = gene_descriptions[~gene_descriptions['chromosome_name'].str.contains('PATCH')]
 	gene_descriptions = gene_descriptions[(gene_descriptions['hgnc_symbol'].isin(genes_list))]
-
+	print(gene_descriptions)
 	return gene_descriptions
 
 
@@ -94,7 +94,8 @@ def get_gnomad_vcfs(gene_descriptions, TEMP_DIR):
 	target_list = []
 	# Format targets for Tabix
 	for i in range(gene_descriptions.shape[0]):
-		target = gene_descriptions.iat[i,1] + ":" + str(gene_descriptions.iat[i,2]) + "-" + str(gene_descriptions.iat[i,3])
+		target = str(gene_descriptions.loc[gene_descriptions.index[i],'chromosome_name']) + ":" + str(gene_descriptions.loc[gene_descriptions.index[i],'start_position']) \
+																	+ "-" + str(gene_descriptions.loc[gene_descriptions.index[i],'end_position'])
 		target_list.append(target)
 	gene_descriptions['targets'] = target_list
 	gene_descriptions = gene_descriptions[['chromosome_name', 'targets']]
@@ -159,7 +160,7 @@ def main():
 	genes_df = get_genes(genes)
 	get_gnomad_vcfs(genes_df, TEMP_DIR)
 	filter_plof_variants(START_DIR, TEMP_DIR)
-	#write_results(args.output_file)
+	write_results(args.output_file)
 	print("Finished. Output in gNALI-results/" + args.output_file)
 
 
