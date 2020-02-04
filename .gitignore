@@ -33,3 +33,4 @@ Non*.txt
 # Testing stuff
 *gNALI-results/
 .cache/
+gnali/.ipnyb*
