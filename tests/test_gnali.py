@@ -13,7 +13,7 @@ import numpy as np
 TEST_INPUT_CSV = str(TEST_PATH) + "/data/test_genes.csv"
 TEST_INPUT_TXT = str(TEST_PATH) + "/data/test_genes.txt"
 EMPTY_INPUT_CSV = str(TEST_PATH) + "/data/empty_file.csv"
-ENSEMBL_HOST = 'http://grch37.ensembl.org'
+ENSEMBL_HUMAN_GENES = str(TEST_PATH) + "/data/ensembl_hsapiens_dataset.csv"
 
 START_DIR = os.getcwd()
 TEMP_DIR  = tempfile.TemporaryDirectory()
@@ -22,13 +22,8 @@ class TestGNALI:
 	@classmethod
 	def setup_class(cls):
 		sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-	"""
-	@pytest.fixture
-	def get_ensembl_db():
-		server = Server(host=ENSEMBL_HOST)
-		dataset = (server.marts['ENSEMBL_MART_ENSEMBL'].datasets['hsapiens_gene_ensembl'])
-		return dataset
-	"""
+
+
 	def test_open_test_file_happy_csv(self):
 		expected_results = ['CCR5', 'ALCAM']
 		method_results = gnali.open_test_file(TEST_INPUT_CSV)
@@ -46,16 +41,21 @@ class TestGNALI:
 			assert gnali.open_test_file(EMPTY_INPUT_CSV)
 			
 	
-	def test_get_genes(self):
+	def test_get_test_gene_descriptions(self, monkeypatch):
 		genes_list = ['CCR5', 'ALCAM']
-		server = Server(host=ENSEMBL_HOST)
-		dataset = (server.marts['ENSEMBL_MART_ENSEMBL'].datasets['hsapiens_gene_ensembl'])
-		expected_results = dataset.query(attributes=['hgnc_symbol', 'chromosome_name', 'start_position', 'end_position'])
-		expected_results.columns = ['hgnc_symbol', 'chromosome_name', 'start_position', 'end_position']	
+		def mock_get_human_genes():
+			human_genes = pd.read_csv(ENSEMBL_HUMAN_GENES) 
+			human_genes.drop(human_genes.columns[0], axis=1, inplace=True)
+			return human_genes
+		monkeypatch.setattr(gnali, "get_human_genes", mock_get_human_genes)
+
+		human_genes = gnali.get_human_genes()
+		method_results = gnali.get_test_gene_descriptions(genes_list)
+
+		human_genes.columns = ['hgnc_symbol', 'chromosome_name', 'start_position', 'end_position']
+		expected_results = human_genes
 		expected_results = expected_results[~expected_results['chromosome_name'].str.contains('PATCH')]
 		expected_results = expected_results[(expected_results['hgnc_symbol'].isin(genes_list))]
-
-		method_results = gnali.get_genes(genes_list)
 
 		assert expected_results.equals(method_results)
 

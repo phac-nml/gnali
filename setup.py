@@ -25,7 +25,7 @@ def readme():
 
 setup(
     name='gNALI',
-    version = "0.1.3",
+    version = "0.1.0",
     license='Apache License, Version 2.0',
     author='Xia Liu',
     author_email='xia.liu@canada.ca',
@@ -35,7 +35,7 @@ setup(
     packages=find_packages(exclude=['tests']),
     install_requires=dependencies,
     entry_points = {
-        'console_scripts': ['gnali=gnali.gNALI:main'],
+        'console_scripts': ['gnali=gnali.gnali:main'],
     },
     classifiers=[
         'Development Status :: 3 - Alpha',

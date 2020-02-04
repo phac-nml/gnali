@@ -39,23 +39,6 @@ GNOMAD_EXOMES = "https://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/
 GNOMAD_GENOMES = "https://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz"
 
 
-def get_genes(genes_list):
-	"""Get relevant fields from genes in Ensembl database.
-
-	Args:
-		input_file: input file containing genes to find
-	"""
-	server = Server(host=ENSEMBL_HOST)
-
-	dataset = (server.marts['ENSEMBL_MART_ENSEMBL'].datasets['hsapiens_gene_ensembl'])
-	
-	gene_descriptions = dataset.query(attributes=['hgnc_symbol', 'chromosome_name', 'start_position', 'end_position'])
-	gene_descriptions.columns = ['hgnc_symbol', 'chromosome_name', 'start_position', 'end_position']	
-	gene_descriptions = gene_descriptions[~gene_descriptions['chromosome_name'].str.contains('PATCH')]
-	gene_descriptions = gene_descriptions[(gene_descriptions['hgnc_symbol'].isin(genes_list))]
-	return gene_descriptions
-
-
 def open_test_file(input_file):
 	"""Read genes from the input file.
 
@@ -82,11 +65,36 @@ def open_test_file(input_file):
 	return test_genes_list	
 
 
+def get_human_genes():
+	"""Connect to the Ensembl database and get the human gene dataset. Keep only required
+		fields.
+	"""
+	server = Server(host=ENSEMBL_HOST)
+	dataset = (server.marts['ENSEMBL_MART_ENSEMBL'].datasets['hsapiens_gene_ensembl'])
+	genes = dataset.query(attributes=['hgnc_symbol', 'chromosome_name', 'start_position', 'end_position'])
+	return genes
+	
+
+
+def get_test_gene_descriptions(genes_list):
+	"""Filter Ensembl human genes for info related to test genes.
+
+	Args:
+		genes_list: list of genes we want to test from open_test_file()
+	"""
+	gene_descriptions = get_human_genes()
+	gene_descriptions.columns = ['hgnc_symbol', 'chromosome_name', 'start_position', 'end_position']	
+	gene_descriptions = gene_descriptions[~gene_descriptions['chromosome_name'].str.contains('PATCH')]
+	gene_descriptions = gene_descriptions[(gene_descriptions['hgnc_symbol'].isin(genes_list))]
+	return gene_descriptions
+
+
 def get_gnomad_vcfs(gene_descriptions, temp_dir):
 	"""Using results from the Ensembl database, build a list of target genes. 
 
 	Args:
-		gene_descriptions: results from Ensembl database from get_genes()
+		gene_descriptions: results from Ensembl database 
+		from get_test_gene_descriptions()
 	"""
 	target_list = []
 	# Format targets for Tabix
@@ -158,7 +166,7 @@ def main():
 	args = arg_parser.parse_args()
 
 	genes = open_test_file(args.input_file)
-	genes_df = get_genes(genes)
+	genes_df = get_test_gene_descriptions(genes)
 	get_gnomad_vcfs(genes_df, temp_dir)
 	filter_plof_variants(start_dir, temp_dir)
 	write_results(args.output_file, temp_dir, start_dir)
