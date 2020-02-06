@@ -5,7 +5,7 @@ from gnali import exceptions
 from gnali import gnali
 
 from pybiomart import Dataset, Server
-import os, sys                                                                  
+import os, sys, shutil                                                                  
 import tempfile, filecmp
 import pandas as pd
 import numpy as np
@@ -17,6 +17,9 @@ ENSEMBL_HUMAN_GENES = str(TEST_PATH) + "/data/ensembl_hsapiens_dataset.csv"
 
 START_DIR = os.getcwd()
 TEMP_DIR  = tempfile.TemporaryDirectory()
+
+GNOMAD_EXOMES = "https://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz"
+GNOMAD_GENOMES = "https://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz"
 
 class TestGNALI:
 	@classmethod
@@ -39,6 +42,11 @@ class TestGNALI:
 	def test_open_test_file_empty_file(self):
 		with pytest.raises(exceptions.EmptyFileError):
 			assert gnali.open_test_file(EMPTY_INPUT_CSV)
+
+
+	def test_open_test_file_no_file(self):
+		with pytest.raises(FileNotFoundError):
+			assert gnali.open_test_file("bad_file.csv")
 			
 	
 	def test_get_test_gene_descriptions(self, monkeypatch):
@@ -60,7 +68,7 @@ class TestGNALI:
 		assert expected_results.equals(method_results)
 
 
-	def test_get_gnomad_vcfs(self):
+	def test_find_test_locations(self):
 		gene_descs = {'': [46843, 58454], \
 					'hgnc_symbol': ['CCR5', 'ALCAM'], \
 					'chromosome_name':  [3, 3], \
@@ -81,14 +89,43 @@ class TestGNALI:
 		method_gene_descs['targets'] = target_list
 		method_gene_descs = method_gene_descs[['chromosome_name', 'targets']]
 		np.savetxt(TEMP_DIR.name + '/' + EXPECTED_TEST_FILE, target_list, delimiter='\t', fmt='%s')
-			
-		gnali.get_gnomad_vcfs(gene_descs, TEMP_DIR)
-		
+		gnali.find_test_locations(gene_descs, TEMP_DIR)
+
 		assert filecmp.cmp(TEMP_DIR.name + '/' + EXPECTED_TEST_FILE, TEMP_DIR.name + '/' + METHOD_TEST_FILE, shallow=False)
 
 
-	def test_filter_plof_variants(self):
-		pass
+	def test_get_plof_variants(self):
+		# Query the gnomAD database for loss of function variants of those genes with Tabix.
+		shutil.copyfile("tests/data/test_locations.txt", TEMP_DIR.name + "/test_locations.txt")
+		os.chdir(TEMP_DIR.name)
+		# Change one of the "GNOMAD_EXOMES" to "GNOMAD_GENOMES" to use full gnomAD database (exomes and genomes)
+		# (This will take ~15min to run)
+		os.system("xargs -a test_locations.txt -I {} tabix -fh " + GNOMAD_EXOMES + " {} > expected_exomes_Results_GW.vcf")
+		os.system("bgzip expected_exomes_Results_GW.vcf")
+		os.system("zgrep -e ';controls_nhomalt=[1-9]' expected_exomes_Results_GW.vcf.gz > expected_exomes_R_Hom_GW.txt")
+		os.system("grep -e HC expected_exomes_R_Hom_GW.txt > expected_exomes_R_Hom_HC_GW.txt")
+		os.system("xargs -a test_locations.txt -I {} tabix -fh " + GNOMAD_EXOMES + " {} > expected_exomes_Results_EX.vcf")
+		os.system("bgzip expected_exomes_Results_EX.vcf")
+		os.system("zgrep -e ';controls_nhomalt=[1-9]' expected_exomes_Results_EX.vcf.gz > expected_exomes_R_Hom_EX.txt")
+		os.system("grep -e HC expected_exomes_R_Hom_EX.txt > expected_exomes_R_Hom_HC_EX.txt")
+
+		gnali.get_plof_variants(START_DIR, TEMP_DIR)
+
+		assert filecmp.cmp("expected_exomes_R_Hom_HC_GW.txt", "exomes_R_Hom_HC_GW.txt", shallow=False)
+		assert filecmp.cmp("expected_exomes_R_Hom_HC_EX.txt", "exomes_R_Hom_HC_EX.txt", shallow=False)
+
+
+	def test_write_results(self):
+		os.chdir(TEMP_DIR.name)
+		results_p1 = pd.read_table("exomes_R_Hom_HC_GW.txt")
+		results_p2 = pd.read_table("exomes_R_Hom_HC_EX.txt")
+		results_detailed = results_p1.append(results_p2)
+		results_detailed.columns = ["Chromosome", "Position_Start", "RSID", "Allele1", "Allele2", "Score", "Quality", "Codes"]
+
+		results_detailed.to_csv("expected_results.txt", sep='\t', mode='a', index=False)
+		gnali.write_results("method_results.txt", TEMP_DIR.name, "..", TEMP_DIR.name)
+		
+		assert filecmp.cmp("expected_results.txt", "method_results.txt", shallow=False)
 		
 
 	
