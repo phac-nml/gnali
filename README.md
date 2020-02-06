@@ -19,6 +19,8 @@ Your input file must be of format `.csv` or `.txt`, and should contain a list of
 If an output file name is not specified, it will use a default name and gNALI
 will tell you where it is and what it's called after it finishes executing.
 
+Some sample genes are included in `tests/data/Genes_To_Test.txt`.
+
 Example commands:
 
 `gnali -i my_genes.csv`
