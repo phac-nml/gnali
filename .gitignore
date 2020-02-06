@@ -1,10 +1,36 @@
+# Distribution/Packaging
+build/
+dist/
+*.egg-info
+*.in
+
+# Original script
 gNALI.R
+
+# Test files
 Genes_Short.csv
+empty_file.csv
+
+# Swaps
+*.swp
+
+# pybiomart stuff
 .pybiomart.sqlite
+
+# Any slurm output
 *.out
-gnomad-cmd-temp/
+
+# Python bytecode
 *.pyc
 *.pyo
+
+# Notes
 notes.md
+
+# Outputs from the gNALI.R
 Non*.txt
-gNALI-results/
+
+# Testing stuff
+*gNALI-results/
+.cache/
+gnali/.ipnyb*
