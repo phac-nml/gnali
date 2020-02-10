@@ -14,6 +14,11 @@ TEST_INPUT_CSV = str(TEST_PATH) + "/data/test_genes.csv"
 TEST_INPUT_TXT = str(TEST_PATH) + "/data/test_genes.txt"
 EMPTY_INPUT_CSV = str(TEST_PATH) + "/data/empty_file.csv"
 ENSEMBL_HUMAN_GENES = str(TEST_PATH) + "/data/ensembl_hsapiens_dataset.csv"
+EXPECTED_TEST_LOCATIONS = str(TEST_PATH) + "/data/expected_test_locations.txt"
+TEST_TEST_LOCATIONS = str(TEST_PATH) + "/data/test_locations.txt"
+EXPECTED_GW = str(TEST_PATH) + "/data/expected_exomes_R_Hom_HC_GW.txt"
+EXPECTED_EX = str(TEST_PATH) + "/data/expected_exomes_R_Hom_HC_EX.txt"
+EXPECTED_RESULTS = str(TEST_PATH) + "/data/expected_results.vcf"
 
 START_DIR = os.getcwd()
 TEMP_DIR  = tempfile.TemporaryDirectory()
@@ -75,8 +80,6 @@ class TestGNALI:
 					'start_position': [46411633, 105085753], \
 					'end_position': [46417697, 46417697]}
 		gene_descs = pd.DataFrame(gene_descs, columns = ['', 'hgnc_symbol', 'chromosome_name', 'start_position', 'end_position'])
-		EXPECTED_TEST_FILE = 'expected_test_locations.txt'
-		METHOD_TEST_FILE = 'test_locations.txt'
 		target_list = []
 		
 		method_gene_descs = gene_descs
@@ -88,44 +91,25 @@ class TestGNALI:
 			target_list.append(target)
 		method_gene_descs['targets'] = target_list
 		method_gene_descs = method_gene_descs[['chromosome_name', 'targets']]
-		np.savetxt(TEMP_DIR.name + '/' + EXPECTED_TEST_FILE, target_list, delimiter='\t', fmt='%s')
+		np.savetxt(TEMP_DIR.name + '/' + "expected_locations.txt", target_list, delimiter='\t', fmt='%s')
 		gnali.find_test_locations(gene_descs, TEMP_DIR)
 
-		assert filecmp.cmp(TEMP_DIR.name + '/' + EXPECTED_TEST_FILE, TEMP_DIR.name + '/' + METHOD_TEST_FILE, shallow=False)
+		assert filecmp.cmp(TEMP_DIR.name + '/' + "expected_locations.txt", TEMP_DIR.name + '/' + "test_locations.txt", shallow=False)
 
 
 	def test_get_plof_variants(self):
-		# Query the gnomAD database for loss of function variants of those genes with Tabix.
-		shutil.copyfile("tests/data/test_locations.txt", TEMP_DIR.name + "/test_locations.txt")
-		os.chdir(TEMP_DIR.name)
-		# Change one of the "GNOMAD_EXOMES" to "GNOMAD_GENOMES" to use full gnomAD database (exomes and genomes)
-		# (This will take ~15min to run)
-		os.system("xargs -a test_locations.txt -I {} tabix -fh " + GNOMAD_EXOMES + " {} > expected_exomes_Results_GW.vcf")
-		os.system("bgzip expected_exomes_Results_GW.vcf")
-		os.system("zgrep -e ';controls_nhomalt=[1-9]' expected_exomes_Results_GW.vcf.gz > expected_exomes_R_Hom_GW.txt")
-		os.system("grep -e HC expected_exomes_R_Hom_GW.txt > expected_exomes_R_Hom_HC_GW.txt")
-		os.system("xargs -a test_locations.txt -I {} tabix -fh " + GNOMAD_EXOMES + " {} > expected_exomes_Results_EX.vcf")
-		os.system("bgzip expected_exomes_Results_EX.vcf")
-		os.system("zgrep -e ';controls_nhomalt=[1-9]' expected_exomes_Results_EX.vcf.gz > expected_exomes_R_Hom_EX.txt")
-		os.system("grep -e HC expected_exomes_R_Hom_EX.txt > expected_exomes_R_Hom_HC_EX.txt")
-
+		shutil.copyfile(TEST_TEST_LOCATIONS, TEMP_DIR.name + "/test_locations.txt")
 		gnali.get_plof_variants(START_DIR, TEMP_DIR)
 
-		assert filecmp.cmp("expected_exomes_R_Hom_HC_GW.txt", "exomes_R_Hom_HC_GW.txt", shallow=False)
-		assert filecmp.cmp("expected_exomes_R_Hom_HC_EX.txt", "exomes_R_Hom_HC_EX.txt", shallow=False)
+		assert filecmp.cmp(EXPECTED_GW, TEMP_DIR.name + "/exomes_R_Hom_HC_GW.txt", shallow=False)
+		assert filecmp.cmp(EXPECTED_EX, TEMP_DIR.name + "/exomes_R_Hom_HC_EX.txt", shallow=False)
 
 
 	def test_write_results(self):
-		os.chdir(TEMP_DIR.name)
-		results_p1 = pd.read_table("exomes_R_Hom_HC_GW.txt")
-		results_p2 = pd.read_table("exomes_R_Hom_HC_EX.txt")
-		results_detailed = results_p1.append(results_p2)
-		results_detailed.columns = ["Chromosome", "Position_Start", "RSID", "Allele1", "Allele2", "Score", "Quality", "Codes"]
-
-		results_detailed.to_csv("expected_results.txt", sep='\t', mode='a', index=False)
-		gnali.write_results("method_results.txt", TEMP_DIR.name, "..", TEMP_DIR.name)
-		
-		assert filecmp.cmp("expected_results.txt", "method_results.txt", shallow=False)
+		shutil.copyfile(EXPECTED_GW, TEMP_DIR.name + "/exomes_R_Hom_HC_GW.txt")
+		shutil.copyfile(EXPECTED_EX, TEMP_DIR.name + "/exomes_R_Hom_HC_EX.txt")
+		gnali.write_results("method_results.vcf", TEMP_DIR.name, "..", TEMP_DIR.name)
+		assert filecmp.cmp(EXPECTED_RESULTS, TEMP_DIR.name + "/method_results.vcf", shallow=False)
 		
 
 	
