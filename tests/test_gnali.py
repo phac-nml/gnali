@@ -24,7 +24,10 @@ START_DIR = os.getcwd()
 TEMP_DIR  = tempfile.TemporaryDirectory()
 
 GNOMAD_EXOMES = "https://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz"
+# To run gNALI on both gnomAD exome and genome databases, add GNOMAD_GENOMES to GENOMAD_DBS below.
+# (~15min runtime)
 GNOMAD_GENOMES = "https://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz"
+GNOMAD_DBS = [GNOMAD_EXOMES]
 
 class TestGNALI:
 	@classmethod
@@ -74,6 +77,7 @@ class TestGNALI:
 
 
 	def test_find_test_locations(self):
+		TEMP_DIR = tempfile.TemporaryDirectory()
 		gene_descs = {'': [46843, 58454], \
 					'hgnc_symbol': ['CCR5', 'ALCAM'], \
 					'chromosome_name':  [3, 3], \
@@ -96,19 +100,21 @@ class TestGNALI:
 
 		assert filecmp.cmp(TEMP_DIR.name + '/' + "expected_locations.txt", TEMP_DIR.name + '/' + "test_locations.txt", shallow=False)
 
-
 	def test_get_plof_variants(self):
+		TEMP_DIR = tempfile.TemporaryDirectory()
 		shutil.copyfile(TEST_TEST_LOCATIONS, TEMP_DIR.name + "/test_locations.txt")
-		gnali.get_plof_variants(START_DIR, TEMP_DIR)
+		gnali.get_plof_variants(START_DIR, TEMP_DIR, *GNOMAD_DBS)
+		for database in GNOMAD_DBS:
+			assert filecmp.cmp(EXPECTED_EX, TEMP_DIR.name + "/exomes_R_Hom_HC_" + database[-20:-6] + ".txt", shallow=False)
 
-		assert filecmp.cmp(EXPECTED_GW, TEMP_DIR.name + "/exomes_R_Hom_HC_GW.txt", shallow=False)
-		assert filecmp.cmp(EXPECTED_EX, TEMP_DIR.name + "/exomes_R_Hom_HC_EX.txt", shallow=False)
-
-
+	
 	def test_write_results(self):
-		shutil.copyfile(EXPECTED_GW, TEMP_DIR.name + "/exomes_R_Hom_HC_GW.txt")
-		shutil.copyfile(EXPECTED_EX, TEMP_DIR.name + "/exomes_R_Hom_HC_EX.txt")
-		gnali.write_results("method_results.vcf", TEMP_DIR.name, "..", TEMP_DIR.name)
+		TEMP_DIR = tempfile.TemporaryDirectory()
+		for database in GNOMAD_DBS:
+			shutil.copyfile(str(TEST_PATH) + "/data/exomes_R_Hom_HC_" + database[-20:-6] + ".txt", \
+								TEMP_DIR.name + "/exomes_R_Hom_HC_" + database[-20:-6] + ".txt")
+		gnali.write_results("method_results.vcf", TEMP_DIR, "..", TEMP_DIR.name, *GNOMAD_DBS)
+		results = pd.read_table("exomes_R_Hom_HC_" + database[-20:-6] + ".txt", header=None)
 		assert filecmp.cmp(EXPECTED_RESULTS, TEMP_DIR.name + "/method_results.vcf", shallow=False)
 		
 
