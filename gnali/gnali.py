@@ -113,10 +113,11 @@ def get_plof_variants(start_dir, temp_dir, *databases):
 	# Query the gnomAD database for loss of function variants of those genes with Tabix.
 	os.chdir(temp_dir.name)
 	for database in databases:
-		os.system("xargs -a test_locations.txt -I {{}} tabix -fh {} {{}} > exomes_Results_{}".format(database, database))
-		os.system("bgzip exomes_Results_{}".format(database))
-		os.system("zgrep -e ';controls_nhomalt=[1-9]' exomes_Results_{}.bgz > exomes_R_Hom_{}.txt".format(database, database))
-		os.system("grep -e HC exomes_R_Hom_{}.txt >> exomes_R_Hom_HC.txt".format(database))
+		id = uuid.uuid4()
+		os.system("xargs -a test_locations.txt -I {{}} tabix -fh {} {{}} > exomes_Results_{}.vcf".format(database, id))
+		os.system("bgzip exomes_Results_{}.vcf".format(id))
+		os.system("zgrep -e ';controls_nhomalt=[1-9]' exomes_Results_{}.vcf.gz > exomes_R_Hom_{}.txt".format(id, id))
+		os.system("grep -e HC exomes_R_Hom_{}.txt >> exomes_R_Hom_HC.txt".format(id))
 
 
 def write_results(out_file, temp_dir, start_dir, results_dir, *databases):
@@ -124,7 +125,6 @@ def write_results(out_file, temp_dir, start_dir, results_dir, *databases):
 	os.chdir(temp_dir.name)
 	results = pd.read_table("exomes_R_Hom_HC.txt", header=None)
 	results.columns = ["Chromosome", "Position_Start", "RSID", "Allele1", "Allele2", "Score", "Quality", "Codes"]
-	print(results.size)
 	os.chdir(start_dir)
 	pathlib.Path(results_dir).mkdir(parents=True, exist_ok=True)
 	os.chdir(results_dir)
