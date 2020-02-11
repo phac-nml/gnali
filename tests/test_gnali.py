@@ -114,7 +114,6 @@ class TestGNALI:
 			shutil.copyfile(str(TEST_PATH) + "/data/exomes_R_Hom_HC_" + database[-20:-6] + ".txt", \
 								TEMP_DIR.name + "/exomes_R_Hom_HC_" + database[-20:-6] + ".txt")
 		gnali.write_results("method_results.vcf", TEMP_DIR, "..", TEMP_DIR.name, *GNOMAD_DBS)
-		results = pd.read_table("exomes_R_Hom_HC_" + database[-20:-6] + ".txt", header=None)
 		assert filecmp.cmp(EXPECTED_RESULTS, TEMP_DIR.name + "/method_results.vcf", shallow=False)
 		
 
