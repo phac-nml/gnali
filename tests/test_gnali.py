@@ -104,15 +104,15 @@ class TestGNALI:
 		TEMP_DIR = tempfile.TemporaryDirectory()
 		shutil.copyfile(TEST_TEST_LOCATIONS, TEMP_DIR.name + "/test_locations.txt")
 		gnali.get_plof_variants(START_DIR, TEMP_DIR, *GNOMAD_DBS)
-		for database in GNOMAD_DBS:
-			assert filecmp.cmp(EXPECTED_EX, TEMP_DIR.name + "/exomes_R_Hom_HC_" + database[-20:-6] + ".txt", shallow=False)
+		
+		assert filecmp.cmp(EXPECTED_EX, TEMP_DIR.name + "/exomes_R_Hom_HC.txt", shallow=False)
 
 	
 	def test_write_results(self):
 		TEMP_DIR = tempfile.TemporaryDirectory()
 		for database in GNOMAD_DBS:
-			shutil.copyfile(str(TEST_PATH) + "/data/exomes_R_Hom_HC_" + database[-20:-6] + ".txt", \
-								TEMP_DIR.name + "/exomes_R_Hom_HC_" + database[-20:-6] + ".txt")
+			shutil.copyfile(str(TEST_PATH) + "/data/exomes_R_Hom_HC.txt", \
+								TEMP_DIR.name + "/exomes_R_Hom_HC.txt")
 		gnali.write_results("method_results.vcf", TEMP_DIR, "..", TEMP_DIR.name, *GNOMAD_DBS)
 		assert filecmp.cmp(EXPECTED_RESULTS, TEMP_DIR.name + "/method_results.vcf", shallow=False)
 		
