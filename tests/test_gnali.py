@@ -51,7 +51,7 @@ class TestGNALI:
 		with pytest.raises(exceptions.EmptyFileError):
 			assert gnali.open_test_file(EMPTY_INPUT_CSV)
 
-
+	
 	def test_open_test_file_no_file(self):
 		with pytest.raises(FileNotFoundError):
 			assert gnali.open_test_file("bad_file.csv")
@@ -114,7 +114,7 @@ class TestGNALI:
 						TEMP_DIR.name + "/exomes_R_Hom_HC.txt")
 		gnali.write_results("method_results.vcf", TEMP_DIR, "..", TEMP_DIR.name, *GNOMAD_DBS)
 		assert filecmp.cmp(EXPECTED_RESULTS, TEMP_DIR.name + "/method_results.vcf", shallow=False)
-		
+	
 
 	
 		

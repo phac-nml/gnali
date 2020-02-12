@@ -34,3 +34,5 @@ Non*.txt
 *gNALI-results/
 .cache/
 .ipnyb_checkpoints
+.tox/
+.coverage
