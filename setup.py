@@ -17,7 +17,7 @@ specific language governing permissions and limitations under the License.
 
 from setuptools import find_packages, setup
 
-dependencies = ['pybiomart', 'numpy', 'pandas', 'pytabix']
+dependencies = ['pybiomart', 'numpy', 'pandas', 'pysam']
 
 def readme():
     with open('README.md') as fd:
