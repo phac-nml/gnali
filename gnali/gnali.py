@@ -153,7 +153,7 @@ def extract_lof_annotations(variants):
 	return results, results_basic
 
 
-def write_results(results, results_basic, current_results_dir, results_dir):
+def write_results(results, results_basic, current_results_dir, results_dir, args):
 	""" Write two output files:
 		- A detailed report outlining the gene variants, and
 		- A basic report listing only the genes with LoF variants
@@ -163,12 +163,13 @@ def write_results(results, results_basic, current_results_dir, results_dir):
 		results_basic: basic reuslts from extract_lof_variants
 		current_results_dir: directory to contain this run's results
 		results_dir: directory containing all gNALI results
+		args: command line arguments
 	"""
 	results_file = "Nonessential_Host_Genes_Detailed_(Detailed).vcf"
 	results_basic_file = "Nonessential_Host_Genes_(Basic).vcf"
 	
 	pathlib.Path(results_dir).mkdir(parents=True, exist_ok=True)
-	pathlib.Path(current_results_dir).mkdir(parents=True, exist_ok=False)
+	pathlib.Path(current_results_dir).mkdir(parents=True, exist_ok=args.force)
 	results.to_csv("{}/{}".format(current_results_dir, results_file), sep='\t', mode='a', index=False)
 	results_basic.to_csv("{}/{}".format(current_results_dir, results_basic_file), sep='\t', mode='a', index=False)
 
@@ -206,7 +207,7 @@ def main():
 	target_list = find_test_locations(genes_df)
 	variants = get_plof_variants(target_list, *GNOMAD_DBS)
 	results, results_basic = extract_lof_annotations(variants)
-	write_results(results, results_basic, current_results_dir, results_dir)
+	write_results(results, results_basic, current_results_dir, results_dir, args)
 	print("Finished. Output in {}".format(current_results_dir))
 
 
