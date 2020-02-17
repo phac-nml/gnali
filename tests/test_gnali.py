@@ -1,6 +1,5 @@
 import pytest
 import pathlib
-TEST_PATH = pathlib.Path(__file__).parent.absolute()
 from gnali import exceptions
 from gnali import gnali
 
@@ -10,6 +9,7 @@ import tempfile, filecmp
 import pandas as pd
 import numpy as np
 
+TEST_PATH = pathlib.Path(__file__).parent.absolute()
 TEST_INPUT_CSV = str(TEST_PATH) + "/data/test_genes.csv"
 TEST_INPUT_TXT = str(TEST_PATH) + "/data/test_genes.txt"
 EMPTY_INPUT_CSV = str(TEST_PATH) + "/data/empty_file.csv"
