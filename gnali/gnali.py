@@ -102,8 +102,7 @@ def find_test_locations(gene_descriptions):
 				+ str(gene_descriptions.loc[gene_descriptions.index[i],'start_position']) + "-"  \
 				+ str(gene_descriptions.loc[gene_descriptions.index[i],'end_position'])
 		target_list.append(target)
-	gene_descriptions['targets'] = target_list
-	gene_descriptions = gene_descriptions[['chromosome_name', 'targets']]
+
 	return target_list
 
 
@@ -124,7 +123,6 @@ def get_plof_variants(target_list, *databases):
 				variants.append(record)
 	variants = [item for item in variants if re.search(";controls_nhomalt=[1-9]", str(item))]
 	variants = [item for item in variants if re.search("HC", str(item))]
-	variants = set(variants)
 	return variants
 
 
@@ -153,7 +151,7 @@ def extract_lof_annotations(variants):
 	return results, results_basic
 
 
-def write_results(results, results_basic, current_results_dir, results_dir, args):
+def write_results(results, results_basic, current_results_dir, results_dir, overwrite):
 	""" Write two output files:
 		- A detailed report outlining the gene variants, and
 		- A basic report listing only the genes with LoF variants
@@ -169,7 +167,7 @@ def write_results(results, results_basic, current_results_dir, results_dir, args
 	results_basic_file = "Nonessential_Host_Genes_(Basic).vcf"
 	
 	pathlib.Path(results_dir).mkdir(parents=True, exist_ok=True)
-	pathlib.Path(current_results_dir).mkdir(parents=True, exist_ok=args.force)
+	pathlib.Path(current_results_dir).mkdir(parents=True, exist_ok=overwrite)
 	results.to_csv("{}/{}".format(current_results_dir, results_file), sep='\t', mode='a', index=False)
 	results_basic.to_csv("{}/{}".format(current_results_dir, results_basic_file), sep='\t', mode='a', index=False)
 
@@ -185,7 +183,7 @@ def init_parser(id):
 						help='Name of output directory. Default: results-ID/')
 	parser.add_argument('-f', '--force',
 						action='store_true',
-						help='Force existing output file(s) to be overwritten')
+						help='Force existing output folder to be overwritten')
 	
 	return parser
 
@@ -207,7 +205,7 @@ def main():
 	target_list = find_test_locations(genes_df)
 	variants = get_plof_variants(target_list, *GNOMAD_DBS)
 	results, results_basic = extract_lof_annotations(variants)
-	write_results(results, results_basic, current_results_dir, results_dir, args)
+	write_results(results, results_basic, current_results_dir, results_dir, args.force)
 	print("Finished. Output in {}".format(current_results_dir))
 
 
