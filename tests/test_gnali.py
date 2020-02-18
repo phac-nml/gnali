@@ -31,112 +31,112 @@ GNOMAD_GENOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/
 GNOMAD_DBS = [GNOMAD_EXOMES]
 
 class TestGNALI:
-	@classmethod
-	def setup_class(cls):
-		sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+    @classmethod
+    def setup_class(cls):
+        sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 
-	def test_open_test_file_happy_csv(self):
-		expected_results = ['CCR5', 'ALCAM']
-		method_results = gnali.open_test_file(TEST_INPUT_CSV)
-		assert expected_results == method_results
+    def test_open_test_file_happy_csv(self):
+        expected_results = ['CCR5', 'ALCAM']
+        method_results = gnali.open_test_file(TEST_INPUT_CSV)
+        assert expected_results == method_results
 
 
-	def test_open_test_file_happy_txt(self):
-		expected_results = ['CCR5', 'ALCAM']
-		method_results = gnali.open_test_file(TEST_INPUT_TXT)
-		assert expected_results == method_results
+    def test_open_test_file_happy_txt(self):
+        expected_results = ['CCR5', 'ALCAM']
+        method_results = gnali.open_test_file(TEST_INPUT_TXT)
+        assert expected_results == method_results
 
 
-	def test_open_test_file_empty_file(self):
-		with pytest.raises(exceptions.EmptyFileError):
-			assert gnali.open_test_file(EMPTY_INPUT_CSV)
+    def test_open_test_file_empty_file(self):
+        with pytest.raises(exceptions.EmptyFileError):
+            assert gnali.open_test_file(EMPTY_INPUT_CSV)
 
-	
-	def test_open_test_file_no_file(self):
-		with pytest.raises(FileNotFoundError):
-			assert gnali.open_test_file("bad_file.csv")
-			
-	
-	def test_get_test_gene_descriptions(self, monkeypatch):
-		genes_list = ['CCR5', 'ALCAM']
-		def mock_get_human_genes():
-			human_genes = pd.read_csv(ENSEMBL_HUMAN_GENES) 
-			human_genes.drop(human_genes.columns[0], axis=1, inplace=True)
-			return human_genes
-		monkeypatch.setattr(gnali, "get_human_genes", mock_get_human_genes)
+    
+    def test_open_test_file_no_file(self):
+        with pytest.raises(FileNotFoundError):
+            assert gnali.open_test_file("bad_file.csv")
+            
+    
+    def test_get_test_gene_descriptions(self, monkeypatch):
+        genes_list = ['CCR5', 'ALCAM']
+        def mock_get_human_genes():
+            human_genes = pd.read_csv(ENSEMBL_HUMAN_GENES) 
+            human_genes.drop(human_genes.columns[0], axis=1, inplace=True)
+            return human_genes
+        monkeypatch.setattr(gnali, "get_human_genes", mock_get_human_genes)
 
-		human_genes = gnali.get_human_genes()
-		method_results = gnali.get_test_gene_descriptions(genes_list)
+        human_genes = gnali.get_human_genes()
+        method_results = gnali.get_test_gene_descriptions(genes_list)
 
-		human_genes.columns = ['hgnc_symbol', 'chromosome_name', 'start_position', 'end_position']
-		expected_results = human_genes
-		expected_results = expected_results[~expected_results['chromosome_name'].str.contains('PATCH')]
-		expected_results = expected_results[(expected_results['hgnc_symbol'].isin(genes_list))]
+        human_genes.columns = ['hgnc_symbol', 'chromosome_name', 'start_position', 'end_position']
+        expected_results = human_genes
+        expected_results = expected_results[~expected_results['chromosome_name'].str.contains('PATCH')]
+        expected_results = expected_results[(expected_results['hgnc_symbol'].isin(genes_list))]
 
-		assert expected_results.equals(method_results)
-
-
-	def test_find_test_locations(self):
-		gene_descs = {'': [46843, 58454], \
-					'hgnc_symbol': ['CCR5', 'ALCAM'], \
-					'chromosome_name':  [3, 3], \
-					'start_position': [46411633, 105085753], \
-					'end_position': [46417697, 46417697]}
-		gene_descs = pd.DataFrame(gene_descs, columns = ['', 'hgnc_symbol', 'chromosome_name', 'start_position', 'end_position'])
-		target_list= []
-		method_gene_descs = gene_descs
-
-		for i in range(gene_descs.shape[0]):
-			target = str(gene_descs.loc[gene_descs.index[i],'chromosome_name']) + ":" \
-					+ str(gene_descs.loc[gene_descs.index[i],'start_position']) + "-"  \
-					+ str(gene_descs.loc[gene_descs.index[i],'end_position'])
-			target_list.append(target)
-		
-		method_test_locations = gnali.find_test_locations(method_gene_descs)
-
-		assert method_test_locations == target_list
+        assert expected_results.equals(method_results)
 
 
-	def test_get_plof_variants(self):
-		target_list = ["3:46411633-46417697"]
+    def test_find_test_locations(self):
+        gene_descs = {'': [46843, 58454], \
+                    'hgnc_symbol': ['CCR5', 'ALCAM'], \
+                    'chromosome_name':  [3, 3], \
+                    'start_position': [46411633, 105085753], \
+                    'end_position': [46417697, 46417697]}
+        gene_descs = pd.DataFrame(gene_descs, columns = ['', 'hgnc_symbol', 'chromosome_name', 'start_position', 'end_position'])
+        target_list= []
+        method_gene_descs = gene_descs
 
-		expected_variants = []
-		with open(EXPECTED_PLOF_VARIANTS, 'r') as test_file:
-			reader = csv.reader(test_file)
-			for row in reader:
-				expected_variants.append(row)
-		
-		expected_variants = sum(expected_variants, [])
+        for i in range(gene_descs.shape[0]):
+            target = str(gene_descs.loc[gene_descs.index[i],'chromosome_name']) + ":" \
+                    + str(gene_descs.loc[gene_descs.index[i],'start_position']) + "-"  \
+                    + str(gene_descs.loc[gene_descs.index[i],'end_position'])
+            target_list.append(target)
+        
+        method_test_locations = gnali.find_test_locations(method_gene_descs)
 
-		method_variants = gnali.get_plof_variants(target_list, *GNOMAD_DBS)
-		
-		assert expected_variants == method_variants
+        assert method_test_locations == target_list
 
 
-	
-	def test_write_results(self):
-		results_dir = tempfile.TemporaryDirectory()
-		test_variants = []
+    def test_get_plof_variants(self):
+        target_list = ["3:46411633-46417697"]
 
-		with open(EXPECTED_PLOF_VARIANTS, 'r') as test_file:
-			reader = csv.reader(test_file)
-			for row in reader:
-				test_variants.append(row)
-		test_variants = sum(test_variants, [])
+        expected_variants = []
+        with open(EXPECTED_PLOF_VARIANTS, 'r') as test_file:
+            reader = csv.reader(test_file)
+            for row in reader:
+                expected_variants.append(row)
+        
+        expected_variants = sum(expected_variants, [])
 
-		expected_results_file = "expected_results.vcf"
-		method_results_file = "method_results.vcf"
+        method_variants = gnali.get_plof_variants(target_list, *GNOMAD_DBS)
+        
+        assert expected_variants == method_variants
 
-		results = [text.split('\t') for text in test_variants]
-		results = pd.DataFrame(data=results)
-		results.columns = ["Chromosome", "Position_Start", "RSID", "Allele1", "Allele2", "Score", "Quality", "Codes"]
-		results.to_csv("{}/{}".format(results_dir.name, expected_results_file), sep='\t', mode='a', index=False)
 
-		gnali.write_results(test_variants, method_results_file, results_dir.name)
-		assert filecmp.cmp("{}/{}".format(results_dir.name, expected_results_file), "{}/{}".format(results_dir.name, method_results_file), shallow=False)
+    
+    def test_write_results(self):
+        results_dir = tempfile.TemporaryDirectory()
+        test_variants = []
 
-	
+        with open(EXPECTED_PLOF_VARIANTS, 'r') as test_file:
+            reader = csv.reader(test_file)
+            for row in reader:
+                test_variants.append(row)
+        test_variants = sum(test_variants, [])
 
-	
-		
+        expected_results_file = "expected_results.vcf"
+        method_results_file = "method_results.vcf"
+
+        results = [text.split('\t') for text in test_variants]
+        results = pd.DataFrame(data=results)
+        results.columns = ["Chromosome", "Position_Start", "RSID", "Allele1", "Allele2", "Score", "Quality", "Codes"]
+        results.to_csv("{}/{}".format(results_dir.name, expected_results_file), sep='\t', mode='a', index=False)
+
+        gnali.write_results(test_variants, method_results_file, results_dir.name)
+        assert filecmp.cmp("{}/{}".format(results_dir.name, expected_results_file), "{}/{}".format(results_dir.name, method_results_file), shallow=False)
+
+    
+
+    
+        
