@@ -112,7 +112,6 @@ def find_test_locations(gene_descriptions):
                 + str(gene_descriptions.loc[gene_descriptions.index[i],
                       'end_position'])
         target_list.append(target)
-
     return target_list
 
 

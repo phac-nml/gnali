@@ -157,7 +157,3 @@ class TestGNALI:
 
 		gnali.write_results(test_results, test_results_basic, method_results_dir, results_dir.name, False)
 		assert filecmp.dircmp(expected_results_dir, method_results_dir)
-	
-
-	
-		
