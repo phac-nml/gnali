@@ -34,10 +34,8 @@ SCRIPT_INFO = "Given a list of genes to test, gNALI finds all potential \
                 loss of function variants of those genes."
 
 ENSEMBL_HOST = 'http://grch37.ensembl.org'
-GNOMAD_EXOMES = "http://storage.googleapis.com/gnomad-public\
-                /release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz"
-GNOMAD_GENOMES = "http://storage.googleapis.com/gnomad-public\
-                /release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz"
+GNOMAD_EXOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz" #noqa
+GNOMAD_GENOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz" #noqa
 GNOMAD_DBS = [GNOMAD_EXOMES, GNOMAD_GENOMES]
 
 
@@ -166,7 +164,7 @@ def extract_lof_annotations(variants):
     return results, results_basic
 
 
-def write_results(results, results_basic, current_results_dir,
+def write_results(results, results_basic,
                   results_dir, overwrite):
     """ Write two output files:
         - A detailed report outlining the gene variants, and
@@ -179,15 +177,13 @@ def write_results(results, results_basic, current_results_dir,
         results_dir: directory containing all gNALI results
         args: command line arguments
     """
-    results_file = "Nonessential_Host_Genes_Detailed_(Detailed).vcf"
+    results_file = "Nonessential_Host_Genes_(Detailed).vcf"
     results_basic_file = "Nonessential_Host_Genes_(Basic).vcf"
 
-    pathlib.Path(results_dir).mkdir(parents=True, exist_ok=True)
-    pathlib.Path(current_results_dir).mkdir(parents=True,
-                                            exist_ok=overwrite)
-    results.to_csv("{}/{}".format(current_results_dir, results_file),
+    pathlib.Path(results_dir).mkdir(parents=True, exist_ok=overwrite)
+    results.to_csv("{}/{}".format(results_dir, results_file),
                    sep='\t', mode='a', index=False)
-    results_basic.to_csv("{}/{}".format(current_results_dir,
+    results_basic.to_csv("{}/{}".format(results_dir,
                          results_basic_file),
                          sep='\t', mode='a', index=False)
 
@@ -218,18 +214,16 @@ def main():
         arg_parser.exit()
     args = arg_parser.parse_args()
 
-    start_dir = os.getcwd()
-    results_dir = start_dir + "/gNALI-results"
-    current_results_dir = "{}/{}/".format(results_dir, args.output_dir)
+    results_dir = args.output_dir
 
     genes = open_test_file(args.input_file)
     genes_df = get_test_gene_descriptions(genes)
     target_list = find_test_locations(genes_df)
     variants = get_plof_variants(target_list, *GNOMAD_DBS)
     results, results_basic = extract_lof_annotations(variants)
-    write_results(results, results_basic, current_results_dir,
+    write_results(results, results_basic,
                   results_dir, args.force)
-    print("Finished. Output in {}".format(current_results_dir))
+    print("Finished. Output in {}".format(results_dir))
 
 
 if __name__ == '__main__':
