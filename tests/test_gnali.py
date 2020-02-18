@@ -155,5 +155,5 @@ class TestGNALI:
 		test_results.to_csv("{}/{}".format(expected_results_dir, expected_results_file), sep='\t', mode='a', index=False)
 		test_results_basic.to_csv("{}/{}".format(expected_results_dir, expected_results_basic_file), sep='\t', mode='a', index=False)
 
-		gnali.write_results(test_results, test_results_basic, method_results_dir, results_dir.name, False)
+		gnali.write_results(test_results, test_results_basic, method_results_dir, False)
 		assert filecmp.dircmp(expected_results_dir, method_results_dir)
