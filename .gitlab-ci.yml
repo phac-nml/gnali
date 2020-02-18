@@ -20,8 +20,4 @@ flake8:
   before_script:
     - pip install tox
   script:
-<<<<<<< HEAD
     - tox -e flake8
-=======
-    - tox -e flake8
->>>>>>> develop
