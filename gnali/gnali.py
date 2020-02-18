@@ -20,7 +20,6 @@ import argparse
 import csv
 from pybiomart import Server
 import pysam
-import os
 import pathlib
 import sys
 import numpy as np
@@ -34,8 +33,8 @@ SCRIPT_INFO = "Given a list of genes to test, gNALI finds all potential \
                 loss of function variants of those genes."
 
 ENSEMBL_HOST = 'http://grch37.ensembl.org'
-GNOMAD_EXOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz" #noqa
-GNOMAD_GENOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz" #noqa
+GNOMAD_EXOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz" # noqa
+GNOMAD_GENOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz" # noqa
 GNOMAD_DBS = [GNOMAD_EXOMES, GNOMAD_GENOMES]
 
 
