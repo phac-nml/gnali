@@ -42,136 +42,133 @@ GNOMAD_DBS = [GNOMAD_EXOMES]
 
 
 def open_test_file(input_file):
-	"""Read genes from the input file.
+    """Read genes from the input file.
 
-	Args:
-		input_file: input file containing genes to find
-	"""
-	test_genes_list = []
-	try:
-		with open(input_file) as csv_file:
-			csv_reader = csv.reader(csv_file, delimiter=',')
-			for gene in csv_reader:
-				if not str(gene):
-					break
-				test_genes_list.append(", ".join(gene))
-	except FileNotFoundError:
-		print("File " + input_file + " not found")
-		raise
-	except:
-		print("Something went wrong. Try again")
-	if len(test_genes_list) == 0:
-		print("Error: input file is empty")
-		raise exceptions.EmptyFileError 
+    Args:
+        input_file: input file containing genes to find
+    """
+    test_genes_list = []
+    try:
+        with open(input_file) as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            for gene in csv_reader:
+                if not str(gene):
+                    break
+                test_genes_list.append(", ".join(gene))
+    except FileNotFoundError:
+        print("File " + input_file + " not found")
+        raise
+    except:
+        print("Something went wrong. Try again")
+    if len(test_genes_list) == 0:
+        print("Error: input file is empty")
+        raise exceptions.EmptyFileError 
 
-	return test_genes_list	
+    return test_genes_list	
 
 
 def get_human_genes():
-	"""Connect to the Ensembl database and get the human gene dataset. Keep only required
-		fields.
-	"""
-	server = Server(host=ENSEMBL_HOST)
-	dataset = (server.marts['ENSEMBL_MART_ENSEMBL'].datasets['hsapiens_gene_ensembl'])
-	genes = dataset.query(attributes=['hgnc_symbol', 'chromosome_name', 'start_position', 'end_position'])
-	return genes
-	
+    """Connect to the Ensembl database and get the human gene dataset. Keep only required
+        fields.
+    """
+    server = Server(host=ENSEMBL_HOST)
+    dataset = (server.marts['ENSEMBL_MART_ENSEMBL'].datasets['hsapiens_gene_ensembl'])
+    genes = dataset.query(attributes=['hgnc_symbol', 'chromosome_name', 'start_position', 'end_position'])
+    return genes
+    
 
 
 def get_test_gene_descriptions(genes_list):
-	"""Filter Ensembl human genes for info related to test genes.
+    """Filter Ensembl human genes for info related to test genes.
 
-	Args:
-		genes_list: list of genes we want to test from open_test_file()
-	"""
-	gene_descriptions = get_human_genes()
-	gene_descriptions.columns = ['hgnc_symbol', 'chromosome_name', 'start_position', 'end_position']	
-	gene_descriptions = gene_descriptions[~gene_descriptions['chromosome_name'].str.contains('PATCH')]
-	gene_descriptions = gene_descriptions[(gene_descriptions['hgnc_symbol'].isin(genes_list))]
-	return gene_descriptions
-
-
-def find_test_locations(gene_descriptions, temp_dir):
-	"""Using results from the Ensembl database, build a list of target genes. 
-
-	Args:
-		gene_descriptions: results from Ensembl database 
-		from get_test_gene_descriptions()
-	"""
-	target_list = []
-	# Format targets for Tabix
-	for i in range(gene_descriptions.shape[0]):
-		target = str(gene_descriptions.loc[gene_descriptions.index[i],'chromosome_name']) + ":" \
-				+ str(gene_descriptions.loc[gene_descriptions.index[i],'start_position']) + "-"  \
-				+ str(gene_descriptions.loc[gene_descriptions.index[i],'end_position'])
-		target_list.append(target)
-	gene_descriptions['targets'] = target_list
-	gene_descriptions = gene_descriptions[['chromosome_name', 'targets']]
-	#np.savetxt("{}/test_locations.txt".format(temp_dir.name), target_list, delimiter='\t', fmt='%s')
-	return target_list
+    Args:
+        genes_list: list of genes we want to test from open_test_file()
+    """
+    gene_descriptions = get_human_genes()
+    gene_descriptions.columns = ['hgnc_symbol', 'chromosome_name', 'start_position', 'end_position']	
+    gene_descriptions = gene_descriptions[~gene_descriptions['chromosome_name'].str.contains('PATCH')]
+    gene_descriptions = gene_descriptions[(gene_descriptions['hgnc_symbol'].isin(genes_list))]
+    return gene_descriptions
 
 
-def get_plof_variants(target_list, start_dir, temp_dir, *databases):
-	# Query the gnomAD database for loss of function variants of those genes with Tabix.
-	for database in databases:
-		tbx = pysam.TabixFile(database)
-		variants = []
-		test_locations = target_list
-		for location in test_locations:
-			records = tbx.fetch(reference=location)
-			for record in records:
-				variants.append(record)
-		variants = [item for item in variants if re.search(";controls_nhomalt=[1-9]", str(item))]
-		variants = [item for item in variants if re.search("HC", str(item))]
-	#print(variants)
-	variants = [text.split('\t') for text in variants]
-	return variants
+def find_test_locations(gene_descriptions):
+    """Using results from the Ensembl database, build a list of target genes. 
+
+    Args:
+        gene_descriptions: results from Ensembl database 
+        from get_test_gene_descriptions()
+    """
+    target_list = []
+    # Format targets for Tabix
+    for i in range(gene_descriptions.shape[0]):
+        target = str(gene_descriptions.loc[gene_descriptions.index[i],'chromosome_name']) + ":" \
+                + str(gene_descriptions.loc[gene_descriptions.index[i],'start_position']) + "-"  \
+                + str(gene_descriptions.loc[gene_descriptions.index[i],'end_position'])
+        target_list.append(target)
+    gene_descriptions['targets'] = target_list
+    gene_descriptions = gene_descriptions[['chromosome_name', 'targets']]
+    return target_list
 
 
-def write_results(variants, out_file, temp_dir, start_dir, results_dir, *databases):
-	# Write results generated by get_plof_variants()
-	results = np.asarray(variants, dtype=np.str)
-	results = pd.DataFrame(data=results)
-	results.columns = ["Chromosome", "Position_Start", "RSID", "Allele1", "Allele2", "Score", "Quality", "Codes"]
-	pathlib.Path(results_dir).mkdir(parents=True, exist_ok=True)
-	results.to_csv("{}/{}".format(results_dir, out_file), sep='\t', mode='a', index=False)
+def get_plof_variants(target_list, *databases):
+    # Query the gnomAD database for loss of function variants of those genes with Tabix.
+    for database in databases:
+        tbx = pysam.TabixFile(database)
+        variants = []
+        test_locations = target_list
+        for location in test_locations:
+            records = tbx.fetch(reference=location)
+            for record in records:
+                variants.append(record)
+        variants = [item for item in variants if re.search(";controls_nhomalt=[1-9]", str(item))]
+        variants = [item for item in variants if re.search("HC", str(item))]
+    return variants
+
+
+def write_results(variants, out_file, results_dir):
+    # Write results generated by get_plof_variants()
+    variants = [text.split('\t') for text in variants]
+    results = np.asarray(variants, dtype=np.str)
+    results = pd.DataFrame(data=results)
+    results.columns = ["Chromosome", "Position_Start", "RSID", "Allele1", "Allele2", "Score", "Quality", "Codes"]
+    pathlib.Path(results_dir).mkdir(parents=True, exist_ok=True)
+    results.to_csv("{}/{}".format(results_dir, out_file), sep='\t', mode='a', index=False)
 
 
 def init_parser(id):
-	parser = argparse.ArgumentParser(prog=SCRIPT_NAME,
-									description=SCRIPT_INFO)
-	parser.add_argument('-i', '--input_file', 
-						required=True,
-						help='File of genes to test. Accepted formats: csv, txt')
-	parser.add_argument('-o', '--output_file',
-						default='results-'+str(id)+'.vcf',
-						help='Name of output file. Default: results-ID.vcf')
-	parser.add_argument('-f', '--force',
-						action='store_true',
-						help='Force existing output file(s) to be overwritten')
-	
-	return parser
+    parser = argparse.ArgumentParser(prog=SCRIPT_NAME,
+                                    description=SCRIPT_INFO)
+    parser.add_argument('-i', '--input_file', 
+                        required=True,
+                        help='File of genes to test. Accepted formats: csv, txt')
+    parser.add_argument('-o', '--output_file',
+                        default='results-'+str(id)+'.vcf',
+                        help='Name of output file. Default: results-ID.vcf')
+    parser.add_argument('-f', '--force',
+                        action='store_true',
+                        help='Force existing output file(s) to be overwritten')
+    
+    return parser
 
 
 def main():
-	start_dir = os.getcwd()
-	temp_dir  = tempfile.TemporaryDirectory()
-	results_dir = start_dir + "/gNALI-results"
-	id = uuid.uuid4()
+    start_dir = os.getcwd()
+    results_dir = start_dir + "/gNALI-results"
+    id = uuid.uuid4()
 
-	arg_parser = init_parser(id)
-	if len(sys.argv) == 1:
-		arg_parser.print_help()
-		arg_parser.exit()
-	args = arg_parser.parse_args()
+    arg_parser = init_parser(id)
+    if len(sys.argv) == 1:
+        arg_parser.print_help()
+        arg_parser.exit()
+    args = arg_parser.parse_args()
 
-	genes = open_test_file(args.input_file)
-	genes_df = get_test_gene_descriptions(genes)
-	target_list = find_test_locations(genes_df, temp_dir)
-	variants = get_plof_variants(target_list, start_dir, temp_dir, *GNOMAD_DBS)
-	write_results(variants, args.output_file, temp_dir, start_dir, results_dir, *GNOMAD_DBS)
-	print("Finished. Output in gNALI-results/" + args.output_file)
+    genes = open_test_file(args.input_file)
+    genes_df = get_test_gene_descriptions(genes)
+    target_list = find_test_locations(genes_df)
+    variants = get_plof_variants(target_list, *GNOMAD_DBS)
+    write_results(variants, args.output_file, results_dir)
+    print("Finished. Output in gNALI-results/" + args.output_file)
 
 
 if __name__ == '__main__':	
-	main()
+    main()

@@ -9,6 +9,7 @@ import os, sys, shutil
 import tempfile, filecmp
 import pandas as pd
 import numpy as np
+import csv
 
 TEST_INPUT_CSV = str(TEST_PATH) + "/data/test_genes.csv"
 TEST_INPUT_TXT = str(TEST_PATH) + "/data/test_genes.txt"
@@ -19,14 +20,14 @@ TEST_TEST_LOCATIONS = str(TEST_PATH) + "/data/test_locations.txt"
 EXPECTED_GW = str(TEST_PATH) + "/data/expected_exomes_R_Hom_HC_GW.txt"
 EXPECTED_EX = str(TEST_PATH) + "/data/expected_exomes_R_Hom_HC_EX.txt"
 EXPECTED_RESULTS = str(TEST_PATH) + "/data/expected_results.vcf"
-
+EXPECTED_PLOF_VARIANTS = str(TEST_PATH) + "/data/expected_plof_variants.txt"
 START_DIR = os.getcwd()
 TEMP_DIR  = tempfile.TemporaryDirectory()
 
-GNOMAD_EXOMES = "https://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz"
+GNOMAD_EXOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz"
 # To run gNALI on both gnomAD exome and genome databases, add GNOMAD_GENOMES to GENOMAD_DBS below.
 # (~15min runtime)
-GNOMAD_GENOMES = "https://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz"
+GNOMAD_GENOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz"
 GNOMAD_DBS = [GNOMAD_EXOMES]
 
 class TestGNALI:
@@ -77,43 +78,64 @@ class TestGNALI:
 
 
 	def test_find_test_locations(self):
-		TEMP_DIR = tempfile.TemporaryDirectory()
 		gene_descs = {'': [46843, 58454], \
 					'hgnc_symbol': ['CCR5', 'ALCAM'], \
 					'chromosome_name':  [3, 3], \
 					'start_position': [46411633, 105085753], \
 					'end_position': [46417697, 46417697]}
 		gene_descs = pd.DataFrame(gene_descs, columns = ['', 'hgnc_symbol', 'chromosome_name', 'start_position', 'end_position'])
-		target_list = []
-		
+		target_list= []
 		method_gene_descs = gene_descs
 
-		for i in range(method_gene_descs.shape[0]):
-			target = str(method_gene_descs.loc[method_gene_descs.index[i],'chromosome_name']) + ":" \
-						+ str(method_gene_descs.loc[method_gene_descs.index[i],'start_position']) + "-" \
-						+ str(method_gene_descs.loc[method_gene_descs.index[i],'end_position'])
+		for i in range(gene_descs.shape[0]):
+			target = str(gene_descs.loc[gene_descs.index[i],'chromosome_name']) + ":" \
+					+ str(gene_descs.loc[gene_descs.index[i],'start_position']) + "-"  \
+					+ str(gene_descs.loc[gene_descs.index[i],'end_position'])
 			target_list.append(target)
-		method_gene_descs['targets'] = target_list
-		method_gene_descs = method_gene_descs[['chromosome_name', 'targets']]
-		np.savetxt(TEMP_DIR.name + '/' + "expected_locations.txt", target_list, delimiter='\t', fmt='%s')
-		gnali.find_test_locations(gene_descs, TEMP_DIR)
+		
+		method_test_locations = gnali.find_test_locations(method_gene_descs)
 
-		assert filecmp.cmp(TEMP_DIR.name + '/' + "expected_locations.txt", TEMP_DIR.name + '/' + "test_locations.txt", shallow=False)
+		assert method_test_locations == target_list
+
 
 	def test_get_plof_variants(self):
-		TEMP_DIR = tempfile.TemporaryDirectory()
-		shutil.copyfile(TEST_TEST_LOCATIONS, TEMP_DIR.name + "/test_locations.txt")
-		gnali.get_plof_variants(START_DIR, TEMP_DIR, *GNOMAD_DBS)
+		target_list = ["3:46411633-46417697"]
+
+		expected_variants = []
+		with open(EXPECTED_PLOF_VARIANTS, 'r') as test_file:
+			reader = csv.reader(test_file)
+			for row in reader:
+				expected_variants.append(row)
 		
-		assert filecmp.cmp(EXPECTED_EX, TEMP_DIR.name + "/exomes_R_Hom_HC.txt", shallow=False)
+		expected_variants = sum(expected_variants, [])
+
+		method_variants = gnali.get_plof_variants(target_list, *GNOMAD_DBS)
+		
+		assert expected_variants == method_variants
+
 
 	
 	def test_write_results(self):
-		TEMP_DIR = tempfile.TemporaryDirectory()
-		shutil.copyfile(str(TEST_PATH) + "/data/exomes_R_Hom_HC.txt", \
-						TEMP_DIR.name + "/exomes_R_Hom_HC.txt")
-		gnali.write_results("method_results.vcf", TEMP_DIR, "..", TEMP_DIR.name, *GNOMAD_DBS)
-		assert filecmp.cmp(EXPECTED_RESULTS, TEMP_DIR.name + "/method_results.vcf", shallow=False)
+		results_dir = tempfile.TemporaryDirectory()
+		test_variants = []
+
+		with open(EXPECTED_PLOF_VARIANTS, 'r') as test_file:
+			reader = csv.reader(test_file)
+			for row in reader:
+				test_variants.append(row)
+		test_variants = sum(test_variants, [])
+
+		expected_results_file = "expected_results.vcf"
+		method_results_file = "method_results.vcf"
+
+		results = [text.split('\t') for text in test_variants]
+		results = pd.DataFrame(data=results)
+		results.columns = ["Chromosome", "Position_Start", "RSID", "Allele1", "Allele2", "Score", "Quality", "Codes"]
+		results.to_csv("{}/{}".format(results_dir.name, expected_results_file), sep='\t', mode='a', index=False)
+
+		gnali.write_results(test_variants, method_results_file, results_dir.name)
+		assert filecmp.cmp("{}/{}".format(results_dir.name, expected_results_file), "{}/{}".format(results_dir.name, method_results_file), shallow=False)
+
 	
 
 	
