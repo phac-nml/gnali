@@ -9,12 +9,10 @@ class Filter:
         self.attribute = re.split('([><=!]+)', expression)[0]
         self.operator = re.split('([><=!]+)', expression)[1]
         self.value = re.split('([><=!]+)', expression)[2]
-        # = re.split('([><=!]+)', expression)
 
     def apply(self, record):
         record_value = record.split("{}=".format(self.attribute))[1]
         record_value = record_value.split(";")[0]
-        #print("{}{}{}".format(record_value, self.operator, cls.value))
         return eval("{}{}{}".format(record_value, self.operator, self.value))
   
     def __str__(self):
