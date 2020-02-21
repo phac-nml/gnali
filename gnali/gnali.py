@@ -17,6 +17,7 @@ specific language governing permissions and limitations under the License.
 """
 
 import argparse
+import os
 import csv
 from pybiomart import Server
 import pysam
@@ -27,7 +28,7 @@ import pandas as pd
 import re
 import uuid
 from . import exceptions
-
+import cProfile, fileinput
 SCRIPT_NAME = 'gNALI'
 SCRIPT_INFO = "Given a list of genes to test, gNALI finds all potential \
                 loss of function variants of those genes."
@@ -36,6 +37,7 @@ ENSEMBL_HOST = 'http://grch37.ensembl.org'
 GNOMAD_EXOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz" # noqa
 GNOMAD_GENOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz" # noqa
 GNOMAD_DBS = [GNOMAD_EXOMES, GNOMAD_GENOMES]
+LOF_ANNOT = "vep"
 
 
 def open_test_file(input_file):
@@ -112,7 +114,7 @@ def find_test_locations(gene_descriptions):
     return target_list
 
 
-def get_plof_variants(target_list, *databases):
+def get_plof_variants(target_list, annot, filters, *databases):
     """Query the gnomAD database for loss of function variants
         of those genes with Tabix.
 
@@ -123,15 +125,38 @@ def get_plof_variants(target_list, *databases):
     variants = []
     for database in databases:
         tbx = pysam.TabixFile(database)
+        header = tbx.header
+
+        # get index of LoF in header
+        annot_header = [line for line in header if "ID={}".format(annot) in line]
+        annot_index = str(annot_header).split("|").index("LoF")
         test_locations = target_list
+
+        # get records in locations
         for location in test_locations:
-            records = tbx.fetch(reference=location)
-            for record in records:
-                variants.append(record)
-    variants = [item for item in variants if
-                re.search(";controls_nhomalt=[1-9]", str(item))]
-    variants = [item for item in variants if re.search("HC", str(item))]
+            for record in tbx.fetch(reference=location):
+                include = True
+                # LoF filter
+                (chrom, pos, id, ref, alt, qual, filter, info) = tuple(record.split("\t"))
+                vep_str = info.split(annot)[1].split(";")[0]
+                lof = vep_str.split("|")[annot_index]
+                if not (lof == "HC"):
+                    include = False
+                # additional filters
+                # e.g. 'controls_nhomalt>0'
+                
+                for filter in filters:
+                    if not re.search(";controls_nhomalt=[1-9]", str(record)):
+                        include = False
+
+                if include:
+                    variants.append(record)
+
     return variants
+
+
+def filter_plof_variants(records):
+    pass
 
 
 def extract_lof_annotations(variants):
@@ -144,14 +169,19 @@ def extract_lof_annotations(variants):
     variants = [text.split('\t') for text in variants]
     results = np.asarray(variants, dtype=np.str)
     results = pd.DataFrame(data=results)
-    results.columns = ["Chromosome", "Position_Start", "RSID", "Allele1",
-                       "Allele2", "Score", "Quality", "Codes"]
+    results.columns = ["Chromosome", "Position_Start", "RSID", 
+                       # Ref/Alt fields might change 
+                       # from GRCh37 to GRCh38
+                       "Reference_Allele", "Alternate_Allele",
+                       "Score", "Quality", "Codes"]
     results = results[results['Quality'] == "PASS"]
     results['Codes'] = results['Codes'].str.replace(".*vep|=", "")
+
     results_codes = pd.DataFrame(results['Codes'].str.split('|', 5).tolist(),
                                  columns=["LoF_Variant", "LoF_Annotation",
                                           "Confidence", "HGNC_Symbol",
                                           "Ensembl Code", "Rest"])
+    
     results_codes.drop('Rest', axis=1, inplace=True)
     results_codes.drop('Confidence', axis=1, inplace=True)
     results.drop('Codes', axis=1, inplace=True)
@@ -176,8 +206,8 @@ def write_results(results, results_basic,
         results_dir: directory containing all gNALI results
         args: command line arguments
     """
-    results_file = "Nonessential_Host_Genes_(Detailed).vcf"
-    results_basic_file = "Nonessential_Host_Genes_(Basic).vcf"
+    results_file = "Nonessential_Host_Genes_(Detailed).txt"
+    results_basic_file = "Nonessential_Host_Genes_(Basic).txt"
 
     pathlib.Path(results_dir).mkdir(parents=True, exist_ok=overwrite)
     results.to_csv("{}/{}".format(results_dir, results_file),
@@ -218,7 +248,9 @@ def main():
     genes = open_test_file(args.input_file)
     genes_df = get_test_gene_descriptions(genes)
     target_list = find_test_locations(genes_df)
-    variants = get_plof_variants(target_list, *GNOMAD_DBS)
+
+    filters = "controls_nhomalt>0"
+    variants = get_plof_variants(target_list, LOF_ANNOT, filters, *GNOMAD_DBS)
     results, results_basic = extract_lof_annotations(variants)
     write_results(results, results_basic,
                   results_dir, args.force)
