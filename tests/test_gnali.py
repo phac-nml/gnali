@@ -1,7 +1,8 @@
 import pytest
 import pathlib
-from gnali import exceptions
 from gnali import gnali
+#from gnali import exceptions
+
 
 from pybiomart import Dataset, Server
 import pysam

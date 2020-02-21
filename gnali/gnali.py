@@ -27,8 +27,9 @@ import numpy as np
 import pandas as pd
 import re
 import uuid
-from . import exceptions
-import cProfile, fileinput
+from gnali.exceptions import EmptyFileError
+from gnali.gv_filters import Filter
+import traceback
 SCRIPT_NAME = 'gNALI'
 SCRIPT_INFO = "Given a list of genes to test, gNALI finds all potential \
                 loss of function variants of those genes."
@@ -61,7 +62,7 @@ def open_test_file(input_file):
         print("Something went wrong. Try again")
     if len(test_genes_list) == 0:
         print("Error: input file is empty")
-        raise exceptions.EmptyFileError
+        raise EmptyFileError
 
     return test_genes_list
 
@@ -114,7 +115,7 @@ def find_test_locations(gene_descriptions):
     return target_list
 
 
-def get_plof_variants(target_list, annot, filters, *databases):
+def get_plof_variants(target_list, annot, op_filters, *databases):
     """Query the gnomAD database for loss of function variants
         of those genes with Tabix.
 
@@ -129,34 +130,42 @@ def get_plof_variants(target_list, annot, filters, *databases):
 
         # get index of LoF in header
         annot_header = [line for line in header if "ID={}".format(annot) in line]
-        annot_index = str(annot_header).split("|").index("LoF")
+        lof_index = str(annot_header).split("|").index("LoF")
         test_locations = target_list
+
+        # transform filters into objects
+        op_filters2 = [Filter(op_filter) for op_filter in op_filters]
 
         # get records in locations
         for location in test_locations:
-            for record in tbx.fetch(reference=location):
-                include = True
-                # LoF filter
-                (chrom, pos, id, ref, alt, qual, filter, info) = tuple(record.split("\t"))
-                vep_str = info.split(annot)[1].split(";")[0]
-                lof = vep_str.split("|")[annot_index]
-                if not (lof == "HC"):
-                    include = False
-                # additional filters
-                # e.g. 'controls_nhomalt>0'
-                
-                for filter in filters:
-                    if not re.search(";controls_nhomalt=[1-9]", str(record)):
-                        include = False
-
-                if include:
-                    variants.append(record)
-
+            variants.extend(filter_plof_variants(tbx.fetch(reference=location), annot, lof_index, op_filters2))
     return variants
 
 
-def filter_plof_variants(records):
-    pass
+def filter_plof_variants(records, annot, lof_index, op_filters):
+    passed = []
+    for record in records:
+        # LoF filter
+        (chrom, pos, id, ref, alt, qual, filter, info) = tuple(record.split("\t"))
+        info = dict(info_item.split("=") for info_item in info.split(";") if len(info_item.split("="))>1)
+        vep_str = info['vep']
+        lof = vep_str.split("|")[lof_index]
+
+        if not (lof == "HC"):
+            continue
+
+        # additional filters
+        # e.g. 'controls_nhomalt>0'
+        filters_passed = True
+        for op_filter in op_filters:
+            if not op_filter.apply(record):
+                filters_passed = False
+                break
+        if not filters_passed:
+            continue
+
+        passed.append(record)
+    return passed
 
 
 def extract_lof_annotations(variants):
@@ -169,18 +178,24 @@ def extract_lof_annotations(variants):
     variants = [text.split('\t') for text in variants]
     results = np.asarray(variants, dtype=np.str)
     results = pd.DataFrame(data=results)
-    results.columns = ["Chromosome", "Position_Start", "RSID", 
-                       # Ref/Alt fields might change 
-                       # from GRCh37 to GRCh38
-                       "Reference_Allele", "Alternate_Allele",
-                       "Score", "Quality", "Codes"]
+    try:
+        results.columns = ["Chromosome", "Position_Start", "RSID", 
+                        # Ref/Alt fields might change 
+                        # from GRCh37 to GRCh38
+                        "Reference_Allele", "Alternate_Allele",
+                        "Score", "Quality", "Codes"]
+    except ValueError:
+        print("bad columns gang")
+        results.to_csv("bad_columns.txt", sep='\t', mode='a', index=False)
+
     results = results[results['Quality'] == "PASS"]
     results['Codes'] = results['Codes'].str.replace(".*vep|=", "")
-
+    
     results_codes = pd.DataFrame(results['Codes'].str.split('|', 5).tolist(),
-                                 columns=["LoF_Variant", "LoF_Annotation",
-                                          "Confidence", "HGNC_Symbol",
-                                          "Ensembl Code", "Rest"])
+                                columns=["LoF_Variant", "LoF_Annotation",
+                                        "Confidence", "HGNC_Symbol",
+                                        "Ensembl Code", "Rest"])
+    
     
     results_codes.drop('Rest', axis=1, inplace=True)
     results_codes.drop('Confidence', axis=1, inplace=True)
@@ -249,8 +264,8 @@ def main():
     genes_df = get_test_gene_descriptions(genes)
     target_list = find_test_locations(genes_df)
 
-    filters = "controls_nhomalt>0"
-    variants = get_plof_variants(target_list, LOF_ANNOT, filters, *GNOMAD_DBS)
+    op_filters = ["controls_nhomalt>0"]
+    variants = get_plof_variants(target_list, LOF_ANNOT, op_filters, *GNOMAD_DBS)
     results, results_basic = extract_lof_annotations(variants)
     write_results(results, results_basic,
                   results_dir, args.force)
