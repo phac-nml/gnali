@@ -28,7 +28,9 @@ import pandas as pd
 import re
 import uuid
 from gnali.exceptions import EmptyFileError
-from gnali.gv_filters import Filter
+from gnali.filter import Filter
+from gnali.variants import Variant
+import gnali.output as output
 import traceback
 SCRIPT_NAME = 'gNALI'
 SCRIPT_INFO = "Given a list of genes to test, gNALI finds all potential \
@@ -139,22 +141,22 @@ def get_plof_variants(target_list, annot, op_filters, *databases):
         # get records in locations
         for location in test_locations:
             variants.extend(filter_plof_variants(tbx.fetch(reference=location), annot, lof_index, op_filters2))
+
     return variants
 
 
 def filter_plof_variants(records, annot, lof_index, op_filters):
     passed = []
+    records = [Variant(record) for record in records]
     for record in records:
         # LoF filter
-        (chrom, pos, id, ref, alt, qual, filter, info) = tuple(record.split("\t"))
-        info = dict(info_item.split("=") for info_item in info.split(";") if len(info_item.split("="))>1)
-        vep_str = info['vep']
+        vep_str = record.info.get('vep')
         lof = vep_str.split("|")[lof_index]
 
-        if not (lof == "HC"):
+        if not (lof == "HC" and record.filter == "PASS"):
             continue
 
-        # additional filters
+        # additional filters from user
         # e.g. 'controls_nhomalt>0'
         filters_passed = True
         for op_filter in op_filters:
@@ -163,8 +165,8 @@ def filter_plof_variants(records, annot, lof_index, op_filters):
                 break
         if not filters_passed:
             continue
-
         passed.append(record)
+
     return passed
 
 
@@ -175,18 +177,14 @@ def extract_lof_annotations(variants):
     Args:
         variants: list of variants from get_lof_variants()
     """
-    variants = [text.split('\t') for text in variants]
+    variants = [variant.as_tuple() for variant in variants]
     results = np.asarray(variants, dtype=np.str)
     results = pd.DataFrame(data=results)
-    try:
-        results.columns = ["Chromosome", "Position_Start", "RSID", 
-                        # Ref/Alt fields might change 
-                        # from GRCh37 to GRCh38
-                        "Reference_Allele", "Alternate_Allele",
-                        "Score", "Quality", "Codes"]
-    except ValueError:
-        print("bad columns gang")
-        results.to_csv("bad_columns.txt", sep='\t', mode='a', index=False)
+
+    results.columns = ["Chromosome", "Position_Start", "RSID", 
+                    "Reference_Allele", "Alternate_Allele",
+                    "Score", "Quality", "Codes"]
+    results.to_csv("bad_columns.txt", sep='\t', mode='a', index=False)
 
     results = results[results['Quality'] == "PASS"]
     results['Codes'] = results['Codes'].str.replace(".*vep|=", "")
@@ -221,8 +219,8 @@ def write_results(results, results_basic,
         results_dir: directory containing all gNALI results
         args: command line arguments
     """
-    results_file = "Nonessential_Host_Genes_(Detailed).txt"
-    results_basic_file = "Nonessential_Host_Genes_(Basic).txt"
+    results_file = "Nonessential_Host_Genes_(Detailed).vcf"
+    results_basic_file = "Nonessential_Host_Genes_(Basic).vcf"
 
     pathlib.Path(results_dir).mkdir(parents=True, exist_ok=overwrite)
     results.to_csv("{}/{}".format(results_dir, results_file),
@@ -230,6 +228,8 @@ def write_results(results, results_basic,
     results_basic.to_csv("{}/{}".format(results_dir,
                          results_basic_file),
                          sep='\t', mode='a', index=False)
+
+
 
 
 def init_parser(id):
@@ -266,6 +266,7 @@ def main():
 
     op_filters = ["controls_nhomalt>0"]
     variants = get_plof_variants(target_list, LOF_ANNOT, op_filters, *GNOMAD_DBS)
+
     results, results_basic = extract_lof_annotations(variants)
     write_results(results, results_basic,
                   results_dir, args.force)

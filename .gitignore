@@ -39,3 +39,6 @@ gNALI-results/
 test.txt
 *.tbi
 results*
+
+# WIP
+gnali/output.py
