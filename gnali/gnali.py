@@ -149,10 +149,9 @@ def filter_plof_variants(records, annot, lof_index, op_filters):
     passed = []
     records = [Variant(record) for record in records]
     for record in records:
-        # LoF filter
+        # LoF and quality filter
         vep_str = record.info.get('vep')
         lof = vep_str.split("|")[lof_index]
-
         if not (lof == "HC" and record.filter == "PASS"):
             continue
 
@@ -184,7 +183,6 @@ def extract_lof_annotations(variants):
     results.columns = ["Chromosome", "Position_Start", "RSID", 
                     "Reference_Allele", "Alternate_Allele",
                     "Score", "Quality", "Codes"]
-    results.to_csv("bad_columns.txt", sep='\t', mode='a', index=False)
 
     results = results[results['Quality'] == "PASS"]
     results['Codes'] = results['Codes'].str.replace(".*vep|=", "")

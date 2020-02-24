@@ -5,9 +5,7 @@ class Filter:
     operator = ""
     value = ""
     def __init__(self, expression):
-        self.attribute = re.split('([><=!]+)', expression)[0]
-        self.operator = re.split('([><=!]+)', expression)[1]
-        self.value = re.split('([><=!]+)', expression)[2]
+        self.attribute, self.operator, self.value = re.split('([><=!]+)', expression)
 
     def apply(self, record):
         self.record_value = record.info.get(self.attribute)
