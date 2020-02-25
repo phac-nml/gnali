@@ -11,7 +11,7 @@ class Variant:
     info_str = ''
 
     def __init__(self, record):
-        self.chrom, self.pos, self.id, self.ref,
+        self.chrom, self.pos, self.id, self.ref, \
         self.alt, self.qual, self.filter, self.info_str = record.split("\t")
         self.info = dict([info_item.split("=") for
                           info_item in self.info_str.split(";")
