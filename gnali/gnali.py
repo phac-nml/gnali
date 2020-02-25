@@ -37,6 +37,8 @@ GNOMAD_EXOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/e
 GNOMAD_GENOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz" # noqa
 GNOMAD_DBS = [GNOMAD_EXOMES, GNOMAD_GENOMES]
 LOF_ANNOT = "vep"
+GNALI_PATH = pathlib.Path(__file__).parent.absolute()
+DATA_PATH = "{}/data/".format(str(GNALI_PATH))
 
 
 def open_test_file(input_file):
@@ -124,7 +126,7 @@ def get_plof_variants(target_list, annot, op_filters, *databases):
     variants = []
     for database in databases:
         tbi = database.split("/")
-        tbi = "{}{}{}".format("data/", tbi[len(tbi)-1], ".tbi")
+        tbi = "{}{}{}".format(DATA_PATH, tbi[len(tbi)-1], ".tbi")
         tbx = pysam.TabixFile(database, index=tbi)
         header = tbx.header
 

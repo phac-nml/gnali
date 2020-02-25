@@ -37,7 +37,6 @@ gNALI-results/
 .tox/
 .coverage
 test.txt
-*.tbi
 results*
 *profile*.txt
 

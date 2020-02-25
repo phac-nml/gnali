@@ -30,14 +30,14 @@ import pandas as pd
 import numpy as np
 import csv
 TEST_PATH = pathlib.Path(__file__).parent.absolute()
-TEST_INPUT_CSV = str(TEST_PATH) + "/data/test_genes.csv"
-TEST_INPUT_TXT = str(TEST_PATH) + "/data/test_genes.txt"
-EMPTY_INPUT_CSV = str(TEST_PATH) + "/data/empty_file.csv"
-ENSEMBL_HUMAN_GENES = str(TEST_PATH) + "/data/ensembl_hsapiens_dataset.csv"
+TEST_INPUT_CSV = "{}/data/test_genes.csv".format(str(TEST_PATH))
+TEST_INPUT_TXT = "{}/data/test_genes.txt".format(str(TEST_PATH))
+EMPTY_INPUT_CSV = "{}/data/empty_file.csv".format(str(TEST_PATH))
+ENSEMBL_HUMAN_GENES = "{}/data/ensembl_hsapiens_dataset.csv".format(str(TEST_PATH))
 
-EXPECTED_PLOF_VARIANTS = str(TEST_PATH) + "/data/expected_plof_variants.txt"
-TEST_RESULTS = str(TEST_PATH) + "/data/test_results.txt"
-TEST_RESULTS_BASIC = str(TEST_PATH) + "/data/test_results.txt"
+EXPECTED_PLOF_VARIANTS = "{}/data/expected_plof_variants.txt".format(str(TEST_PATH))
+TEST_RESULTS = "{}/data/test_results.txt".format(str(TEST_PATH))
+TEST_RESULTS_BASIC = "{}/data/test_results.txt".format(str(TEST_PATH))
 
 START_DIR = os.getcwd()
 TEMP_DIR  = tempfile.TemporaryDirectory()
