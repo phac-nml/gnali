@@ -145,12 +145,14 @@ def get_plof_variants(target_list, annot, op_filters, *databases):
 
 def filter_plof_variants(records, annot, lof_index, op_filters):
     passed = []
+    conf_filter = "HC"
+    qual_filter = "PASS"
     for record in records:
         record = Variant(record)
         # LoF and quality filter
-        vep_str = record.info.get(annot)
+        vep_str = record.info[annot]
         lof = vep_str.split("|")[lof_index]
-        if not (lof == "HC" and record.filter == "PASS"):
+        if not (lof == conf_filter and record.filter == qual_filter):
             continue
 
         # additional filters from user
