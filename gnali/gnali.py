@@ -20,11 +20,12 @@ import argparse
 import csv
 from pybiomart import Server
 import pysam
-import pathlib
+from pathlib import Path
 import sys
 import numpy as np
 import pandas as pd
 import uuid
+import urllib
 from gnali.exceptions import EmptyFileError
 from gnali.filter import Filter
 from gnali.variants import Variant
@@ -37,7 +38,7 @@ GNOMAD_EXOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/e
 GNOMAD_GENOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz" # noqa
 GNOMAD_DBS = [GNOMAD_EXOMES, GNOMAD_GENOMES]
 LOF_ANNOT = "vep"
-GNALI_PATH = pathlib.Path(__file__).parent.absolute()
+GNALI_PATH = Path(__file__).parent.absolute()
 DATA_PATH = "{}/data/".format(str(GNALI_PATH))
 
 
@@ -65,6 +66,17 @@ def open_test_file(input_file):
         raise EmptyFileError
 
     return test_genes_list
+
+
+def get_db_tbi(database):
+    tbi_url = "{}.tbi".format(database)
+    db_url = database.split("/")
+    tbi_path = "{}{}{}".format(DATA_PATH, db_url[len(db_url)-1], ".tbi")
+    if not Path.is_file(Path(tbi_path)):
+        tbi_data = urllib.request.urlopen(tbi_url).read()
+        with open(tbi_path, 'wb') as file_obj:
+            file_obj.write(tbi_data)
+    return tbi_path
 
 
 def get_human_genes():
@@ -125,8 +137,7 @@ def get_plof_variants(target_list, annot, op_filters, *databases):
     """
     variants = []
     for database in databases:
-        tbi = database.split("/")
-        tbi = "{}{}{}".format(DATA_PATH, tbi[len(tbi)-1], ".tbi")
+        tbi = get_db_tbi(database)
         tbx = pysam.TabixFile(database, index=tbi)
         header = tbx.header
 
@@ -220,7 +231,7 @@ def write_results(results, results_basic,
     results_file = "Nonessential_Host_Genes_(Detailed).txt"
     results_basic_file = "Nonessential_Host_Genes_(Basic).txt"
 
-    pathlib.Path(results_dir).mkdir(parents=True, exist_ok=overwrite)
+    Path(results_dir).mkdir(parents=True, exist_ok=overwrite)
     results.to_csv("{}/{}".format(results_dir, results_file),
                    sep='\t', mode='a', index=False)
     results_basic.to_csv("{}/{}".format(results_dir,
