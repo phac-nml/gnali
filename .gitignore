@@ -31,8 +31,14 @@ notes.md
 Non*.txt
 
 # Testing stuff
-*gNALI-results/
+gNALI-results/
 .cache/
 .ipnyb_checkpoints
 .tox/
 .coverage
+test.txt
+*.tbi
+results*
+
+# WIP
+gnali/output.py
