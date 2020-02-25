@@ -39,6 +39,7 @@ gNALI-results/
 test.txt
 *.tbi
 results*
+*profile*.txt
 
 # WIP
 gnali/output.py

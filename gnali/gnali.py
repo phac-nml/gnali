@@ -123,7 +123,9 @@ def get_plof_variants(target_list, annot, op_filters, *databases):
     """
     variants = []
     for database in databases:
-        tbx = pysam.TabixFile(database)
+        tbi = database.split("/")
+        tbi = "{}{}{}".format("data/", tbi[len(tbi)-1], ".tbi")
+        tbx = pysam.TabixFile(database, index=tbi)
         header = tbx.header
 
         # get index of LoF in header
