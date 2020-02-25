@@ -114,13 +114,8 @@ class TestGNALI:
         test_variants = []
         with open(EXPECTED_PLOF_VARIANTS, 'r') as test_file:
             for row in test_file:
-                #sum(row, [])
-                #print("type of row: " + str(type(row)))
-                #print(str(row))
                 row = Variant(str(row))
-                #print(str(row))
                 test_variants.append(row)
-        #test_variants = sum(test_variants, [])
 
         method_results, method_results_basic = gnali.extract_lof_annotations(test_variants)
 
@@ -139,8 +134,6 @@ class TestGNALI:
         expected_results = results.drop_duplicates(keep='first', inplace=False)
         expected_results_basic = results["HGNC_Symbol"].drop_duplicates(keep='first', inplace=False)
 
-        #method_results.to_csv("method_results.txt", sep='\t', mode='a', index=False)
-        #expected_results.to_csv("expected_results.txt", sep='\t', mode='a', index=False)
         assert expected_results.equals(method_results)
         assert expected_results_basic.equals(method_results_basic)
 
