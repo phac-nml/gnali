@@ -17,7 +17,6 @@ specific language governing permissions and limitations under the License.
 """
 
 import argparse
-import os
 import csv
 from pybiomart import Server
 import pysam
@@ -25,13 +24,10 @@ import pathlib
 import sys
 import numpy as np
 import pandas as pd
-import re
 import uuid
 from gnali.exceptions import EmptyFileError
 from gnali.filter import Filter
 from gnali.variants import Variant
-import gnali.output as output
-import traceback
 SCRIPT_NAME = 'gNALI'
 SCRIPT_INFO = "Given a list of genes to test, gNALI finds all potential \
                 loss of function variants of those genes."
@@ -131,24 +127,26 @@ def get_plof_variants(target_list, annot, op_filters, *databases):
         header = tbx.header
 
         # get index of LoF in header
-        annot_header = [line for line in header if "ID={}".format(annot) in line]
+        annot_header = [line for line in header
+                        if "ID={}".format(annot) in line]
         lof_index = str(annot_header).split("|").index("LoF")
         test_locations = target_list
 
         # transform filters into objects
-        op_filters2 = [Filter(op_filter) for op_filter in op_filters]
+        op_filter_objs = [Filter(op_filter) for op_filter in op_filters]
 
         # get records in locations
         for location in test_locations:
-            variants.extend(filter_plof_variants(tbx.fetch(reference=location), annot, lof_index, op_filters2))
+            variants.extend(filter_plof_variants(tbx.fetch(reference=location),
+                            annot, lof_index, op_filter_objs))
 
     return variants
 
 
 def filter_plof_variants(records, annot, lof_index, op_filters):
     passed = []
-    records = [Variant(record) for record in records]
     for record in records:
+        record = Variant(record)
         # LoF and quality filter
         vep_str = record.info.get('vep')
         lof = vep_str.split("|")[lof_index]
@@ -180,19 +178,18 @@ def extract_lof_annotations(variants):
     results = np.asarray(variants, dtype=np.str)
     results = pd.DataFrame(data=results)
 
-    results.columns = ["Chromosome", "Position_Start", "RSID", 
-                    "Reference_Allele", "Alternate_Allele",
-                    "Score", "Quality", "Codes"]
+    results.columns = ["Chromosome", "Position_Start", "RSID",
+                       "Reference_Allele", "Alternate_Allele",
+                       "Score", "Quality", "Codes"]
 
     results = results[results['Quality'] == "PASS"]
     results['Codes'] = results['Codes'].str.replace(".*vep|=", "")
-    
+
     results_codes = pd.DataFrame(results['Codes'].str.split('|', 5).tolist(),
-                                columns=["LoF_Variant", "LoF_Annotation",
-                                        "Confidence", "HGNC_Symbol",
-                                        "Ensembl Code", "Rest"])
-    
-    
+                                 columns=["LoF_Variant", "LoF_Annotation",
+                                          "Confidence", "HGNC_Symbol",
+                                          "Ensembl Code", "Rest"])
+
     results_codes.drop('Rest', axis=1, inplace=True)
     results_codes.drop('Confidence', axis=1, inplace=True)
     results.drop('Codes', axis=1, inplace=True)
@@ -228,8 +225,6 @@ def write_results(results, results_basic,
                          sep='\t', mode='a', index=False)
 
 
-
-
 def init_parser(id):
     parser = argparse.ArgumentParser(prog=SCRIPT_NAME,
                                      description=SCRIPT_INFO)
@@ -263,7 +258,8 @@ def main():
     target_list = find_test_locations(genes_df)
 
     op_filters = ["controls_nhomalt>0"]
-    variants = get_plof_variants(target_list, LOF_ANNOT, op_filters, *GNOMAD_DBS)
+    variants = get_plof_variants(target_list, LOF_ANNOT,
+                                 op_filters, *GNOMAD_DBS)
 
     results, results_basic = extract_lof_annotations(variants)
     write_results(results, results_basic,
