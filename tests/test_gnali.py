@@ -18,8 +18,8 @@ EMPTY_INPUT_CSV = str(TEST_PATH) + "/data/empty_file.csv"
 ENSEMBL_HUMAN_GENES = str(TEST_PATH) + "/data/ensembl_hsapiens_dataset.csv"
 
 EXPECTED_PLOF_VARIANTS = str(TEST_PATH) + "/data/expected_plof_variants.txt"
-TEST_RESULTS = str(TEST_PATH) + "/data/test_results.vcf"
-TEST_RESULTS_BASIC = str(TEST_PATH) + "/data/test_results.vcf"
+TEST_RESULTS = str(TEST_PATH) + "/data/test_results.txt"
+TEST_RESULTS_BASIC = str(TEST_PATH) + "/data/test_results.txt"
 
 START_DIR = os.getcwd()
 TEMP_DIR  = tempfile.TemporaryDirectory()
@@ -119,12 +119,11 @@ class TestGNALI:
 
         method_results, method_results_basic = gnali.extract_lof_annotations(test_variants)
 
-        test_variants = [variant.as_tuple() for variant in test_variants]
+        test_variants = [variant.as_tuple_vep() for variant in test_variants]
         results = np.asarray(test_variants, dtype=np.str)
         results = pd.DataFrame(data=results)
 
         results.columns = ["Chromosome", "Position_Start", "RSID", "Reference_Allele", "Alternate_Allele", "Score", "Quality", "Codes"]
-        results['Codes'] = results['Codes'].str.replace(".*vep|=", "")
         results_codes = pd.DataFrame(results['Codes'].str.split('|',5).tolist(),
                                     columns = ["LoF_Variant", "LoF_Annotation", "Confidence", "HGNC_Symbol", "Ensembl Code", "Rest"])
         results_codes.drop('Rest', axis=1, inplace=True)
@@ -145,8 +144,8 @@ class TestGNALI:
         test_results = pd.read_csv(TEST_RESULTS)
         test_results_basic = pd.read_csv(TEST_RESULTS_BASIC)
         
-        expected_results_file = "Nonessential_Host_Genes_Detailed_(Detailed).vcf"
-        expected_results_basic_file = "Nonessential_Host_Genes_(Basic).vcf"
+        expected_results_file = "Nonessential_Host_Genes_Detailed_(Detailed).txt"
+        expected_results_basic_file = "Nonessential_Host_Genes_(Basic).txt"
         
         pathlib.Path(results_dir.name).mkdir(parents=True, exist_ok=True)
         pathlib.Path(expected_results_dir).mkdir(parents=True, exist_ok=False)

@@ -148,7 +148,7 @@ def filter_plof_variants(records, annot, lof_index, op_filters):
     for record in records:
         record = Variant(record)
         # LoF and quality filter
-        vep_str = record.info.get('vep')
+        vep_str = record.info.get(annot)
         lof = vep_str.split("|")[lof_index]
         if not (lof == "HC" and record.filter == "PASS"):
             continue
@@ -174,7 +174,7 @@ def extract_lof_annotations(variants):
     Args:
         variants: list of variants from get_lof_variants()
     """
-    variants = [variant.as_tuple() for variant in variants]
+    variants = [variant.as_tuple_vep() for variant in variants]
     results = np.asarray(variants, dtype=np.str)
     results = pd.DataFrame(data=results)
 
@@ -183,7 +183,6 @@ def extract_lof_annotations(variants):
                        "Score", "Quality", "Codes"]
 
     results = results[results['Quality'] == "PASS"]
-    results['Codes'] = results['Codes'].str.replace(".*vep|=", "")
 
     results_codes = pd.DataFrame(results['Codes'].str.split('|', 5).tolist(),
                                  columns=["LoF_Variant", "LoF_Annotation",
@@ -214,8 +213,8 @@ def write_results(results, results_basic,
         results_dir: directory containing all gNALI results
         args: command line arguments
     """
-    results_file = "Nonessential_Host_Genes_(Detailed).vcf"
-    results_basic_file = "Nonessential_Host_Genes_(Basic).vcf"
+    results_file = "Nonessential_Host_Genes_(Detailed).txt"
+    results_basic_file = "Nonessential_Host_Genes_(Basic).txt"
 
     pathlib.Path(results_dir).mkdir(parents=True, exist_ok=overwrite)
     results.to_csv("{}/{}".format(results_dir, results_file),

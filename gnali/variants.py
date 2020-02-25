@@ -32,3 +32,7 @@ class Variant:
     def as_tuple(self):
         return (self.chrom, self.pos, self.id, self.ref,
                 self.alt, self.qual, self.filter, self.info_str)
+
+    def as_tuple_vep(self):
+        return (self.chrom, self.pos, self.id, self.ref,
+                self.alt, self.qual, self.filter, self.info['vep'])
