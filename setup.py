@@ -25,7 +25,7 @@ def readme():
 
 setup(
     name='gNALI',
-    version = "0.1.0",
+    version = "0.1.0-c4a20b2a",
     license='Apache License, Version 2.0',
     author='Xia Liu',
     author_email='xia.liu@canada.ca',
