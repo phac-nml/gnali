@@ -184,8 +184,6 @@ def extract_lof_annotations(variants):
                        "Reference_Allele", "Alternate_Allele",
                        "Score", "Quality", "Codes"]
 
-    results = results[results['Quality'] == "PASS"]
-
     results_codes = pd.DataFrame(results['Codes'].str.split('|', 5).tolist(),
                                  columns=["LoF_Variant", "LoF_Annotation",
                                           "Confidence", "HGNC_Symbol",
