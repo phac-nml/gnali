@@ -74,13 +74,11 @@ def get_db_tbi(database):
     tbi_path = "{}{}{}".format(DATA_PATH, database.split("/")[-1], ".tbi")
     tbi_lock = "{}.lock".format(tbi_path)
     lock = FileLock(tbi_lock)
+    lock.acquire()
     if not Path.is_file(Path(tbi_path)):
         tbi_data = urllib.request.urlopen(tbi_url).read()
-        with lock.acquire():
-            with open(tbi_path, 'wb') as file_obj:
-                file_obj.write(tbi_data)
-    else:
-        lock.acquire()
+        with open(tbi_path, 'wb') as file_obj:
+            file_obj.write(tbi_data)
     lock.release()
     return tbi_path
 
