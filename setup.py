@@ -17,7 +17,7 @@ specific language governing permissions and limitations under the License.
 import os
 from setuptools import find_packages, setup
 
-dependencies = ['pybiomart', 'numpy', 'pandas', 'pysam']
+dependencies = ['pybiomart', 'numpy', 'pandas', 'pysam', 'filelock']
 
 if os.getenv('PATCH') is not None:
     PATCH = "-{}".format(os.getenv('PATCH'))
