@@ -94,8 +94,9 @@ def get_db_tbi(database):
         if attempts == max_attempts // 2:
             temp = tempfile.TemporaryDirectory()
             tbi_path = "{}{}.tbi".format(temp.name, database.split("/")[-1])
-    if attempts = max_attempts:
+    if attempts == max_attempts:
         # raise a custom error
+        pass
 
     return tbi_path
 
