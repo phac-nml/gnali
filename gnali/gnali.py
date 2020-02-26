@@ -26,6 +26,7 @@ import numpy as np
 import pandas as pd
 import uuid
 import urllib
+import tempfile
 from filelock import FileLock
 from gnali.exceptions import EmptyFileError
 from gnali.filter import Filter
@@ -71,15 +72,31 @@ def open_test_file(input_file):
 
 def get_db_tbi(database):
     tbi_url = "{}.tbi".format(database)
-    tbi_path = "{}{}{}".format(DATA_PATH, database.split("/")[-1], ".tbi")
+    tbi_path = "{}{}.tbi".format(DATA_PATH, database.split("/")[-1])
     tbi_lock = "{}.lock".format(tbi_path)
     lock = FileLock(tbi_lock)
-    lock.acquire()
-    if not Path.is_file(Path(tbi_path)):
-        tbi_data = urllib.request.urlopen(tbi_url).read()
+    
+    attempts = 0
+    max_attempts = 10
+    while attempts < 10:
+        lock.acquire(timeout=180)
+        if not Path.is_file(Path(tbi_path)):
+            try:
+                tbi_data = urllib.request.urlopen(tbi_url).read()
+            except urllib.error.HTTPError as error:
+                print(error.reason)
+            except urllib.error.URLError as error:
+                print(error.reason)
         with open(tbi_path, 'wb') as file_obj:
             file_obj.write(tbi_data)
-    lock.release()
+        lock.release()
+        attempts += 1
+        if attempts == max_attempts // 2:
+            temp = tempfile.TemporaryDirectory()
+            tbi_path = "{}{}.tbi".format(temp.name, database.split("/")[-1])
+    if attempts = max_attempts:
+        # raise a custom error
+
     return tbi_path
 
 

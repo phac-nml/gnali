@@ -73,6 +73,8 @@ class TestGNALI:
         with pytest.raises(FileNotFoundError):
             assert gnali.open_test_file("bad_file.csv")
             
+    def test_get_db_tbi(self):
+        pass
     
     def test_get_test_gene_descs(self, monkeypatch):
         genes_list = ['CCR5', 'ALCAM']
