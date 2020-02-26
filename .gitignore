@@ -14,8 +14,10 @@ empty_file.csv
 # Swaps
 *.swp
 
-# pybiomart stuff
+# Data stuff
 .pybiomart.sqlite
+gnali/data*
+!gnali/data/.gitkeep
 
 # Any slurm output
 *.out

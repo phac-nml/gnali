@@ -26,6 +26,7 @@ import numpy as np
 import pandas as pd
 import uuid
 import urllib
+from filelock import FileLock
 from gnali.exceptions import EmptyFileError
 from gnali.filter import Filter
 from gnali.variants import Variant
@@ -70,12 +71,17 @@ def open_test_file(input_file):
 
 def get_db_tbi(database):
     tbi_url = "{}.tbi".format(database)
-    db_url = database.split("/")
-    tbi_path = "{}{}{}".format(DATA_PATH, db_url[len(db_url)-1], ".tbi")
+    tbi_path = "{}{}{}".format(DATA_PATH, database.split("/")[-1], ".tbi")
+    tbi_lock = "{}.lock".format(tbi_path)
+    lock = FileLock(tbi_lock)
     if not Path.is_file(Path(tbi_path)):
         tbi_data = urllib.request.urlopen(tbi_url).read()
-        with open(tbi_path, 'wb') as file_obj:
-            file_obj.write(tbi_data)
+        with lock.acquire():
+            with open(tbi_path, 'wb') as file_obj:
+                file_obj.write(tbi_data)
+    else:
+        lock.acquire()
+    lock.release()
     return tbi_path
 
 
