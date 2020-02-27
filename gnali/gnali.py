@@ -26,7 +26,6 @@ import sys
 import numpy as np
 import pandas as pd
 import uuid
-import requests
 import urllib
 import tempfile
 from filelock import FileLock
@@ -123,7 +122,7 @@ def find_test_locations(gene_descriptions):
 
 
 def download_file(url, dest_path, max_time):
-    """Download a file from a url if it does not 
+    """Download a file from a url if it does not
         already exist or is an unexpected size.
     Args:
         url: url for a file
