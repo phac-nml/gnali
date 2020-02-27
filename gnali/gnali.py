@@ -124,8 +124,7 @@ def find_test_locations(gene_descriptions):
 def download_file(url, dest_path, max_time):
     try:
         url_open = urllib.request.urlopen(url, timeout=max_time)
-        url_data = url_open.read()
-        file_size = url_open.info().get_all('Content-Length')
+        file_size = url_open.getheader('Content-Length')
     except urllib.error.HTTPError as error:
         print(error.reason)
         raise
@@ -139,6 +138,7 @@ def download_file(url, dest_path, max_time):
     if not Path.is_file(Path(dest_path)) or \
        file_size != os.path.getsize(dest_path):
         with open(dest_path, 'wb') as file_obj:
+            url_data = url_open.read()
             file_obj.write(url_data)
 
 
@@ -150,7 +150,7 @@ def get_db_tbi(database, data_path, max_download_time):
     max_time = max_download_time
     lock = FileLock(tbi_lock)
     try:
-        lock.acquire(timeout=10)
+        lock.acquire(timeout=max_download_time)
         download_file(tbi_url, tbi_path, max_time)
         lock.release()
     except TimeoutError:
