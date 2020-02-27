@@ -18,9 +18,8 @@ specific language governing permissions and limitations under the License.
 
 import pytest
 import pathlib
-from gnali import gnali
-from gnali.exceptions import EmptyFileError
-from gnali.variants import Variant
+import urllib
+from multiprocessing import Process
 from pybiomart import Dataset, Server
 import pysam
 import re
@@ -29,6 +28,9 @@ import tempfile, filecmp
 import pandas as pd
 import numpy as np
 import csv
+from gnali import gnali
+from gnali.exceptions import EmptyFileError
+from gnali.variants import Variant
 TEST_PATH = pathlib.Path(__file__).parent.absolute()
 TEST_INPUT_CSV = "{}/data/test_genes.csv".format(str(TEST_PATH))
 TEST_INPUT_TXT = "{}/data/test_genes.txt".format(str(TEST_PATH))
@@ -38,6 +40,8 @@ ENSEMBL_HUMAN_GENES = "{}/data/ensembl_hsapiens_dataset.csv".format(str(TEST_PAT
 EXPECTED_PLOF_VARIANTS = "{}/data/expected_plof_variants.txt".format(str(TEST_PATH))
 TEST_RESULTS = "{}/data/test_results.txt".format(str(TEST_PATH))
 TEST_RESULTS_BASIC = "{}/data/test_results.txt".format(str(TEST_PATH))
+
+TEST_DB = "{}/gnomad.exomes.r2.1.1.sites.vcf.bgz.tbi".format(str(TEST_PATH))
 
 START_DIR = os.getcwd()
 TEMP_DIR  = tempfile.TemporaryDirectory()
@@ -73,8 +77,19 @@ class TestGNALI:
         with pytest.raises(FileNotFoundError):
             assert gnali.open_test_file("bad_file.csv")
             
-    def test_get_db_tbi(self):
+    def test_get_db_tbi_happy(self):
+        temp = tempfile.TemporaryDirectory()
+        max_time = 180
+        test_tbi_path = gnali.get_db_tbi(GNOMAD_EXOMES, "{}/".format(temp.name), max_time)
+        assert os.path.exists(test_tbi_path)
+
+    def test_get_db_tbi_lock_timeout(self):
         pass
+
+    def test_get_db_tbi_download_timeout(self):
+        pass
+
+
     
     def test_get_test_gene_descs(self, monkeypatch):
         genes_list = ['CCR5', 'ALCAM']

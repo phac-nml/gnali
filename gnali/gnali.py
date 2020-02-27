@@ -21,6 +21,7 @@ import csv
 from pybiomart import Server
 import pysam
 from pathlib import Path
+import os
 import sys
 import numpy as np
 import pandas as pd
@@ -31,6 +32,7 @@ from filelock import FileLock
 from gnali.exceptions import EmptyFileError
 from gnali.filter import Filter
 from gnali.variants import Variant
+
 SCRIPT_NAME = 'gNALI'
 SCRIPT_INFO = "Given a list of genes to test, gNALI finds all potential \
                 loss of function variants of those genes."
@@ -63,42 +65,12 @@ def open_test_file(input_file):
         raise
     except Exception:
         print("Something went wrong. Try again")
+        raise
     if len(test_genes_list) == 0:
         print("Error: input file is empty")
         raise EmptyFileError
 
     return test_genes_list
-
-
-def get_db_tbi(database):
-    tbi_url = "{}.tbi".format(database)
-    tbi_path = "{}{}.tbi".format(DATA_PATH, database.split("/")[-1])
-    tbi_lock = "{}.lock".format(tbi_path)
-    lock = FileLock(tbi_lock)
-    
-    attempts = 0
-    max_attempts = 10
-    while attempts < 10:
-        lock.acquire(timeout=180)
-        if not Path.is_file(Path(tbi_path)):
-            try:
-                tbi_data = urllib.request.urlopen(tbi_url).read()
-            except urllib.error.HTTPError as error:
-                print(error.reason)
-            except urllib.error.URLError as error:
-                print(error.reason)
-        with open(tbi_path, 'wb') as file_obj:
-            file_obj.write(tbi_data)
-        lock.release()
-        attempts += 1
-        if attempts == max_attempts // 2:
-            temp = tempfile.TemporaryDirectory()
-            tbi_path = "{}{}.tbi".format(temp.name, database.split("/")[-1])
-    if attempts == max_attempts:
-        # raise a custom error
-        pass
-
-    return tbi_path
 
 
 def get_human_genes():
@@ -149,6 +121,47 @@ def find_test_locations(gene_descriptions):
     return target_list
 
 
+def download_file(url, dest_path, max_time):
+    try:
+        url_open = urllib.request.urlopen(url, timeout=max_time)
+        url_data = url_open.read()
+        file_size = url_open.info().get_all('Content-Length')
+    except urllib.error.HTTPError as error:
+        print(error.reason)
+        raise
+    except urllib.error.URLError as error:
+        print(error.reason)
+        raise
+    except TimeoutError:
+        print("TimeoutError: could not download file {} \
+              before timeout".format(url))
+        raise
+    if not Path.is_file(Path(dest_path)) or \
+       file_size != os.path.getsize(dest_path):
+        with open(dest_path, 'wb') as file_obj:
+            file_obj.write(url_data)
+
+
+def get_db_tbi(database, data_path, max_download_time):
+    tbi_url = "{}.tbi".format(database)
+    tbi_name = database.split("/")[-1]
+    tbi_path = "{}{}.tbi".format(data_path, tbi_name)
+    tbi_lock = "{}.lock".format(tbi_path)
+    max_time = max_download_time
+    lock = FileLock(tbi_lock)
+    try:
+        lock.acquire(timeout=10)
+        download_file(tbi_url, tbi_path, max_time)
+        lock.release()
+    except TimeoutError:
+        lock.release()
+        temp = tempfile.TemporaryDirectory()
+        tbi_path = "{}/{}".format(temp.name, tbi_name)
+        download_file(tbi_url, tbi_path, max_time)
+
+    return tbi_path
+
+
 def get_plof_variants(target_list, annot, op_filters, *databases):
     """Query the gnomAD database for loss of function variants
         of those genes with Tabix.
@@ -158,8 +171,9 @@ def get_plof_variants(target_list, annot, op_filters, *databases):
         *databases: list of databases to query
     """
     variants = []
+    max_time = 180
     for database in databases:
-        tbi = get_db_tbi(database)
+        tbi = get_db_tbi(database, DATA_PATH, max_time)
         tbx = pysam.TabixFile(database, index=tbi)
         header = tbx.header
 
