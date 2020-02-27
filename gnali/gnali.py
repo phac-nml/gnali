@@ -26,6 +26,7 @@ import sys
 import numpy as np
 import pandas as pd
 import uuid
+import requests
 import urllib
 import tempfile
 from filelock import FileLock
@@ -122,38 +123,61 @@ def find_test_locations(gene_descriptions):
 
 
 def download_file(url, dest_path, max_time):
+    """Download a file from a url if it does not 
+        already exist or is an unexpected size.
+    Args:
+        url: url for a file
+        dest_path: where to save file
+        max_time: maximum time to wait for
+                  download. An exception is
+                  raised if download doesn't
+                  complete in this time.
+    """
     try:
-        url_open = urllib.request.urlopen(url, timeout=max_time)
-        file_size = url_open.getheader('Content-Length')
-    except urllib.error.HTTPError as error:
-        print(error.reason)
-        raise
-    except urllib.error.URLError as error:
+        url_req = urllib.request.Request(url, method='HEAD')
+        url_f = urllib.request.urlopen(url_req)
+        file_size = int(url_f.headers['Content-Length'])
+    except (urllib.error.HTTPError, urllib.error.URLError) as error:
         print(error.reason)
         raise
     except TimeoutError:
         print("TimeoutError: could not download file {} \
               before timeout".format(url))
         raise
+
     if not Path.is_file(Path(dest_path)) or \
        file_size != os.path.getsize(dest_path):
         with open(dest_path, 'wb') as file_obj:
+            url_open = urllib.request.urlopen(url, timeout=max_time)
             url_data = url_open.read()
             file_obj.write(url_data)
 
 
-def get_db_tbi(database, data_path, max_download_time):
+def get_db_tbi(database, data_path, max_time):
+    """Download the index (.tbi) file for a database.
+
+    Args:
+        database: a database url
+        data_path: where to save the index file
+        max_time: maximum time to wait for
+                  download. An exception is
+                  raised if download doesn't
+                  complete in this time.
+    """
     tbi_url = "{}.tbi".format(database)
     tbi_name = database.split("/")[-1]
     tbi_path = "{}{}.tbi".format(data_path, tbi_name)
     tbi_lock = "{}.lock".format(tbi_path)
-    max_time = max_download_time
+    # lock access to index file
     lock = FileLock(tbi_lock)
+
     try:
-        lock.acquire(timeout=max_download_time)
+        lock.acquire(timeout=max_time)
         download_file(tbi_url, tbi_path, max_time)
         lock.release()
+    # not able to gain access to index in time
     except TimeoutError:
+        # download index file to temp directory
         lock.release()
         temp = tempfile.TemporaryDirectory()
         tbi_path = "{}/{}".format(temp.name, tbi_name)
@@ -233,16 +257,17 @@ def extract_lof_annotations(variants):
 
     results.columns = ["Chromosome", "Position_Start", "RSID",
                        "Reference_Allele", "Alternate_Allele",
-                       "Score", "Quality", "Codes"]
+                       "Score", "Quality", "VEP"]
 
-    results_codes = pd.DataFrame(results['Codes'].str.split('|', 5).tolist(),
+    # Get LoF annotations from VEP field
+    results_codes = pd.DataFrame(results['VEP'].str.split('|', 5).tolist(),
                                  columns=["LoF_Variant", "LoF_Annotation",
                                           "Confidence", "HGNC_Symbol",
                                           "Ensembl Code", "Rest"])
 
     results_codes.drop('Rest', axis=1, inplace=True)
     results_codes.drop('Confidence', axis=1, inplace=True)
-    results.drop('Codes', axis=1, inplace=True)
+    results.drop('VEP', axis=1, inplace=True)
     results = pd.concat([results, results_codes], axis=1)
     results = results.drop_duplicates(keep='first', inplace=False)
     results_basic = results["HGNC_Symbol"].drop_duplicates(keep='first',
