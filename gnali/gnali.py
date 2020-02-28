@@ -29,7 +29,7 @@ import uuid
 import urllib
 import tempfile
 from filelock import FileLock
-from gnali.exceptions import EmptyFileError
+from gnali.exceptions import EmptyFileError, TBIDownloadError
 from gnali.filter import Filter
 from gnali.variants import Variant
 
@@ -61,14 +61,12 @@ def open_test_file(input_file):
                     break
                 test_genes_list.append(", ".join(gene))
     except FileNotFoundError:
-        print("File " + input_file + " not found")
-        raise
+        raise FileNotFoundError("input file {} was not \
+                                 found".format(input_file))
     except Exception:
-        print("Something went wrong. Try again")
-        raise
+        raise Exception("something went wrong, try again")
     if len(test_genes_list) == 0:
-        print("Error: input file is empty")
-        raise EmptyFileError
+        raise EmptyFileError("input file {} is empty".format(input_file))
 
     return test_genes_list
 
@@ -136,19 +134,23 @@ def download_file(url, dest_path, max_time):
         url_req = urllib.request.Request(url, method='HEAD')
         url_f = urllib.request.urlopen(url_req)
         file_size = int(url_f.headers['Content-Length'])
-    except (urllib.error.HTTPError, urllib.error.URLError) as error:
-        print(error.reason)
-        raise
+    except (urllib.error.HTTPError, urllib.error.URLError,
+            urllib.error.ContentTooShortError):
+        raise TBIDownloadError("could not get header for .tbi \
+                                file for {}".format(url))
     except TimeoutError:
-        print("TimeoutError: could not download file {} \
+        raise TimeoutError("could not download file {} \
               before timeout".format(url))
-        raise
 
     if not Path.is_file(Path(dest_path)) or \
        file_size != os.path.getsize(dest_path):
         with open(dest_path, 'wb') as file_obj:
-            url_open = urllib.request.urlopen(url, timeout=max_time)
-            url_data = url_open.read()
+            try:
+                url_open = urllib.request.urlopen(url, timeout=max_time)
+                url_data = url_open.read()
+            except Exception:
+                raise TBIDownloadError("could not get download \
+                                        .tbi file for {}".format(url))
             file_obj.write(url_data)
 
 
@@ -325,18 +327,21 @@ def main():
 
     results_dir = args.output_dir
 
-    genes = open_test_file(args.input_file)
-    genes_df = get_test_gene_descriptions(genes)
-    target_list = find_test_locations(genes_df)
+    try:
+        genes = open_test_file(args.input_file)
+        genes_df = get_test_gene_descriptions(genes)
+        target_list = find_test_locations(genes_df)
 
-    op_filters = ["controls_nhomalt>0"]
-    variants = get_plof_variants(target_list, LOF_ANNOT,
-                                 op_filters, *GNOMAD_DBS)
+        op_filters = ["controls_nhomalt>0"]
+        variants = get_plof_variants(target_list, LOF_ANNOT,
+                                     op_filters, *GNOMAD_DBS)
 
-    results, results_basic = extract_lof_annotations(variants)
-    write_results(results, results_basic,
-                  results_dir, args.force)
-    print("Finished. Output in {}".format(results_dir))
+        results, results_basic = extract_lof_annotations(variants)
+        write_results(results, results_basic,
+                      results_dir, args.force)
+        print("Finished. Output in {}".format(results_dir))
+    except Exception as error:
+        print(error)
 
 
 if __name__ == '__main__':
