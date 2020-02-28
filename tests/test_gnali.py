@@ -90,7 +90,6 @@ class TestGNALI:
         pass
 
 
-    
     def test_get_test_gene_descs(self, monkeypatch):
         genes_list = ['CCR5', 'ALCAM']
         def mock_get_human_genes():

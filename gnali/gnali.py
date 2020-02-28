@@ -173,14 +173,14 @@ def get_db_tbi(database, data_path, max_time):
     try:
         lock.acquire(timeout=max_time)
         download_file(tbi_url, tbi_path, max_time)
-        lock.release()
     # not able to gain access to index in time
     except TimeoutError:
         # download index file to temp directory
-        lock.release()
         temp = tempfile.TemporaryDirectory()
         tbi_path = "{}/{}".format(temp.name, tbi_name)
         download_file(tbi_url, tbi_path, max_time)
+    finally:
+        lock.release()
 
     return tbi_path
 
