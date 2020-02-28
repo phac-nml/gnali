@@ -28,8 +28,10 @@ import tempfile, filecmp
 import pandas as pd
 import numpy as np
 import csv
+from filelock import FileLock
+import time
 from gnali import gnali
-from gnali.exceptions import EmptyFileError
+from gnali.exceptions import EmptyFileError, TBIDownloadError
 from gnali.variants import Variant
 TEST_PATH = pathlib.Path(__file__).parent.absolute()
 TEST_INPUT_CSV = "{}/data/test_genes.csv".format(str(TEST_PATH))
@@ -41,8 +43,8 @@ EXPECTED_PLOF_VARIANTS = "{}/data/expected_plof_variants.txt".format(str(TEST_PA
 TEST_RESULTS = "{}/data/test_results.txt".format(str(TEST_PATH))
 TEST_RESULTS_BASIC = "{}/data/test_results.txt".format(str(TEST_PATH))
 
-TEST_DB = "{}/gnomad.exomes.r2.1.1.sites.vcf.bgz.tbi".format(str(TEST_PATH))
-
+TEST_DB_TBI = "{}/data/gnomad.exomes.r2.1.1.sites.vcf.bgz.tbi".format(str(TEST_PATH))
+TEST_DB_TBI_NAME = TEST_DB_TBI.split("/")[-1]
 START_DIR = os.getcwd()
 TEMP_DIR  = tempfile.TemporaryDirectory()
 
@@ -50,12 +52,14 @@ GNOMAD_EXOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/e
 GNOMAD_GENOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz"
 GNOMAD_DBS = [GNOMAD_EXOMES, GNOMAD_GENOMES]
 
+MAX_TIME = 180
+
 class TestGNALI:
     @classmethod
     def setup_class(cls):
         sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-
+    ### Tests for open_test_file() ###########################
     def test_open_test_file_happy_csv(self):
         expected_results = ['CCR5', 'ALCAM']
         method_results = gnali.open_test_file(TEST_INPUT_CSV)
@@ -76,19 +80,52 @@ class TestGNALI:
     def test_open_test_file_no_file(self):
         with pytest.raises(FileNotFoundError):
             assert gnali.open_test_file("bad_file.csv")
-            
-    def test_get_db_tbi_happy(self):
-        temp = tempfile.TemporaryDirectory()
-        max_time = 180
-        test_tbi_path = gnali.get_db_tbi(GNOMAD_EXOMES, "{}/".format(temp.name), max_time)
-        assert os.path.exists(test_tbi_path)
+    #########################################################
 
+    ### Tests for get_db_tbi() ##############################
+    """
+    def test_get_db_tbi_happy(self, monkeypatch):
+        temp = tempfile.TemporaryDirectory()
+        def mock_download_file(url, dest_path, max_time):
+            dest_path = tempfile.TemporaryFile().name
+        monkeypatch.setattr(gnali, "download_file", mock_download_file)
+        test_tbi_path = gnali.get_db_tbi(GNOMAD_EXOMES, "{}/".format(temp.name), MAX_TIME)
+        assert os.path.exists(test_tbi_path)
+    
     def test_get_db_tbi_lock_timeout(self):
-        pass
+        
+        temp = tempfile.TemporaryDirectory()
+        tbi_path = "{}/{}".format(temp.name, TEST_DB_TBI_NAME)
+        shutil.copyfile(TEST_DB_TBI, tbi_path)
+        pid = os.fork()
+        if pid == 0:
+            tbi_lock = "{}.lock".format(tbi_path)
+            lock = FileLock(tbi_lock)
+            lock.acquire()
+            time.sleep(2)
+            exit(0)
+        else:
+            with pytest.raises(TimeoutError):
+                assert gnali.download_file(GNOMAD_EXOMES, temp.name, 1)
+    """
 
     def test_get_db_tbi_download_timeout(self):
         pass
+    ########################################################
 
+    ### Tests for download_file() ##########################
+    def test_download_file_invalid_url(self):
+        temp = tempfile.TemporaryFile()
+        url = "http://badurl.com"
+        with pytest.raises(TBIDownloadError):
+            assert gnali.download_file(url, temp.name, MAX_TIME)
+
+    def test_download_file_not_a_url(self):
+        temp = tempfile.TemporaryDirectory()
+        url = "not_a_url"
+        with pytest.raises(TBIDownloadError):
+            assert gnali.download_file(url, temp.name, MAX_TIME)
+    ########################################################
 
     def test_get_test_gene_descs(self, monkeypatch):
         genes_list = ['CCR5', 'ALCAM']

@@ -138,8 +138,10 @@ def download_file(url, dest_path, max_time):
             urllib.error.ContentTooShortError):
         raise TBIDownloadError("could not get header for .tbi \
                                 file for {}".format(url))
+    except ValueError:
+        raise TBIDownloadError("not a URL: {}".format(url))
     except TimeoutError:
-        raise TimeoutError("could not download file {} \
+        raise TimeoutError("could not fetch header for {} \
               before timeout".format(url))
 
     if not Path.is_file(Path(dest_path)) or \
