@@ -14,10 +14,15 @@ under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
-
+import os
 from setuptools import find_packages, setup
 
-dependencies = ['pybiomart', 'numpy', 'pandas', 'pysam']
+dependencies = ['pybiomart', 'numpy', 'pandas', 'pysam', 'filelock']
+
+if os.getenv('PATCH') is not None:
+    PATCH = "-{}".format(os.getenv('PATCH'))
+else:
+    PATCH = ""
 
 def readme():
     with open('README.md') as fd:
@@ -25,7 +30,7 @@ def readme():
 
 setup(
     name='gNALI',
-    version = "0.1.0",
+    version = "0.1.0{}".format(PATCH),
     license='Apache License, Version 2.0',
     author='Xia Liu',
     author_email='xia.liu@canada.ca',

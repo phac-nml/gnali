@@ -20,14 +20,19 @@ import argparse
 import csv
 from pybiomart import Server
 import pysam
-import pathlib
+from pathlib import Path
+import os
 import sys
 import numpy as np
 import pandas as pd
 import uuid
-from gnali.exceptions import EmptyFileError
+import urllib
+import tempfile
+from filelock import FileLock
+from gnali.exceptions import EmptyFileError, TBIDownloadError
 from gnali.filter import Filter
 from gnali.variants import Variant
+
 SCRIPT_NAME = 'gNALI'
 SCRIPT_INFO = "Given a list of genes to test, gNALI finds all potential \
                 loss of function variants of those genes."
@@ -37,6 +42,8 @@ GNOMAD_EXOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/e
 GNOMAD_GENOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz" # noqa
 GNOMAD_DBS = [GNOMAD_EXOMES, GNOMAD_GENOMES]
 LOF_ANNOT = "vep"
+GNALI_PATH = Path(__file__).parent.absolute()
+DATA_PATH = "{}/data/".format(str(GNALI_PATH))
 
 
 def open_test_file(input_file):
@@ -54,13 +61,12 @@ def open_test_file(input_file):
                     break
                 test_genes_list.append(", ".join(gene))
     except FileNotFoundError:
-        print("File " + input_file + " not found")
-        raise
+        raise FileNotFoundError("input file {} was not \
+                                 found".format(input_file))
     except Exception:
-        print("Something went wrong. Try again")
+        raise Exception("something went wrong, try again")
     if len(test_genes_list) == 0:
-        print("Error: input file is empty")
-        raise EmptyFileError
+        raise EmptyFileError("input file {} is empty".format(input_file))
 
     return test_genes_list
 
@@ -113,6 +119,89 @@ def find_test_locations(gene_descriptions):
     return target_list
 
 
+def tbi_needed(url, dest_path):
+    """Given a tbi url, determine if we must download it.
+        We will download it if it does not yet exist or it
+        exists but the size is not what we expect based on
+        the header info.
+
+    Args:
+        url: tbi url
+        dest_path: path of expected tbi
+    """
+    try:
+        url_req = urllib.request.Request(url, method='HEAD')
+        url_f = urllib.request.urlopen(url_req)
+        file_size = int(url_f.headers['Content-Length'])
+    except (urllib.error.HTTPError, urllib.error.URLError,
+            urllib.error.ContentTooShortError):
+        raise TBIDownloadError("could not get header for .tbi \
+                                file for {}".format(url))
+    except TimeoutError:
+        raise TimeoutError("could not fetch header for {} \
+              before timeout".format(url))
+    except Exception as error:
+        raise Exception(error)
+    if not Path.is_file(Path(dest_path)) or \
+       file_size != os.path.getsize(dest_path):
+        return True
+    return False
+
+
+def download_file(url, dest_path, max_time):
+    """Download a file from a url.
+
+    Args:
+        url: url for a file
+        dest_path: where to save file
+        max_time: maximum time to wait for
+                  download. An exception is
+                  raised if download doesn't
+                  complete in this time.
+    """
+    with open(dest_path, 'wb') as file_obj:
+        try:
+            url_open = urllib.request.urlopen(url, timeout=max_time)
+            url_data = url_open.read()
+        except Exception:
+            raise TBIDownloadError("could not get download \
+                                    .tbi file for {}".format(url))
+        file_obj.write(url_data)
+
+
+def get_db_tbi(database, data_path, max_time):
+    """Download the index (.tbi) file for a database.
+
+    Args:
+        database: a database url
+        data_path: where to save the index file
+        max_time: maximum time to wait for
+                  download. An exception is
+                  raised if download doesn't
+                  complete in this time.
+    """
+    tbi_url = "{}.tbi".format(database)
+    tbi_name = database.split("/")[-1]
+    tbi_path = "{}{}.tbi".format(data_path, tbi_name)
+    tbi_lock = "{}.lock".format(tbi_path)
+    # lock access to index file
+    lock = FileLock(tbi_lock)
+
+    try:
+        with lock.acquire(timeout=max_time):
+            if tbi_needed(tbi_url, tbi_path):
+                download_file(tbi_url, tbi_path, max_time)
+    # not able to gain access to index in time
+    except TimeoutError:
+        # download index file to temp directory
+        temp = tempfile.TemporaryDirectory()
+        tbi_path = "{}/{}.tbi".format(temp.name, tbi_name)
+        download_file(tbi_url, tbi_path, max_time)
+    except Exception as error:
+        raise Exception(error)
+    return tbi_path
+
+
 def get_plof_variants(target_list, annot, op_filters, *databases):
     """Query the gnomAD database for loss of function variants
         of those genes with Tabix.
@@ -122,8 +211,10 @@ def get_plof_variants(target_list, annot, op_filters, *databases):
         *databases: list of databases to query
     """
     variants = []
+    max_time = 180
     for database in databases:
-        tbx = pysam.TabixFile(database)
+        tbi = get_db_tbi(database, DATA_PATH, max_time)
+        tbx = pysam.TabixFile(database, index=tbi)
         header = tbx.header
 
         # get index of LoF in header
@@ -182,16 +273,17 @@ def extract_lof_annotations(variants):
 
     results.columns = ["Chromosome", "Position_Start", "RSID",
                        "Reference_Allele", "Alternate_Allele",
-                       "Score", "Quality", "Codes"]
+                       "Score", "Quality", "VEP"]
 
-    results_codes = pd.DataFrame(results['Codes'].str.split('|', 5).tolist(),
+    # Get LoF annotations from VEP field
+    results_codes = pd.DataFrame(results['VEP'].str.split('|', 5).tolist(),
                                  columns=["LoF_Variant", "LoF_Annotation",
                                           "Confidence", "HGNC_Symbol",
                                           "Ensembl Code", "Rest"])
 
     results_codes.drop('Rest', axis=1, inplace=True)
     results_codes.drop('Confidence', axis=1, inplace=True)
-    results.drop('Codes', axis=1, inplace=True)
+    results.drop('VEP', axis=1, inplace=True)
     results = pd.concat([results, results_codes], axis=1)
     results = results.drop_duplicates(keep='first', inplace=False)
     results_basic = results["HGNC_Symbol"].drop_duplicates(keep='first',
@@ -216,7 +308,7 @@ def write_results(results, results_basic,
     results_file = "Nonessential_Host_Genes_(Detailed).txt"
     results_basic_file = "Nonessential_Host_Genes_(Basic).txt"
 
-    pathlib.Path(results_dir).mkdir(parents=True, exist_ok=overwrite)
+    Path(results_dir).mkdir(parents=True, exist_ok=overwrite)
     results.to_csv("{}/{}".format(results_dir, results_file),
                    sep='\t', mode='a', index=False)
     results_basic.to_csv("{}/{}".format(results_dir,
@@ -252,18 +344,21 @@ def main():
 
     results_dir = args.output_dir
 
-    genes = open_test_file(args.input_file)
-    genes_df = get_test_gene_descriptions(genes)
-    target_list = find_test_locations(genes_df)
+    try:
+        genes = open_test_file(args.input_file)
+        genes_df = get_test_gene_descriptions(genes)
+        target_list = find_test_locations(genes_df)
 
-    op_filters = ["controls_nhomalt>0"]
-    variants = get_plof_variants(target_list, LOF_ANNOT,
-                                 op_filters, *GNOMAD_DBS)
+        op_filters = ["controls_nhomalt>0"]
+        variants = get_plof_variants(target_list, LOF_ANNOT,
+                                     op_filters, *GNOMAD_DBS)
 
-    results, results_basic = extract_lof_annotations(variants)
-    write_results(results, results_basic,
-                  results_dir, args.force)
-    print("Finished. Output in {}".format(results_dir))
+        results, results_basic = extract_lof_annotations(variants)
+        write_results(results, results_basic,
+                      results_dir, args.force)
+        print("Finished. Output in {}".format(results_dir))
+    except Exception as error:
+        print(error)
 
 
 if __name__ == '__main__':

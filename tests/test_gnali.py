@@ -1,8 +1,25 @@
+"""
+Copyright Government of Canada 2020
+
+Written by: Xia Liu, National Microbiology Laboratory,
+            Public Health Agency of Canada
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this work except in compliance with the License. You may obtain a copy of the
+License at:
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+"""
+
 import pytest
 import pathlib
-from gnali import gnali
-from gnali.exceptions import EmptyFileError
-from gnali.variants import Variant
+import urllib
+from multiprocessing import Process
 from pybiomart import Dataset, Server
 import pysam
 import re
@@ -11,29 +28,44 @@ import tempfile, filecmp
 import pandas as pd
 import numpy as np
 import csv
+import filelock
+from filelock import FileLock
+import time
+from gnali import gnali
+from gnali.exceptions import EmptyFileError, TBIDownloadError
+from gnali.variants import Variant
 TEST_PATH = pathlib.Path(__file__).parent.absolute()
-TEST_INPUT_CSV = str(TEST_PATH) + "/data/test_genes.csv"
-TEST_INPUT_TXT = str(TEST_PATH) + "/data/test_genes.txt"
-EMPTY_INPUT_CSV = str(TEST_PATH) + "/data/empty_file.csv"
-ENSEMBL_HUMAN_GENES = str(TEST_PATH) + "/data/ensembl_hsapiens_dataset.csv"
+TEST_INPUT_CSV = "{}/data/test_genes.csv".format(str(TEST_PATH))
+TEST_INPUT_TXT = "{}/data/test_genes.txt".format(str(TEST_PATH))
+EMPTY_INPUT_CSV = "{}/data/empty_file.csv".format(str(TEST_PATH))
+ENSEMBL_HUMAN_GENES = "{}/data/ensembl_hsapiens_dataset.csv".format(str(TEST_PATH))
 
-EXPECTED_PLOF_VARIANTS = str(TEST_PATH) + "/data/expected_plof_variants.txt"
-TEST_RESULTS = str(TEST_PATH) + "/data/test_results.txt"
-TEST_RESULTS_BASIC = str(TEST_PATH) + "/data/test_results.txt"
+EXPECTED_PLOF_VARIANTS = "{}/data/expected_plof_variants.txt".format(str(TEST_PATH))
+TEST_RESULTS = "{}/data/test_results.txt".format(str(TEST_PATH))
+TEST_RESULTS_BASIC = "{}/data/test_results.txt".format(str(TEST_PATH))
 
 START_DIR = os.getcwd()
-TEMP_DIR  = tempfile.TemporaryDirectory()
 
 GNOMAD_EXOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz"
 GNOMAD_GENOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz"
 GNOMAD_DBS = [GNOMAD_EXOMES, GNOMAD_GENOMES]
+TEST_DB_TBI = "{}/data/fake_db.vcf.bgz.tbi".format(str(TEST_PATH))
+TEST_DB_TBI_NAME = TEST_DB_TBI.split("/")[-1]
+TEST_DB_TBI_URL = "http://fake_db.vcf.bgz"
+MAX_TIME = 180
+
+
+class MockHeader:
+    headers = {"Content-Length": 0}
+    def read(self):
+        return ""
 
 class TestGNALI:
     @classmethod
     def setup_class(cls):
         sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-
+    ### Tests for open_test_file() ###########################
     def test_open_test_file_happy_csv(self):
         expected_results = ['CCR5', 'ALCAM']
         method_results = gnali.open_test_file(TEST_INPUT_CSV)
@@ -54,7 +86,63 @@ class TestGNALI:
     def test_open_test_file_no_file(self):
         with pytest.raises(FileNotFoundError):
             assert gnali.open_test_file("bad_file.csv")
-            
+    #########################################################
+
+
+    ### Tests for tbi_needed() ##############################
+    def test_tbi_needed_is_needed(self, monkeypatch):
+        def mock_open_header(req):
+            return MockHeader
+        monkeypatch.setattr(urllib.request, "urlopen", mock_open_header)
+        with tempfile.TemporaryDirectory() as temp:
+            assert gnali.tbi_needed(TEST_DB_TBI_URL, temp)
+    
+    def test_tbi_needed_not_needed(self, monkeypatch):
+        def mock_open_header(req):
+            return MockHeader
+        monkeypatch.setattr(urllib.request, "urlopen", mock_open_header)
+        with tempfile.TemporaryDirectory() as temp:
+            shutil.copyfile(TEST_DB_TBI, "{}/{}".format(temp, TEST_DB_TBI_NAME))
+            is_need =  gnali.tbi_needed(TEST_DB_TBI_URL, "{}/{}".format(temp, TEST_DB_TBI_NAME))
+            assert not is_need
+    #########################################################
+
+
+    def test_download_file_invalid_url(self, monkeypatch):
+        url = "http://badurl.com"
+        def mock_open_header(req):
+            return MockHeader
+        monkeypatch.setattr(urllib.request, "urlopen", mock_open_header)
+        with tempfile.TemporaryDirectory() as temp:
+            with pytest.raises(TBIDownloadError):
+                assert gnali.download_file(url, "{}/{}".format(temp, "/bad_url"), MAX_TIME)
+
+
+    ### Tests for get_db_tbi() ##############################
+    def test_get_db_tbi_happy(self, monkeypatch):
+        def mock_tbi_needed(url, dest_path):
+            return True
+        monkeypatch.setattr(gnali, "tbi_needed", mock_tbi_needed)
+        def mock_download_file(url, dest_path, max_time):
+            dest_path = tempfile.TemporaryFile().name
+        monkeypatch.setattr(gnali, "download_file", mock_download_file)
+        with tempfile.TemporaryDirectory() as temp:
+            assert gnali.get_db_tbi(TEST_DB_TBI_URL, temp, MAX_TIME)
+    
+    def test_get_db_tbi_lock_timeout_exception(self, monkeypatch):
+        with tempfile.TemporaryDirectory() as temp:
+            temp = tempfile.TemporaryDirectory()
+            tbi_path = "{}/{}".format(temp.name, TEST_DB_TBI_NAME)
+            shutil.copyfile(TEST_DB_TBI, tbi_path)
+            def mock_lock_acquire(*args, **kwargs):
+                raise TimeoutError
+            monkeypatch.setattr(filelock.FileLock, "acquire", mock_lock_acquire)
+            def mock_download_file(url, dest_path, max_time):
+                dest_path = tempfile.TemporaryFile().name
+            monkeypatch.setattr(gnali, "download_file", mock_download_file)
+            assert gnali.get_db_tbi(TEST_DB_TBI_URL, tbi_path, MAX_TIME)  
+    ########################################################
+
     
     def test_get_test_gene_descs(self, monkeypatch):
         genes_list = ['CCR5', 'ALCAM']
