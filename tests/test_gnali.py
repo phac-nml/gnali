@@ -54,6 +54,12 @@ TEST_DB_TBI_NAME = TEST_DB_TBI.split("/")[-1]
 TEST_DB_TBI_URL = "{}.tbi".format(GNOMAD_EXOMES)
 MAX_TIME = 180
 
+
+class MockHeader:
+    headers = {"Content-Length": 0}
+    def read(self):
+        return ""
+
 class TestGNALI:
     @classmethod
     def setup_class(cls):
@@ -84,11 +90,17 @@ class TestGNALI:
 
 
     ### Tests for tbi_needed() ##############################
-    def test_tbi_needed_is_needed(self):
+    def test_tbi_needed_is_needed(self, monkeypatch):
+        def mock_open_header(req):
+            return MockHeader
+        monkeypatch.setattr(urllib.request, "urlopen", mock_open_header)
         with tempfile.TemporaryDirectory() as temp:
             assert gnali.tbi_needed(GNOMAD_EXOMES, temp)
     
-    def test_tbi_needed_not_needed(self):
+    def test_tbi_needed_not_needed(self, monkeypatch):
+        def mock_open_header(req):
+            return MockHeader
+        monkeypatch.setattr(urllib.request, "urlopen", mock_open_header)
         with tempfile.TemporaryDirectory() as temp:
             shutil.copyfile(TEST_DB_TBI, "{}/{}".format(temp, TEST_DB_TBI_NAME))
             is_need =  gnali.tbi_needed(TEST_DB_TBI_URL, "{}/{}".format(temp, TEST_DB_TBI_NAME))
@@ -96,15 +108,21 @@ class TestGNALI:
     #########################################################
 
 
-    def test_download_file_invalid_url(self):
+    def test_download_file_invalid_url(self, monkeypatch):
         url = "http://badurl.com"
-        with pytest.raises(TBIDownloadError):
-            with tempfile.TemporaryDirectory() as temp:
+        def mock_open_header(req):
+            return MockHeader
+        monkeypatch.setattr(urllib.request, "urlopen", mock_open_header)
+        with tempfile.TemporaryDirectory() as temp:
+            with pytest.raises(TBIDownloadError):
                 assert gnali.download_file(url, "{}/{}".format(temp, "/bad_url"), MAX_TIME)
 
 
     ### Tests for get_db_tbi() ##############################
     def test_get_db_tbi_happy(self, monkeypatch):
+        def mock_tbi_needed(url, dest_path):
+            return True
+        monkeypatch.setattr(gnali, "tbi_needed", mock_tbi_needed)
         def mock_download_file(url, dest_path, max_time):
             dest_path = tempfile.TemporaryFile().name
         monkeypatch.setattr(gnali, "download_file", mock_download_file)
