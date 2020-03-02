@@ -49,9 +49,9 @@ START_DIR = os.getcwd()
 GNOMAD_EXOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz"
 GNOMAD_GENOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz"
 GNOMAD_DBS = [GNOMAD_EXOMES, GNOMAD_GENOMES]
-TEST_DB_TBI = "{}/data/gnomad.exomes.r2.1.1.sites.vcf.bgz.tbi".format(str(TEST_PATH))
+TEST_DB_TBI = "{}/data/fake_db.vcf.bgz.tbi".format(str(TEST_PATH))
 TEST_DB_TBI_NAME = TEST_DB_TBI.split("/")[-1]
-TEST_DB_TBI_URL = "{}.tbi".format(GNOMAD_EXOMES)
+TEST_DB_TBI_URL = "http://fake_db.vcf.bgz"
 MAX_TIME = 180
 
 
@@ -95,7 +95,7 @@ class TestGNALI:
             return MockHeader
         monkeypatch.setattr(urllib.request, "urlopen", mock_open_header)
         with tempfile.TemporaryDirectory() as temp:
-            assert gnali.tbi_needed(GNOMAD_EXOMES, temp)
+            assert gnali.tbi_needed(TEST_DB_TBI_URL, temp)
     
     def test_tbi_needed_not_needed(self, monkeypatch):
         def mock_open_header(req):
@@ -127,7 +127,7 @@ class TestGNALI:
             dest_path = tempfile.TemporaryFile().name
         monkeypatch.setattr(gnali, "download_file", mock_download_file)
         with tempfile.TemporaryDirectory() as temp:
-            assert gnali.get_db_tbi(GNOMAD_EXOMES, temp, MAX_TIME)
+            assert gnali.get_db_tbi(TEST_DB_TBI_URL, temp, MAX_TIME)
     
     def test_get_db_tbi_lock_timeout_exception(self, monkeypatch):
         with tempfile.TemporaryDirectory() as temp:
@@ -137,7 +137,10 @@ class TestGNALI:
             def mock_lock_acquire(*args, **kwargs):
                 raise TimeoutError
             monkeypatch.setattr(filelock.FileLock, "acquire", mock_lock_acquire)
-            assert gnali.get_db_tbi(GNOMAD_EXOMES, tbi_path, MAX_TIME)  
+            def mock_download_file(url, dest_path, max_time):
+                dest_path = tempfile.TemporaryFile().name
+            monkeypatch.setattr(gnali, "download_file", mock_download_file)
+            assert gnali.get_db_tbi(TEST_DB_TBI_URL, tbi_path, MAX_TIME)  
     ########################################################
 
     
