@@ -16,7 +16,7 @@ potential loss of function variants of genes.
 Your input file must be of format `.csv` or `.txt`, and should contain a list of genes
 (as HGNC symbols) to test. It should not contain any blank lines until the end of the list.
 
-If an output file name is not specified, it will use a default name and gNALI
+If an output folder name is not specified, it will use a default name and gNALI
 will tell you where it is and what it's called after it finishes executing.
 
 Some sample genes are included in `tests/data/Genes_To_Test.txt`.
@@ -24,12 +24,15 @@ Some sample genes are included in `tests/data/Genes_To_Test.txt`.
 Example commands:
 
 `gnali -i my_genes.csv`
-* An input file called `my_genes.csv` is tested for PLoF variants
-* The output file will be called `results-ID.vcf` with a randomly generated unique ID
 
-`gnali -i my_genes.csv -o my_results.vcf`
+* An input file called `my_genes.csv` is tested for PLoF variants
+* The output folder will be called `results-ID` with a randomly generated unique ID,
+    and will contain both detailed results and basic results
+
+`gnali -i my_genes.csv -o my_results`
+
 * Like above, an input file called `my_genes.csv` is tested for PLoF variants
-* The output file will be called `my_results.vcf`
+* The output folder will be called `my_results`
 
 ## Legal ##
 -----------
@@ -51,6 +54,8 @@ specific language governing permissions and limitations under the License.
 
 ## Contact ##
 -------------
+
+**Gary Van Domselaar**: gary.vandomselaar@canada.ca
 
 **Xia Liu**: xia.liu@canada.ca
 
