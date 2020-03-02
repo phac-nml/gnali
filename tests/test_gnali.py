@@ -28,6 +28,7 @@ import tempfile, filecmp
 import pandas as pd
 import numpy as np
 import csv
+import filelock
 from filelock import FileLock
 import time
 from gnali import gnali
@@ -43,15 +44,14 @@ EXPECTED_PLOF_VARIANTS = "{}/data/expected_plof_variants.txt".format(str(TEST_PA
 TEST_RESULTS = "{}/data/test_results.txt".format(str(TEST_PATH))
 TEST_RESULTS_BASIC = "{}/data/test_results.txt".format(str(TEST_PATH))
 
-TEST_DB_TBI = "{}/data/gnomad.exomes.r2.1.1.sites.vcf.bgz.tbi".format(str(TEST_PATH))
-TEST_DB_TBI_NAME = TEST_DB_TBI.split("/")[-1]
 START_DIR = os.getcwd()
-TEMP_DIR  = tempfile.TemporaryDirectory()
 
 GNOMAD_EXOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz"
 GNOMAD_GENOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz"
 GNOMAD_DBS = [GNOMAD_EXOMES, GNOMAD_GENOMES]
-
+TEST_DB_TBI = "{}/data/gnomad.exomes.r2.1.1.sites.vcf.bgz.tbi".format(str(TEST_PATH))
+TEST_DB_TBI_NAME = TEST_DB_TBI.split("/")[-1]
+TEST_DB_TBI_URL = "{}.tbi".format(GNOMAD_EXOMES)
 MAX_TIME = 180
 
 class TestGNALI:
@@ -82,51 +82,47 @@ class TestGNALI:
             assert gnali.open_test_file("bad_file.csv")
     #########################################################
 
+
+    ### Tests for tbi_needed() ##############################
+    def test_tbi_needed_is_needed(self):
+        with tempfile.TemporaryDirectory() as temp:
+            assert gnali.tbi_needed(GNOMAD_EXOMES, temp)
+    
+    def test_tbi_needed_not_needed(self):
+        with tempfile.TemporaryDirectory() as temp:
+            shutil.copyfile(TEST_DB_TBI, "{}/{}".format(temp, TEST_DB_TBI_NAME))
+            is_need =  gnali.tbi_needed(TEST_DB_TBI_URL, "{}/{}".format(temp, TEST_DB_TBI_NAME))
+            assert not is_need
+    #########################################################
+
+
+    def test_download_file_invalid_url(self):
+        url = "http://badurl.com"
+        with pytest.raises(TBIDownloadError):
+            with tempfile.TemporaryDirectory() as temp:
+                assert gnali.download_file(url, "{}/{}".format(temp, "/bad_url"), MAX_TIME)
+
+
     ### Tests for get_db_tbi() ##############################
-    """
     def test_get_db_tbi_happy(self, monkeypatch):
-        temp = tempfile.TemporaryDirectory()
         def mock_download_file(url, dest_path, max_time):
             dest_path = tempfile.TemporaryFile().name
         monkeypatch.setattr(gnali, "download_file", mock_download_file)
-        test_tbi_path = gnali.get_db_tbi(GNOMAD_EXOMES, "{}/".format(temp.name), MAX_TIME)
-        assert os.path.exists(test_tbi_path)
+        with tempfile.TemporaryDirectory() as temp:
+            assert gnali.get_db_tbi(GNOMAD_EXOMES, temp, MAX_TIME)
     
-    def test_get_db_tbi_lock_timeout(self):
-        
-        temp = tempfile.TemporaryDirectory()
-        tbi_path = "{}/{}".format(temp.name, TEST_DB_TBI_NAME)
-        shutil.copyfile(TEST_DB_TBI, tbi_path)
-        pid = os.fork()
-        if pid == 0:
-            tbi_lock = "{}.lock".format(tbi_path)
-            lock = FileLock(tbi_lock)
-            lock.acquire()
-            time.sleep(2)
-            exit(0)
-        else:
-            with pytest.raises(TimeoutError):
-                assert gnali.download_file(GNOMAD_EXOMES, temp.name, 1)
-    """
-
-    def test_get_db_tbi_download_timeout(self):
-        pass
+    def test_get_db_tbi_lock_timeout_exception(self, monkeypatch):
+        with tempfile.TemporaryDirectory() as temp:
+            temp = tempfile.TemporaryDirectory()
+            tbi_path = "{}/{}".format(temp.name, TEST_DB_TBI_NAME)
+            shutil.copyfile(TEST_DB_TBI, tbi_path)
+            def mock_lock_acquire(*args, **kwargs):
+                raise TimeoutError
+            monkeypatch.setattr(filelock.FileLock, "acquire", mock_lock_acquire)
+            assert gnali.get_db_tbi(GNOMAD_EXOMES, tbi_path, MAX_TIME)  
     ########################################################
 
-    ### Tests for download_file() ##########################
-    def test_download_file_invalid_url(self):
-        temp = tempfile.TemporaryFile()
-        url = "http://badurl.com"
-        with pytest.raises(TBIDownloadError):
-            assert gnali.download_file(url, temp.name, MAX_TIME)
-
-    def test_download_file_not_a_url(self):
-        temp = tempfile.TemporaryDirectory()
-        url = "not_a_url"
-        with pytest.raises(TBIDownloadError):
-            assert gnali.download_file(url, temp.name, MAX_TIME)
-    ########################################################
-
+    
     def test_get_test_gene_descs(self, monkeypatch):
         genes_list = ['CCR5', 'ALCAM']
         def mock_get_human_genes():

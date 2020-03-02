@@ -119,16 +119,15 @@ def find_test_locations(gene_descriptions):
     return target_list
 
 
-def download_file(url, dest_path, max_time):
-    """Download a file from a url if it does not
-        already exist or is an unexpected size.
+def tbi_needed(url, dest_path):
+    """Given a tbi url, determine if we must download it.
+        We will download it if it does not yet exist or it
+        exists but the size is not what we expect based on
+        the header info.
+
     Args:
-        url: url for a file
-        dest_path: where to save file
-        max_time: maximum time to wait for
-                  download. An exception is
-                  raised if download doesn't
-                  complete in this time.
+        url: tbi url
+        dest_path: path of expected tbi
     """
     try:
         url_req = urllib.request.Request(url, method='HEAD')
@@ -138,22 +137,36 @@ def download_file(url, dest_path, max_time):
             urllib.error.ContentTooShortError):
         raise TBIDownloadError("could not get header for .tbi \
                                 file for {}".format(url))
-    except ValueError:
-        raise TBIDownloadError("not a URL: {}".format(url))
     except TimeoutError:
         raise TimeoutError("could not fetch header for {} \
               before timeout".format(url))
-
+    except Exception as error:
+        raise Exception(error)
     if not Path.is_file(Path(dest_path)) or \
        file_size != os.path.getsize(dest_path):
-        with open(dest_path, 'wb') as file_obj:
-            try:
-                url_open = urllib.request.urlopen(url, timeout=max_time)
-                url_data = url_open.read()
-            except Exception:
-                raise TBIDownloadError("could not get download \
-                                        .tbi file for {}".format(url))
-            file_obj.write(url_data)
+        return True
+    return False
+
+
+def download_file(url, dest_path, max_time):
+    """Download a file from a url.
+
+    Args:
+        url: url for a file
+        dest_path: where to save file
+        max_time: maximum time to wait for
+                  download. An exception is
+                  raised if download doesn't
+                  complete in this time.
+    """
+    with open(dest_path, 'wb') as file_obj:
+        try:
+            url_open = urllib.request.urlopen(url, timeout=max_time)
+            url_data = url_open.read()
+        except Exception:
+            raise TBIDownloadError("could not get download \
+                                    .tbi file for {}".format(url))
+        file_obj.write(url_data)
 
 
 def get_db_tbi(database, data_path, max_time):
@@ -176,14 +189,16 @@ def get_db_tbi(database, data_path, max_time):
 
     try:
         with lock.acquire(timeout=max_time):
-            download_file(tbi_url, tbi_path, max_time)
+            if tbi_needed(tbi_url, tbi_path):
+                download_file(tbi_url, tbi_path, max_time)
     # not able to gain access to index in time
     except TimeoutError:
         # download index file to temp directory
         temp = tempfile.TemporaryDirectory()
-        tbi_path = "{}/{}".format(temp.name, tbi_name)
+        tbi_path = "{}/{}.tbi".format(temp.name, tbi_name)
         download_file(tbi_url, tbi_path, max_time)
-
+    except Exception as error:
+        raise Exception(error)
     return tbi_path
 
 
