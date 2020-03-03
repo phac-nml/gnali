@@ -53,5 +53,3 @@ setup(
         'Topic :: Scientific/Engineering'
     ]
 )
-
-b
