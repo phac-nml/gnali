@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export PATCH=`git rev-parse --short HEAD`
+export PATCH='1'
 pip install twine
 python setup.py sdist bdist_wheel
 
