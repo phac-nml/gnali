@@ -18,6 +18,7 @@ empty_file.csv
 .pybiomart.sqlite
 gnali/data*
 !gnali/data/.gitkeep
+!gnali/data/__init__.py
 
 # Any slurm output
 *.out

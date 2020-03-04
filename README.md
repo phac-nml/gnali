@@ -13,13 +13,17 @@ potential loss of function variants of genes.
 ## Usage ##
 -----------
 
-Your input file must be of format `.csv` or `.txt`, and should contain a list of genes
+Your input file must be of format `.csv`, `.txt`, or `tsv` and should contain a list of genes
 (as HGNC symbols) to test. It should not contain any blank lines until the end of the list.
+
+Example input:
+
+    CCR5
+    ALCAM
+
 
 If an output folder name is not specified, it will use a default name and gNALI
 will tell you where it is and what it's called after it finishes executing.
-
-Some sample genes are included in `tests/data/Genes_To_Test.txt`.
 
 Example commands:
 
