@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export PATCH='1'
+export PATCH='2'
 pip install twine
 python setup.py sdist bdist_wheel
 
