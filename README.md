@@ -14,7 +14,8 @@ potential loss of function variants of genes.
 -----------
 
 Your input file must be of format `.csv`, `.txt`, or `tsv` and should contain a list of genes
-(as HGNC symbols) to test. It should not contain any blank lines until the end of the list.
+(as HGNC symbols) to test, separated by newline characters.
+It should not contain any blank lines until the end of the list.
 
 Example input:
 
