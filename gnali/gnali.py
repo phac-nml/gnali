@@ -228,7 +228,11 @@ def get_plof_variants(target_list, annot, op_filters, *databases):
 
         # get records in locations
         for location in test_locations:
-            variants.extend(filter_plof_variants(tbx.fetch(reference=location),
+            try:
+                records = tbx.fetch(reference=location)
+            except ValueError:
+                continue
+            variants.extend(filter_plof_variants(records,
                             annot, lof_index, op_filter_objs))
 
     return variants
@@ -240,6 +244,7 @@ def filter_plof_variants(records, annot, lof_index, op_filters):
     qual_filter = "PASS"
     for record in records:
         record = Variant(record)
+
         # LoF and quality filter
         vep_str = record.info[annot]
         lof = vep_str.split("|")[lof_index]
@@ -348,8 +353,9 @@ def main():
         genes = open_test_file(args.input_file)
         genes_df = get_test_gene_descriptions(genes)
         target_list = find_test_locations(genes_df)
-
+        
         op_filters = ["controls_nhomalt>0"]
+
         variants = get_plof_variants(target_list, LOF_ANNOT,
                                      op_filters, *GNOMAD_DBS)
 
