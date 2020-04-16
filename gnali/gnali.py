@@ -80,7 +80,7 @@ def get_human_genes():
                .datasets['hsapiens_gene_ensembl'])
     # Create list of human chromosomes.
     # Use this to filter out gene patches
-    chromosome_filters = [str(x) for x in range(1, 24)]
+    chromosome_filters = [str(x) for x in range(1, 23)]
     chromosome_filters.extend(['X', 'Y'])
     genes = dataset.query(attributes=['hgnc_symbol', 'chromosome_name',
                                       'start_position', 'end_position'],
