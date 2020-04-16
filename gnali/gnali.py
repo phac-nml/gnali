@@ -353,7 +353,7 @@ def main():
         genes = open_test_file(args.input_file)
         genes_df = get_test_gene_descriptions(genes)
         target_list = find_test_locations(genes_df)
-        
+
         op_filters = ["controls_nhomalt>0"]
 
         variants = get_plof_variants(target_list, LOF_ANNOT,

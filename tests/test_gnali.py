@@ -183,8 +183,8 @@ class TestGNALI:
 
         assert method_test_locations == target_list
 
-
-    def test_get_plof_variants(self):
+    ### Tests for get_plof_variants() ######################
+    def test_get_plof_variants_happy(self):
         target_list = ["3:46411633-46417697"]
 
         expected_variants = []
@@ -197,7 +197,14 @@ class TestGNALI:
 
         assert expected_variants == method_variants
 
-    
+    def test_get_plof_variants_gene_patch(self, monkeypatch):
+        target_list = ["HSCHR17_1_CTG1:5810-31427"]
+        def mock_filter_plof_variants():
+            return []
+        monkeypatch.setattr(gnali, "filter_plof_variants", mock_filter_plof_variants)
+        assert gnali.get_plof_variants(target_list, "vep", ["controls_nhomalt>0"], *GNOMAD_DBS) == []
+    ########################################################
+
     def test_extract_lof_annotations(self):
         test_variants = []
         with open(EXPECTED_PLOF_VARIANTS, 'r') as test_file:
