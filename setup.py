@@ -20,7 +20,7 @@ from setuptools import find_packages, setup
 dependencies = ['pybiomart', 'numpy', 'pandas', 'pysam', 'filelock', 'cython']
 
 if os.getenv('PATCH') is not None:
-    PATCH = "{}".format(os.getenv('PATCH'))
+    PATCH = "rc.dev{}".format(os.getenv('PATCH'))
 else:
     PATCH = ""
 
@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='gNALI',
-    version = ("0.1.0rc.dev{}".format(PATCH)),
+    version = ("0.1.1{}".format(PATCH)),
     url="https://github.com/phac-nml/gnali",
     license='Apache License, Version 2.0',
     author='Xia Liu',
