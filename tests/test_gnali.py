@@ -196,13 +196,6 @@ class TestGNALI:
         method_variants = [str(variant) for variant in method_variants]
 
         assert expected_variants == method_variants
-
-    def test_get_plof_variants_gene_patch(self, monkeypatch):
-        target_list = ["HSCHR17_1_CTG1:5810-31427"]
-        def mock_filter_plof_variants():
-            return []
-        monkeypatch.setattr(gnali, "filter_plof_variants", mock_filter_plof_variants)
-        assert gnali.get_plof_variants(target_list, "vep", ["controls_nhomalt>0"], *GNOMAD_DBS) == []
     ########################################################
 
     def test_extract_lof_annotations(self):
