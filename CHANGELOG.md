@@ -2,6 +2,14 @@
 
 All notable changes to gNALI will be documented in this file.
 
+## 0.1.1 ##
+
+2020-04-16
+
+### Changed ###
+
+- Fixed filtering for gene patches
+
 ## 0.1.0 ##
 
 2020-03-02
