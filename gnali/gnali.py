@@ -78,8 +78,13 @@ def get_human_genes():
     server = Server(host=ENSEMBL_HOST)
     dataset = (server.marts['ENSEMBL_MART_ENSEMBL']
                .datasets['hsapiens_gene_ensembl'])
+    # Create list of human chromosomes.
+    # Use this to filter out gene patches
+    chromosome_filters = [str(x) for x in range(1, 23)]
+    chromosome_filters.extend(['X', 'Y'])
     genes = dataset.query(attributes=['hgnc_symbol', 'chromosome_name',
-                                      'start_position', 'end_position'])
+                                      'start_position', 'end_position'],
+                          filters={'chromosome_name': chromosome_filters})
     return genes
 
 
@@ -228,7 +233,8 @@ def get_plof_variants(target_list, annot, op_filters, *databases):
 
         # get records in locations
         for location in test_locations:
-            variants.extend(filter_plof_variants(tbx.fetch(reference=location),
+            records = tbx.fetch(reference=location)
+            variants.extend(filter_plof_variants(records,
                             annot, lof_index, op_filter_objs))
 
     return variants
@@ -240,6 +246,7 @@ def filter_plof_variants(records, annot, lof_index, op_filters):
     qual_filter = "PASS"
     for record in records:
         record = Variant(record)
+
         # LoF and quality filter
         vep_str = record.info[annot]
         lof = vep_str.split("|")[lof_index]
@@ -350,6 +357,7 @@ def main():
         target_list = find_test_locations(genes_df)
 
         op_filters = ["controls_nhomalt>0"]
+
         variants = get_plof_variants(target_list, LOF_ANNOT,
                                      op_filters, *GNOMAD_DBS)
 

@@ -42,6 +42,7 @@ gNALI-results/
 test.txt
 results*
 *profile*.txt
+gnali/patch.txt
 
 # WIP
 gnali/output.py
