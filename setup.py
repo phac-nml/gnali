@@ -20,7 +20,7 @@ from setuptools import find_packages, setup
 dependencies = ['pybiomart', 'numpy', 'pandas', 'pysam', 'filelock', 'cython']
 
 if os.getenv('PATCH') is not None:
-    PATCH = "rc.dev{}".format(os.getenv('PATCH'))
+    PATCH = "rc0.dev{}".format(os.getenv('PATCH'))
 else:
     PATCH = ""
 
