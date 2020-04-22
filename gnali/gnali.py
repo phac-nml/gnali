@@ -28,6 +28,7 @@ import pandas as pd
 import uuid
 import urllib
 import tempfile
+import yaml
 from filelock import FileLock
 from gnali.exceptions import EmptyFileError, TBIDownloadError
 from gnali.filter import Filter
@@ -38,13 +39,9 @@ SCRIPT_INFO = "Given a list of genes to test, gNALI finds all potential \
                 loss of function variants of those genes."
 
 ENSEMBL_HOST = 'http://grch37.ensembl.org'
-GNOMAD_EXOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz" # noqa
-GNOMAD_GENOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz" # noqa
-GNOMAD_DBS = [GNOMAD_EXOMES, GNOMAD_GENOMES]
-LOF_ANNOT = "vep"
 GNALI_PATH = Path(__file__).parent.absolute()
 DATA_PATH = "{}/data/".format(str(GNALI_PATH))
-
+DB_CONFIG_FILE = "{}db-config.yaml".format(str(DATA_PATH))
 
 def open_test_file(input_file):
     """Read genes from the input file.
@@ -119,6 +116,27 @@ def find_test_locations(gene_descriptions):
     return target_list
 
 
+def get_db_config(config_file, dbs):
+    print("get the config")
+    try:
+        with open(config_file, 'r') as config_stream:
+            config = yaml.load(config_stream.read(),
+                            Loader=yaml.FullLoader)
+            print(config)
+            config = [config[db] for db in dbs]
+            config = [info for db, info in config]
+            print("mod")
+            #sum(config, [])
+            print("RETURNING")
+            print(config)
+            #import pdb; pdb. set_trace() 
+            return config
+    except Exception as error:
+        print("Could not read from database configuration \
+              file:", config_file)
+        raise Exception(error)
+
+
 def tbi_needed(url, dest_path):
     """Given a tbi url, determine if we must download it.
         We will download it if it does not yet exist or it
@@ -180,12 +198,15 @@ def get_db_tbi(database, data_path, max_time):
                   raised if download doesn't
                   complete in this time.
     """
-    tbi_url = "{}.tbi".format(database)
-    tbi_name = database.split("/")[-1]
-    tbi_path = "{}{}.tbi".format(data_path, tbi_name)
-    tbi_lock = "{}.lock".format(tbi_path)
+    print("GET A TBI")
+    print(database)
+    tbi_url = database['tbi-url']
+    print(tbi_url)
+    tbi_name = database['tbi-file']
+    tbi_path = "{}{}".format(data_path, tbi_name)
+    tbi_lock_path = "{}.{}".format(tbi_path, database['tbi-lock'])
     # lock access to index file
-    lock = FileLock(tbi_lock)
+    lock = FileLock(tbi_lock_path)
 
     try:
         with lock.acquire(timeout=max_time):
@@ -202,7 +223,7 @@ def get_db_tbi(database, data_path, max_time):
     return tbi_path
 
 
-def get_plof_variants(target_list, annot, op_filters, *databases):
+def get_plof_variants(target_list, op_filters, db_info):
     """Query the gnomAD database for loss of function variants
         of those genes with Tabix.
 
@@ -212,15 +233,16 @@ def get_plof_variants(target_list, annot, op_filters, *databases):
     """
     variants = []
     max_time = 180
-    for database in databases:
+    for database in db_info:
+        print(database)
         tbi = get_db_tbi(database, DATA_PATH, max_time)
-        tbx = pysam.TabixFile(database, index=tbi)
+        tbx = pysam.TabixFile(database['url'], index=tbi)
         header = tbx.header
 
         # get index of LoF in header
         annot_header = [line for line in header
-                        if "ID={}".format(annot) in line]
-        lof_index = str(annot_header).split("|").index("LoF")
+                        if "ID={}".format(database['lof-tool']) in line]
+        lof_index = str(annot_header).split("|").index(database['lof-annot'])
         test_locations = target_list
 
         # transform filters into objects
@@ -229,7 +251,7 @@ def get_plof_variants(target_list, annot, op_filters, *databases):
         # get records in locations
         for location in test_locations:
             variants.extend(filter_plof_variants(tbx.fetch(reference=location),
-                            annot, lof_index, op_filter_objs))
+                            database['lof-annot'], lof_index, op_filter_objs))
 
     return variants
 
@@ -349,9 +371,12 @@ def main():
         genes_df = get_test_gene_descriptions(genes)
         target_list = find_test_locations(genes_df)
 
+        dbs = ["gnomadv2.1.1"]
+        db_info = get_db_config(DB_CONFIG_FILE, dbs)
+
         op_filters = ["controls_nhomalt>0"]
-        variants = get_plof_variants(target_list, LOF_ANNOT,
-                                     op_filters, *GNOMAD_DBS)
+        variants = get_plof_variants(target_list, op_filters, 
+                                     db_info)
 
         results, results_basic = extract_lof_annotations(variants)
         write_results(results, results_basic,
