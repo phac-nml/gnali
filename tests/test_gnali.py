@@ -183,8 +183,8 @@ class TestGNALI:
 
         assert method_test_locations == target_list
 
-
-    def test_get_plof_variants(self):
+    ### Tests for get_plof_variants() ######################
+    def test_get_plof_variants_happy(self):
         target_list = ["3:46411633-46417697"]
 
         expected_variants = []
@@ -196,8 +196,8 @@ class TestGNALI:
         method_variants = [str(variant) for variant in method_variants]
 
         assert expected_variants == method_variants
+    ########################################################
 
-    
     def test_extract_lof_annotations(self):
         test_variants = []
         with open(EXPECTED_PLOF_VARIANTS, 'r') as test_file:

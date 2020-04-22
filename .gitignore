@@ -19,6 +19,7 @@ empty_file.csv
 gnali/data*
 !gnali/data/.gitkeep
 !gnali/data/db-config.yaml
+!gnali/data/__init__.py
 
 # Any slurm output
 *.out
@@ -42,6 +43,8 @@ gNALI-results/
 test.txt
 results*
 *profile*.txt
+gnali/patch.txt
+chr18*
 
 # WIP
 gnali/output.py
