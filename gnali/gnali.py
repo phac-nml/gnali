@@ -122,18 +122,13 @@ def find_test_locations(gene_descriptions):
 
 
 def get_db_config(config_file, dbs):
-    print("get the config")
     try:
         with open(config_file, 'r') as config_stream:
             config = yaml.load(config_stream.read(),
                             Loader=yaml.FullLoader)
-            print(config)
             config = [config[db] for db in dbs]
-            config = [info for db, info in config]
-            print("mod")
             #sum(config, [])
-            print("RETURNING")
-            print(config)
+            config = config[0]
             #import pdb; pdb. set_trace() 
             return config
     except Exception as error:
@@ -203,10 +198,7 @@ def get_db_tbi(database, data_path, max_time):
                   raised if download doesn't
                   complete in this time.
     """
-    print("GET A TBI")
-    print(database)
     tbi_url = database['tbi-url']
-    print(tbi_url)
     tbi_name = database['tbi-file']
     tbi_path = "{}{}".format(data_path, tbi_name)
     tbi_lock_path = "{}.{}".format(tbi_path, database['tbi-lock'])
@@ -238,25 +230,26 @@ def get_plof_variants(target_list, op_filters, db_info):
     """
     variants = []
     max_time = 180
-    for database in db_info:
-        print(database)
-        tbi = get_db_tbi(database, DATA_PATH, max_time)
-        tbx = pysam.TabixFile(database['url'], index=tbi)
-        header = tbx.header
+    for config in db_info:
+        for info in config.values():
+            tbi = get_db_tbi(info, DATA_PATH, max_time)
+            tbx = pysam.TabixFile(info['url'], index=tbi)
+            header = tbx.header
 
-        # get index of LoF in header
-        annot_header = [line for line in header
-                        if "ID={}".format(database['lof-tool']) in line]
-        lof_index = str(annot_header).split("|").index(database['lof-annot'])
-        test_locations = target_list
+            # get index of LoF in header
+            annot_header = [line for line in header
+                            if "ID={}".format(info['lof-tool']) in line]
+            lof_index = str(annot_header).split("|").index(info['lof-annot'])
+            test_locations = target_list
 
-        # transform filters into objects
-        op_filter_objs = [Filter(op_filter) for op_filter in op_filters]
+            # transform filters into objects
+            op_filter_objs = [Filter(op_filter) for op_filter in op_filters]
 
-        # get records in locations
-        for location in test_locations:
-            variants.extend(filter_plof_variants(tbx.fetch(reference=location),
-                            database['lof-annot'], lof_index, op_filter_objs))
+            # get records in locations
+            for location in test_locations:
+                #import pdb; pdb.set_trace()
+                variants.extend(filter_plof_variants(tbx.fetch(reference=location),
+                                info['lof-tool'], lof_index, op_filter_objs))
 
     return variants
 
@@ -265,26 +258,28 @@ def filter_plof_variants(records, annot, lof_index, op_filters):
     passed = []
     conf_filter = "HC"
     qual_filter = "PASS"
-    for record in records:
-        record = Variant(record)
+    try:
+        for record in records:
+            record = Variant(record)
+            # LoF and quality filter
+            vep_str = record.info[annot]
+            lof = vep_str.split("|")[lof_index]
+            if not (lof == conf_filter and record.filter == qual_filter):
+                continue
 
-        # LoF and quality filter
-        vep_str = record.info[annot]
-        lof = vep_str.split("|")[lof_index]
-        if not (lof == conf_filter and record.filter == qual_filter):
-            continue
-
-        # additional filters from user
-        # e.g. 'controls_nhomalt>0'
-        filters_passed = True
-        for op_filter in op_filters:
-            if not op_filter.apply(record):
-                filters_passed = False
-                break
-        if not filters_passed:
-            continue
-        passed.append(record)
-
+            # additional filters from user
+            # e.g. 'controls_nhomalt>0'
+            filters_passed = True
+            for op_filter in op_filters:
+                if not op_filter.apply(record):
+                    filters_passed = False
+                    break
+            if not filters_passed:
+                continue
+            passed.append(record)
+    except Exception as error:
+        print(error)
+        raise
     return passed
 
 
