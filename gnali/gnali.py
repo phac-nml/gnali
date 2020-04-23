@@ -128,8 +128,7 @@ def get_db_config(config_file, dbs):
             config = yaml.load(config_stream.read(),
                                Loader=yaml.FullLoader)
             config = [config[db] for db in dbs]
-            config = config[0]
-            print(config)
+            config = [db for dbs in config for db in dbs]
             return config
     except Exception as error:
         print("Could not read from database configuration \
