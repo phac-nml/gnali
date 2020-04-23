@@ -43,6 +43,7 @@ GNALI_PATH = Path(__file__).parent.absolute()
 DATA_PATH = "{}/data/".format(str(GNALI_PATH))
 DB_CONFIG_FILE = "{}db-config.yaml".format(str(DATA_PATH))
 
+
 def open_test_file(input_file):
     """Read genes from the input file.
 
@@ -125,11 +126,10 @@ def get_db_config(config_file, dbs):
     try:
         with open(config_file, 'r') as config_stream:
             config = yaml.load(config_stream.read(),
-                            Loader=yaml.FullLoader)
+                               Loader=yaml.FullLoader)
             config = [config[db] for db in dbs]
-            #sum(config, [])
             config = config[0]
-            #import pdb; pdb. set_trace() 
+            print(config)
             return config
     except Exception as error:
         print("Could not read from database configuration \
@@ -191,7 +191,7 @@ def get_db_tbi(database, data_path, max_time):
     """Download the index (.tbi) file for a database.
 
     Args:
-        database: a database url
+        database: a database config
         data_path: where to save the index file
         max_time: maximum time to wait for
                   download. An exception is
@@ -247,8 +247,8 @@ def get_plof_variants(target_list, op_filters, db_info):
 
             # get records in locations
             for location in test_locations:
-                #import pdb; pdb.set_trace()
-                variants.extend(filter_plof_variants(tbx.fetch(reference=location),
+                records = tbx.fetch(reference=location)
+                variants.extend(filter_plof_variants(records,
                                 info['lof-tool'], lof_index, op_filter_objs))
 
     return variants
@@ -376,7 +376,7 @@ def main():
         db_info = get_db_config(DB_CONFIG_FILE, dbs)
 
         op_filters = ["controls_nhomalt>0"]
-        variants = get_plof_variants(target_list, op_filters, 
+        variants = get_plof_variants(target_list, op_filters,
                                      db_info)
 
         results, results_basic = extract_lof_annotations(variants)

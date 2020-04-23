@@ -46,14 +46,19 @@ TEST_RESULTS_BASIC = "{}/data/test_results.txt".format(str(TEST_PATH))
 
 START_DIR = os.getcwd()
 
-GNOMAD_EXOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz"
-GNOMAD_GENOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz"
-GNOMAD_DBS = [GNOMAD_EXOMES, GNOMAD_GENOMES]
 TEST_DB_TBI = "{}/data/fake_db.vcf.bgz.tbi".format(str(TEST_PATH))
 TEST_DB_TBI_NAME = TEST_DB_TBI.split("/")[-1]
 TEST_DB_TBI_URL = "http://fake_db.vcf.bgz"
 MAX_TIME = 180
 
+DB_CONFIG = [{'exomes': {'url': 'http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz', 
+                         'tbi-url': 'http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz.tbi', 
+                         'tbi-file': 'gnomad.exomes.r2.1.1.sites.vcf.bgz.tbi', 'tbi-lock': 'gnomad.exomes.r2.1.1.sites.vcf.bgz.tbi.lock', 
+                         'lof-tool': 'vep', 'lof-annot': 'LoF'}},
+             {'genomes': {'url': 'http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz', 
+                         'tbi-url': 'http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz.tbi', 
+                         'tbi-file': 'gnomad.genomes.r2.1.1.sites.vcf.bgz.tbi', 'tbi-lock': 'gnomad.genomes.r2.1.1.sites.vcf.bgz.tbi.lock', 
+                         'lof-tool': 'vep', 'lof-annot': 'LoF'}}]
 
 class MockHeader:
     headers = {"Content-Length": 0}
@@ -127,7 +132,7 @@ class TestGNALI:
             dest_path = tempfile.TemporaryFile().name
         monkeypatch.setattr(gnali, "download_file", mock_download_file)
         with tempfile.TemporaryDirectory() as temp:
-            assert gnali.get_db_tbi(TEST_DB_TBI_URL, temp, MAX_TIME)
+            assert gnali.get_db_tbi(DB_CONFIG[0]['exomes'], temp, MAX_TIME)
     
     def test_get_db_tbi_lock_timeout_exception(self, monkeypatch):
         with tempfile.TemporaryDirectory() as temp:
@@ -140,7 +145,7 @@ class TestGNALI:
             def mock_download_file(url, dest_path, max_time):
                 dest_path = tempfile.TemporaryFile().name
             monkeypatch.setattr(gnali, "download_file", mock_download_file)
-            assert gnali.get_db_tbi(TEST_DB_TBI_URL, tbi_path, MAX_TIME)  
+            assert gnali.get_db_tbi(DB_CONFIG[0]['exomes'], tbi_path, MAX_TIME)  
     ########################################################
 
     
@@ -186,13 +191,13 @@ class TestGNALI:
     ### Tests for get_plof_variants() ######################
     def test_get_plof_variants_happy(self):
         target_list = ["3:46411633-46417697"]
-
+        
         expected_variants = []
         with open(EXPECTED_PLOF_VARIANTS, 'r') as test_file:
             for line in test_file:
                 expected_variants.append(line)
         
-        method_variants = gnali.get_plof_variants(target_list, "vep", ["controls_nhomalt>0"], *GNOMAD_DBS)
+        method_variants = gnali.get_plof_variants(target_list, ["controls_nhomalt>0"], DB_CONFIG)
         method_variants = [str(variant) for variant in method_variants]
 
         assert expected_variants == method_variants

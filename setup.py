@@ -17,7 +17,7 @@ specific language governing permissions and limitations under the License.
 import os
 from setuptools import find_packages, setup
 
-dependencies = ['pybiomart', 'numpy', 'pandas', 'pysam', 'filelock', 'cython']
+dependencies = ['pybiomart', 'numpy', 'pandas', 'pysam', 'filelock', 'cython', 'pyyaml']
 
 if os.getenv('PATCH') is not None:
     PATCH = "rc.dev{}".format(os.getenv('PATCH'))
