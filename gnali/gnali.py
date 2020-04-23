@@ -197,10 +197,10 @@ def get_db_tbi(database, data_path, max_time):
                   raised if download doesn't
                   complete in this time.
     """
-    tbi_url = database['tbi-url']
-    tbi_name = database['tbi-file']
+    tbi_url = "{}.tbi".format(database['url'])
+    tbi_name = tbi_url.split("/")[-1]
     tbi_path = "{}{}".format(data_path, tbi_name)
-    tbi_lock_path = "{}.{}".format(tbi_path, database['tbi-lock'])
+    tbi_lock_path = "{}.{}.lock".format(tbi_path, tbi_name)
     # lock access to index file
     lock = FileLock(tbi_lock_path)
 
@@ -384,6 +384,7 @@ def main():
         print("Finished. Output in {}".format(results_dir))
     except Exception as error:
         print(error)
+        raise
 
 
 if __name__ == '__main__':

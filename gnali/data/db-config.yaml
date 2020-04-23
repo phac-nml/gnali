@@ -1,15 +1,11 @@
 gnomadv2.1.1:
   - exomes:
       url: http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz
-      tbi-url: http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz.tbi
-      tbi-file: gnomad.exomes.r2.1.1.sites.vcf.bgz.tbi
-      tbi-lock: gnomad.exomes.r2.1.1.sites.vcf.bgz.tbi.lock
       lof-tool: vep
       lof-annot: LoF
+      default-filters: "controls_nhomalt>0"
   - genomes:
       url: http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz
-      tbi-url: http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz.tbi
-      tbi-file: gnomad.genomes.r2.1.1.sites.vcf.bgz.tbi
-      tbi-lock: gnomad.genomes.r2.1.1.sites.vcf.bgz.tbi.lock
       lof-tool: vep
       lof-annot: LoF
+      default-filters: "controls_nhomalt>0"
