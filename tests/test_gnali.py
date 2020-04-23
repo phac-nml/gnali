@@ -52,13 +52,11 @@ TEST_DB_TBI_URL = "http://fake_db.vcf.bgz"
 MAX_TIME = 180
 
 DB_CONFIG = [{'exomes': {'url': 'http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz', 
-                         'tbi-url': 'http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz.tbi', 
-                         'tbi-file': 'gnomad.exomes.r2.1.1.sites.vcf.bgz.tbi', 'tbi-lock': 'gnomad.exomes.r2.1.1.sites.vcf.bgz.tbi.lock', 
-                         'lof-tool': 'vep', 'lof-annot': 'LoF'}},
-             {'genomes': {'url': 'http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz', 
-                         'tbi-url': 'http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz.tbi', 
-                         'tbi-file': 'gnomad.genomes.r2.1.1.sites.vcf.bgz.tbi', 'tbi-lock': 'gnomad.genomes.r2.1.1.sites.vcf.bgz.tbi.lock', 
-                         'lof-tool': 'vep', 'lof-annot': 'LoF'}}]
+              'lof-tool': 'vep', 'lof-annot': 'LoF', 
+              'default-filters': {'confidence': 'HC', 'quality': 'PASS'}}}, 
+            {'genomes': {'url': 'http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz', 
+             'lof-tool': 'vep', 'lof-annot': 'LoF', 
+             'default-filters': {'confidence': 'HC', 'quality': 'PASS'}}}]
 
 class MockHeader:
     headers = {"Content-Length": 0}

@@ -248,20 +248,21 @@ def get_plof_variants(target_list, op_filters, db_info):
             for location in test_locations:
                 records = tbx.fetch(reference=location)
                 variants.extend(filter_plof_variants(records,
-                                info['lof-tool'], lof_index, op_filter_objs))
+                                info, lof_index, op_filter_objs))
 
     return variants
 
 
-def filter_plof_variants(records, annot, lof_index, op_filters):
+def filter_plof_variants(records, db_info, lof_index, op_filters):
     passed = []
-    conf_filter = "HC"
-    qual_filter = "PASS"
+    conf_filter = db_info['default-filters']['confidence']
+    qual_filter = db_info['default-filters']['quality']
+    lof_tool = db_info['lof-tool']
     try:
         for record in records:
             record = Variant(record)
             # LoF and quality filter
-            vep_str = record.info[annot]
+            vep_str = record.info[lof_tool]
             lof = vep_str.split("|")[lof_index]
             if not (lof == conf_filter and record.filter == qual_filter):
                 continue
