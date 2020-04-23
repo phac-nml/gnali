@@ -53,10 +53,10 @@ MAX_TIME = 180
 
 DB_CONFIG = [{'exomes': {'url': 'http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz', 
               'lof-tool': 'vep', 'lof-annot': 'LoF', 
-              'default-filters': {'confidence': 'HC', 'quality': 'PASS'}}}, 
+              'default-filters': {'confidence': 'HC', 'nonessentiality': 'controls_nhomalt>0'}}}, 
             {'genomes': {'url': 'http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz', 
              'lof-tool': 'vep', 'lof-annot': 'LoF', 
-             'default-filters': {'confidence': 'HC', 'quality': 'PASS'}}}]
+             'default-filters': {'confidence': 'HC', 'nonessentiality': 'controls_nhomalt>0'}}}]
 
 class MockHeader:
     headers = {"Content-Length": 0}

@@ -4,12 +4,13 @@ gnomadv2.1.1:
       lof-tool: vep
       lof-annot: LoF
       default-filters: 
+        nonessentiality: controls_nhomalt>0
         confidence: HC
-        quality: PASS
   - genomes:
       url: http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz
       lof-tool: vep
       lof-annot: LoF
       default-filters: 
+        nonessentiality: controls_nhomalt>0
         confidence: HC
-        quality: PASS
+

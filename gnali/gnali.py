@@ -256,7 +256,7 @@ def get_plof_variants(target_list, op_filters, db_info):
 def filter_plof_variants(records, db_info, lof_index, op_filters):
     passed = []
     conf_filter = db_info['default-filters']['confidence']
-    qual_filter = db_info['default-filters']['quality']
+    non_ess_filter = Filter(db_info['default-filters']['nonessentiality'])
     lof_tool = db_info['lof-tool']
     try:
         for record in records:
@@ -264,7 +264,8 @@ def filter_plof_variants(records, db_info, lof_index, op_filters):
             # LoF and quality filter
             vep_str = record.info[lof_tool]
             lof = vep_str.split("|")[lof_index]
-            if not (lof == conf_filter and record.filter == qual_filter):
+            if not (lof == conf_filter and 
+                    non_ess_filter.apply(record)):
                 continue
 
             # additional filters from user
@@ -375,7 +376,7 @@ def main():
         dbs = ["gnomadv2.1.1"]
         db_info = get_db_config(DB_CONFIG_FILE, dbs)
 
-        op_filters = ["controls_nhomalt>0"]
+        op_filters = []
         variants = get_plof_variants(target_list, op_filters,
                                      db_info)
 
