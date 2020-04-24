@@ -264,7 +264,7 @@ def filter_plof_variants(records, db_info, lof_index, op_filters):
             # LoF and quality filter
             vep_str = record.info[lof_tool]
             lof = vep_str.split("|")[lof_index]
-            if not (lof == conf_filter and 
+            if not (lof == conf_filter and
                     non_ess_filter.apply(record)):
                 continue
 
