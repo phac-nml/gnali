@@ -257,6 +257,7 @@ def filter_plof_variants(records, db_info, lof_index, op_filters):
     passed = []
     conf_filter = db_info['default-filters']['confidence']
     non_ess_filter = Filter(db_info['default-filters']['nonessentiality'])
+    qual_filter = "PASS"
     lof_tool = db_info['lof-tool']
     try:
         for record in records:
@@ -265,6 +266,7 @@ def filter_plof_variants(records, db_info, lof_index, op_filters):
             vep_str = record.info[lof_tool]
             lof = vep_str.split("|")[lof_index]
             if not (lof == conf_filter and
+                    record.filter == qual_filter and
                     non_ess_filter.apply(record)):
                 continue
 
