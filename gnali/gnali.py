@@ -127,8 +127,13 @@ def get_db_config(config_file, dbs):
         with open(config_file, 'r') as config_stream:
             config = yaml.load(config_stream.read(),
                                Loader=yaml.FullLoader)
-            config = [config[db] for db in dbs]
-            config = [db for dbs in config for db in dbs]
+            if dbs == '':
+                return config['databases']
+            elif dbs is None:
+                return config['databases'][config['default']]
+            else:
+                return config['databases'][dbs]
+
             return config
     except Exception as error:
         print("Could not read from database configuration \
@@ -237,7 +242,7 @@ def get_plof_variants(target_list, op_filters, db_info):
 
             # get index of LoF in header
             annot_header = [line for line in header
-                            if "ID={}".format(info['lof-tool']) in line]
+                            if "ID={}".format(info['lof-id']) in line]
             lof_index = str(annot_header).split("|").index(info['lof-annot'])
             test_locations = target_list
 
@@ -255,10 +260,10 @@ def get_plof_variants(target_list, op_filters, db_info):
 
 def filter_plof_variants(records, db_info, lof_index, op_filters):
     passed = []
-    conf_filter = db_info['default-filters']['confidence']
+    conf_filter = db_info['lof-filters']['confidence']
     non_ess_filter = Filter(db_info['default-filters']['nonessentiality'])
     qual_filter = "PASS"
-    lof_tool = db_info['lof-tool']
+    lof_tool = db_info['lof-id']
     try:
         for record in records:
             record = Variant(record)
@@ -271,7 +276,6 @@ def filter_plof_variants(records, db_info, lof_index, op_filters):
                 continue
 
             # additional filters from user
-            # e.g. 'controls_nhomalt>0'
             filters_passed = True
             for op_filter in op_filters:
                 if not op_filter.apply(record):
@@ -356,6 +360,9 @@ def init_parser(id):
     parser.add_argument('-f', '--force',
                         action='store_true',
                         help='Force existing output folder to be overwritten')
+    parser.add_argument('-d', '--database',
+                        help='Database to query. Options: {}'
+                        .format([*get_db_config(DB_CONFIG_FILE, '').keys()]))
 
     return parser
 
@@ -375,8 +382,7 @@ def main():
         genes_df = get_test_gene_descriptions(genes)
         target_list = find_test_locations(genes_df)
 
-        dbs = ["gnomadv2.1.1"]
-        db_info = get_db_config(DB_CONFIG_FILE, dbs)
+        db_info = get_db_config(DB_CONFIG_FILE, args.database)
 
         op_filters = []
         variants = get_plof_variants(target_list, op_filters,
