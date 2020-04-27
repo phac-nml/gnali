@@ -133,8 +133,6 @@ def get_db_config(config_file, dbs):
                 return config['databases'][config['default']]
             else:
                 return config['databases'][dbs]
-
-            return config
     except Exception as error:
         print("Could not read from database configuration \
               file:", config_file)
