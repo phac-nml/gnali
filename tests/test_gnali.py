@@ -31,6 +31,7 @@ import csv
 import filelock
 from filelock import FileLock
 import time
+import yaml
 from gnali import gnali
 from gnali.exceptions import EmptyFileError, TBIDownloadError
 from gnali.variants import Variant
@@ -51,16 +52,7 @@ TEST_DB_TBI_NAME = TEST_DB_TBI.split("/")[-1]
 TEST_DB_TBI_URL = "http://fake_db.vcf.bgz"
 MAX_TIME = 180
 
-DB_CONFIG = [{'exomes': {'url': 'http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz', 
-              'lof-id': 'vep', 'lof-annot': 'LoF', 
-              'default-filters': {'nonessentiality': 'controls_nhomalt>0'},
-              'op-filters': None,
-              'lof-filters': {'confidence': 'HC'} }},
-            {'genomes': {'url': 'http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz', 
-             'lof-id': 'vep', 'lof-annot': 'LoF', 
-             'default-filters': {'nonessentiality': 'controls_nhomalt>0'},
-             'op-filters': None,
-             'lof-filters': {'confidence': 'HC'} }}]
+DB_CONFIG_FILE = "{}/data/db-config.yaml".format(str(TEST_PATH))
 
 class MockHeader:
     headers = {"Content-Length": 0}
@@ -134,7 +126,9 @@ class TestGNALI:
             dest_path = tempfile.TemporaryFile().name
         monkeypatch.setattr(gnali, "download_file", mock_download_file)
         with tempfile.TemporaryDirectory() as temp:
-            assert gnali.get_db_tbi(DB_CONFIG[0]['exomes'], temp, MAX_TIME)
+            db_config_file = open(DB_CONFIG_FILE, 'r')
+            db_config = yaml.load(db_config_file.read(), Loader=yaml.FullLoader)
+            assert gnali.get_db_tbi(db_config['databases']['gnomadv2.1.1'][0]['exomes'], temp, MAX_TIME)
     
     def test_get_db_tbi_lock_timeout_exception(self, monkeypatch):
         with tempfile.TemporaryDirectory() as temp:
@@ -147,7 +141,9 @@ class TestGNALI:
             def mock_download_file(url, dest_path, max_time):
                 dest_path = tempfile.TemporaryFile().name
             monkeypatch.setattr(gnali, "download_file", mock_download_file)
-            assert gnali.get_db_tbi(DB_CONFIG[0]['exomes'], tbi_path, MAX_TIME)  
+            db_config_file = open(DB_CONFIG_FILE, 'r')
+            db_config = yaml.load(db_config_file.read(), Loader=yaml.FullLoader)
+            assert gnali.get_db_tbi(db_config['databases']['gnomadv2.1.1'][0]['exomes'], tbi_path, MAX_TIME)  
     ########################################################
 
     
@@ -198,8 +194,12 @@ class TestGNALI:
         with open(EXPECTED_PLOF_VARIANTS, 'r') as test_file:
             for line in test_file:
                 expected_variants.append(line)
+
+        db_config_file = open(DB_CONFIG_FILE, 'r')
+        db_config = yaml.load(db_config_file.read(), Loader=yaml.FullLoader)
+        db_config = db_config['databases']['gnomadv2.1.1']
         
-        method_variants = gnali.get_plof_variants(target_list, DB_CONFIG)
+        method_variants = gnali.get_plof_variants(target_list, db_config)
         method_variants = [str(variant) for variant in method_variants]
 
         assert expected_variants == method_variants

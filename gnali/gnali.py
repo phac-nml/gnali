@@ -245,24 +245,23 @@ def get_plof_variants(target_list, db_info):
             test_locations = target_list
 
             # transform filters into objects
-            op_filter_objs = []
-            if info['op-filters'] is not None:
-                op_filter_objs = [Filter(op_filter) for op_filter
-                                  in info['op-filters']]
+            filter_objs = []
+            if info['default-filters'] is not None:
+                filter_objs = [Filter(filt) for filt
+                               in info['default-filters'].values()]
 
             # get records in locations
             for location in test_locations:
                 records = tbx.fetch(reference=location)
                 variants.extend(filter_plof_variants(records,
-                                info, lof_index, op_filter_objs))
+                                info, lof_index, filter_objs))
 
     return variants
 
 
-def filter_plof_variants(records, db_info, lof_index, op_filters):
+def filter_plof_variants(records, db_info, lof_index, filters):
     passed = []
     conf_filter = db_info['lof-filters']['confidence']
-    non_ess_filter = Filter(db_info['default-filters']['nonessentiality'])
     qual_filter = "PASS"
     lof_tool = db_info['lof-id']
 
@@ -273,14 +272,13 @@ def filter_plof_variants(records, db_info, lof_index, op_filters):
             vep_str = record.info[lof_tool]
             lof = vep_str.split("|")[lof_index]
             if not (lof == conf_filter and
-                    record.filter == qual_filter and
-                    non_ess_filter.apply(record)):
+                    record.filter == qual_filter):
                 continue
 
             # additional filters from user
             filters_passed = True
-            for op_filter in op_filters:
-                if not op_filter.apply(record):
+            for filt in filters:
+                if not filt.apply(record):
                     filters_passed = False
                     break
             if not filters_passed:
@@ -385,7 +383,7 @@ def main():
         target_list = find_test_locations(genes_df)
 
         db_info = get_db_config(DB_CONFIG_FILE, args.database)
-
+        print(db_info)
         variants = get_plof_variants(target_list, db_info)
 
         results, results_basic = extract_lof_annotations(variants)
