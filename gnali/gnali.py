@@ -222,7 +222,7 @@ def get_db_tbi(database, data_path, max_time):
     return tbi_path
 
 
-def get_plof_variants(target_list, op_filters, db_info):
+def get_plof_variants(target_list, db_info):
     """Query the gnomAD database for loss of function variants
         of those genes with Tabix.
 
@@ -245,7 +245,10 @@ def get_plof_variants(target_list, op_filters, db_info):
             test_locations = target_list
 
             # transform filters into objects
-            op_filter_objs = [Filter(op_filter) for op_filter in op_filters]
+            op_filter_objs = []
+            if info['op-filters'] is not None:
+                op_filter_objs = [Filter(op_filter) for op_filter
+                                  in info['op-filters']]
 
             # get records in locations
             for location in test_locations:
@@ -262,6 +265,7 @@ def filter_plof_variants(records, db_info, lof_index, op_filters):
     non_ess_filter = Filter(db_info['default-filters']['nonessentiality'])
     qual_filter = "PASS"
     lof_tool = db_info['lof-id']
+
     try:
         for record in records:
             record = Variant(record)
@@ -382,9 +386,7 @@ def main():
 
         db_info = get_db_config(DB_CONFIG_FILE, args.database)
 
-        op_filters = []
-        variants = get_plof_variants(target_list, op_filters,
-                                     db_info)
+        variants = get_plof_variants(target_list, db_info)
 
         results, results_basic = extract_lof_annotations(variants)
         write_results(results, results_basic,

@@ -54,10 +54,12 @@ MAX_TIME = 180
 DB_CONFIG = [{'exomes': {'url': 'http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz', 
               'lof-id': 'vep', 'lof-annot': 'LoF', 
               'default-filters': {'nonessentiality': 'controls_nhomalt>0'},
+              'op-filters': None,
               'lof-filters': {'confidence': 'HC'} }},
             {'genomes': {'url': 'http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz', 
              'lof-id': 'vep', 'lof-annot': 'LoF', 
              'default-filters': {'nonessentiality': 'controls_nhomalt>0'},
+             'op-filters': None,
              'lof-filters': {'confidence': 'HC'} }}]
 
 class MockHeader:
@@ -197,7 +199,7 @@ class TestGNALI:
             for line in test_file:
                 expected_variants.append(line)
         
-        method_variants = gnali.get_plof_variants(target_list, ["controls_nhomalt>0"], DB_CONFIG)
+        method_variants = gnali.get_plof_variants(target_list, DB_CONFIG)
         method_variants = [str(variant) for variant in method_variants]
 
         assert expected_variants == method_variants

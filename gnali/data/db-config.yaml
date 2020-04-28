@@ -7,6 +7,7 @@ databases:
         lof-annot: LoF
         default-filters: 
           nonessentiality: controls_nhomalt>0
+        op-filters:
         lof-filters:
           confidence: HC
     - genomes:
@@ -15,6 +16,7 @@ databases:
         lof-annot: LoF
         default-filters: 
           nonessentiality: controls_nhomalt>0
+        op-filters:
         lof-filters:
           confidence: HC
 
