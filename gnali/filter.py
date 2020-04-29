@@ -23,10 +23,12 @@ class Filter:
     attribute = ""
     operator = ""
     value = ""
+    name = ""
 
-    def __init__(self, expression):
+    def __init__(self, name, expression):
+        self.name = name
         self.attribute, self.operator, \
-                        self.value = re.split('(>|>=|<|<=|==|!=)', expression)
+            self.value = re.split('(>|>=|<|<=|==|!=)', expression)
 
     def apply(self, record):
         self.record_value = record.info[self.attribute]
