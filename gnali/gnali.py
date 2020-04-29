@@ -383,7 +383,6 @@ def main():
         target_list = find_test_locations(genes_df)
 
         db_info = get_db_config(DB_CONFIG_FILE, args.database)
-        print(db_info)
         variants = get_plof_variants(target_list, db_info)
 
         results, results_basic = extract_lof_annotations(variants)
