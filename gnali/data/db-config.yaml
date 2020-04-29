@@ -12,11 +12,12 @@ databases:
   #       default-filters:
   #         nonessentiality: <filter specifying that number of controls is greater than zero>
   #                          (Other filters can be specified with the format <name>: <filter>
-  #                           Filters must be based on parameters appearing in the INFO section 
+  #                           <name> is for your reference only 
+  #                           <filter> must be based on parameters appearing in the INFO section 
   #                           equaling something, ex. 'controls_nhomalt=0'. 
   #                           Comparison operators for filters should include one of:
   #                             >, >=, <, <=, =, and !=.
-  #                           Filters can be by string or numerical values.)
+  #                           Filters can be comparisons by string or numerical values.)
   #       lof-filters:
   #         confidence: <annotation id signifying high-confidence used with 'lof-annot' specified above>
   #                     (Currently there is no support to add additional filters in this section)
