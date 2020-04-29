@@ -4,7 +4,7 @@ default: gnomadv2.1.1
 databases:
   # Format to add a new database:
   # <database id>:
-  #   - <database file name> (you will need to add one for every URL/file in the database release)
+  #   - <database file name> (you will need to add one for every URL/file in the database)
   #       url: <HTTP (not HTTPS) url of vcf database>
   #       lof-id: <id of the loss-of-function tool used for annotations in the INFO section 
   #                of the vcf header)>
