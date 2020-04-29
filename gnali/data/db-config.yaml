@@ -1,5 +1,25 @@
 default: gnomadv2.1.1
+         # default database used when no databases are specified by the user, 
+         # given as the database release name
 databases:
+  # Format to add a new database:
+  # <database release>:
+  #   - <database name> (you will need to add one for every URL in the database release)
+  #       url: <HTTP (not HTTPS) url of vcf database>
+  #       lof-id: <id of the loss-of-function tool used for annotations in the INFO section 
+  #                of the vcf header)>
+  #       lof-annot: <name of the annotation used to determine if a variant is loss-of-function>
+  #       default-filters:
+  #         nonessentiality: <filter specifying that number of controls is greater than zero>
+  #                          (Other filters can be specified with the format <name>: <filter>
+  #                           Filters must be based on parameters appearing in the INFO section 
+  #                           equaling something, ex. 'controls_nhomalt=0'. 
+  #                           Comparison operators for filters should include one of:
+  #                             >, >=, <, <=, =, and !=.
+  #                           Filters can be by string or numerical values.)
+  #       lof-filters:
+  #         confidence: <annotation id signifying high-confidence used with 'lof-annot' specified above>
+  #                     (Currently there is no support to add additional filters in this section)
   gnomadv2.1.1:
     - exomes:
         url: http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz
