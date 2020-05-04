@@ -128,7 +128,7 @@ class TestGNALI:
         with tempfile.TemporaryDirectory() as temp:
             db_config_file = open(DB_CONFIG_FILE, 'r')
             db_config = yaml.load(db_config_file.read(), Loader=yaml.FullLoader)
-            assert gnali.get_db_tbi(db_config['databases']['gnomadv2.1.1'][0]['exomes'], temp, MAX_TIME)
+            assert gnali.get_db_tbi(db_config['databases']['gnomadv2.1.1']['exomes'], temp, MAX_TIME)
     
     def test_get_db_tbi_lock_timeout_exception(self, monkeypatch):
         with tempfile.TemporaryDirectory() as temp:
@@ -143,7 +143,7 @@ class TestGNALI:
             monkeypatch.setattr(gnali, "download_file", mock_download_file)
             db_config_file = open(DB_CONFIG_FILE, 'r')
             db_config = yaml.load(db_config_file.read(), Loader=yaml.FullLoader)
-            assert gnali.get_db_tbi(db_config['databases']['gnomadv2.1.1'][0]['exomes'], tbi_path, MAX_TIME)  
+            assert gnali.get_db_tbi(db_config['databases']['gnomadv2.1.1']['exomes'], tbi_path, MAX_TIME)  
     ########################################################
 
     
@@ -197,7 +197,8 @@ class TestGNALI:
 
         db_config_file = open(DB_CONFIG_FILE, 'r')
         db_config = yaml.load(db_config_file.read(), Loader=yaml.FullLoader)
-        db_config = db_config['databases']['gnomadv2.1.1']
+        db_config = db_config['databases'][db_config['default']]
+        #print(db_config)
         
         method_variants = gnali.get_plof_variants(target_list, db_config)
         method_variants = [str(variant) for variant in method_variants]

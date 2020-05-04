@@ -45,6 +45,7 @@ results*
 *profile*.txt
 gnali/patch.txt
 chr18*
+gnomad3*
 
 # WIP
 gnali/output.py

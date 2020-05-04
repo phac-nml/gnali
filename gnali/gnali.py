@@ -232,38 +232,37 @@ def get_plof_variants(target_list, db_info):
     """
     variants = []
     max_time = 180
-    for config in db_info:
-        for info in config.values():
-            tbi = get_db_tbi(info, DATA_PATH, max_time)
-            tbx = pysam.TabixFile(info['url'], index=tbi)
-            header = tbx.header
+    for info in db_info.values():
+        tbi = get_db_tbi(info, DATA_PATH, max_time)
+        tbx = pysam.TabixFile(info['url'], index=tbi)
+        header = tbx.header
 
-            # get index of LoF in header
-            annot_header = [line for line in header
-                            if "ID={}".format(info['lof-id']) in line]
-            lof_index = str(annot_header).split("|").index(info['lof-annot'])
-            test_locations = target_list
+        # get index of LoF in header
+        annot_header = [line for line in header
+                        if "ID={}".format(info['lof']['id']) in line]
+        lof_index = str(annot_header).split("|").index(info['lof']['annot'])
+        test_locations = target_list
 
-            # transform filters into objects
-            filter_objs = []
-            if info['default-filters'] is not None:
-                filter_objs = [Filter(key, value) for key, value
-                               in info['default-filters'].items()]
+        # transform filters into objects
+        filter_objs = []
+        if info['default-filters'] is not None:
+            filter_objs = [Filter(key, value) for key, value
+                            in info['default-filters'].items()]
 
-            # get records in locations
-            for location in test_locations:
-                records = tbx.fetch(reference=location)
-                variants.extend(filter_plof_variants(records,
-                                info, lof_index, filter_objs))
+        # get records in locations
+        for location in test_locations:
+            records = tbx.fetch(reference=location)
+            variants.extend(filter_plof_variants(records,
+                            info, lof_index, filter_objs))
 
     return variants
 
 
 def filter_plof_variants(records, db_info, lof_index, filters):
     passed = []
-    conf_filter = db_info['lof-filters']['confidence']
+    conf_filter = db_info['lof']['filters']['confidence']
     qual_filter = "PASS"
-    lof_tool = db_info['lof-id']
+    lof_tool = db_info['lof']['id']
 
     try:
         for record in records:
