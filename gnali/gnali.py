@@ -247,7 +247,7 @@ def get_plof_variants(target_list, db_info):
         filter_objs = []
         if info['default-filters'] is not None:
             filter_objs = [Filter(key, value) for key, value
-                            in info['default-filters'].items()]
+                           in info['default-filters'].items()]
 
         # get records in locations
         for location in test_locations:
