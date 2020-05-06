@@ -13,8 +13,7 @@ databases:
   #         id: <(REQUIRED) id of the loss-of-function tool used for annotations in the INFO section 
   #                   the vcf header)>
   #         annot: <(REQUIRED) name of the annotation used to determine if a variant is loss-of-function>
-  #       default-filters: ((REQUIRED) If you have no default filters to specify, then leave this label in and
-  #                         and do not add anything under its indent.)
+  #       default-filters: (If you have no default filters to specify, omit this label.)
   #         nonessentiality: (Required only if database has non-viable samples. If all sequences are 
   #                           collected from healthy samples, do not include this label.)
   #                          <filter specifying that number of controls is greater than zero>
