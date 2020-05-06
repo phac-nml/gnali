@@ -35,6 +35,7 @@ from gnali.exceptions import EmptyFileError, TBIDownloadError, \
 from gnali.filter import Filter
 from gnali.variants import Variant
 import gnali.parsers as parsers
+import pkg_resources
 
 SCRIPT_NAME = 'gNALI'
 SCRIPT_INFO = "Given a list of genes to test, gNALI finds all potential \
@@ -366,7 +367,12 @@ def init_parser(id):
                         help='Force existing output folder to be overwritten')
     parser.add_argument('-d', '--database',
                         help='Database to query. Options: {}'
-                        .format([*get_db_config(DB_CONFIG_FILE, '').keys()]))
+                        .format([*get_db_config(DB_CONFIG_FILE, '').keys()])) 
+    parser.add_argument('-V', '--version', 
+                        action='version', 
+                        version='%(prog)s {}'
+                        .format(pkg_resources.require("gnali")[0].version))
+    
 
     return parser
 
