@@ -30,9 +30,11 @@ import urllib
 import tempfile
 import yaml
 from filelock import FileLock
-from gnali.exceptions import EmptyFileError, TBIDownloadError
+from gnali.exceptions import EmptyFileError, TBIDownloadError, \
+                             InvalidConfigurationError
 from gnali.filter import Filter
 from gnali.variants import Variant
+import gnali.parsers as parsers
 
 SCRIPT_NAME = 'gNALI'
 SCRIPT_INFO = "Given a list of genes to test, gNALI finds all potential \
@@ -127,12 +129,15 @@ def get_db_config(config_file, dbs):
         with open(config_file, 'r') as config_stream:
             config = yaml.load(config_stream.read(),
                                Loader=yaml.FullLoader)
+            parsers.validate_config(config)
             if dbs == '':
                 return config['databases']
             elif dbs is None:
                 return config['databases'][config['default']]
             else:
                 return config['databases'][dbs]
+    except InvalidConfigurationError:
+        raise
     except Exception as error:
         print("Could not read from database configuration \
               file:", config_file)

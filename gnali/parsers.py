@@ -16,10 +16,10 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from exceptions import InvalidConfigurationError
+from gnali.exceptions import InvalidConfigurationError
 
 
-def valididate_config(config):
+def validate_config(config):
 
     if config['default'] == "" or \
        config['default'] not in config['databases']:
