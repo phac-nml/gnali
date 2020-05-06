@@ -28,22 +28,23 @@ import pandas as pd
 import uuid
 import urllib
 import tempfile
+import yaml
 from filelock import FileLock
-from gnali.exceptions import EmptyFileError, TBIDownloadError
+from gnali.exceptions import EmptyFileError, TBIDownloadError, \
+                             InvalidConfigurationError
 from gnali.filter import Filter
 from gnali.variants import Variant
+import gnali.parsers as parsers
+import pkg_resources
 
 SCRIPT_NAME = 'gNALI'
 SCRIPT_INFO = "Given a list of genes to test, gNALI finds all potential \
                 loss of function variants of those genes."
 
 ENSEMBL_HOST = 'http://grch37.ensembl.org'
-GNOMAD_EXOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz" # noqa
-GNOMAD_GENOMES = "http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz" # noqa
-GNOMAD_DBS = [GNOMAD_EXOMES, GNOMAD_GENOMES]
-LOF_ANNOT = "vep"
 GNALI_PATH = Path(__file__).parent.absolute()
 DATA_PATH = "{}/data/".format(str(GNALI_PATH))
+DB_CONFIG_FILE = "{}db-config.yaml".format(str(DATA_PATH))
 
 
 def open_test_file(input_file):
@@ -124,6 +125,26 @@ def find_test_locations(gene_descriptions):
     return target_list
 
 
+def get_db_config(config_file, dbs):
+    try:
+        with open(config_file, 'r') as config_stream:
+            config = yaml.load(config_stream.read(),
+                               Loader=yaml.FullLoader)
+            parsers.validate_config(config)
+            if dbs == '':
+                return config['databases']
+            elif dbs is None:
+                return config['databases'][config['default']]
+            else:
+                return config['databases'][dbs]
+    except InvalidConfigurationError:
+        raise
+    except Exception as error:
+        print("Could not read from database configuration "
+              "file:", config_file)
+        raise Exception(error)
+
+
 def tbi_needed(url, dest_path):
     """Given a tbi url, determine if we must download it.
         We will download it if it does not yet exist or it
@@ -178,19 +199,19 @@ def get_db_tbi(database, data_path, max_time):
     """Download the index (.tbi) file for a database.
 
     Args:
-        database: a database url
+        database: a database config
         data_path: where to save the index file
         max_time: maximum time to wait for
                   download. An exception is
                   raised if download doesn't
                   complete in this time.
     """
-    tbi_url = "{}.tbi".format(database)
-    tbi_name = database.split("/")[-1]
-    tbi_path = "{}{}.tbi".format(data_path, tbi_name)
-    tbi_lock = "{}.lock".format(tbi_path)
+    tbi_url = "{}.tbi".format(database['url'])
+    tbi_name = tbi_url.split("/")[-1]
+    tbi_path = "{}{}".format(data_path, tbi_name)
+    tbi_lock_path = "{}.{}.lock".format(tbi_path, tbi_name)
     # lock access to index file
-    lock = FileLock(tbi_lock)
+    lock = FileLock(tbi_lock_path)
 
     try:
         with lock.acquire(timeout=max_time):
@@ -207,7 +228,7 @@ def get_db_tbi(database, data_path, max_time):
     return tbi_path
 
 
-def get_plof_variants(target_list, annot, op_filters, *databases):
+def get_plof_variants(target_list, db_info):
     """Query the gnomAD database for loss of function variants
         of those genes with Tabix.
 
@@ -217,53 +238,60 @@ def get_plof_variants(target_list, annot, op_filters, *databases):
     """
     variants = []
     max_time = 180
-    for database in databases:
-        tbi = get_db_tbi(database, DATA_PATH, max_time)
-        tbx = pysam.TabixFile(database, index=tbi)
+    for info in db_info.values():
+        tbi = get_db_tbi(info, DATA_PATH, max_time)
+        tbx = pysam.TabixFile(info['url'], index=tbi)
         header = tbx.header
 
         # get index of LoF in header
         annot_header = [line for line in header
-                        if "ID={}".format(annot) in line]
-        lof_index = str(annot_header).split("|").index("LoF")
+                        if "ID={}".format(info['lof']['id']) in line]
+        lof_index = str(annot_header).split("|").index(info['lof']['annot'])
         test_locations = target_list
 
         # transform filters into objects
-        op_filter_objs = [Filter(op_filter) for op_filter in op_filters]
+        filter_objs = []
+        if info.get('default-filters') is not None:
+            filter_objs = [Filter(key, value) for key, value
+                           in info['default-filters'].items()]
 
         # get records in locations
         for location in test_locations:
             records = tbx.fetch(reference=location)
             variants.extend(filter_plof_variants(records,
-                            annot, lof_index, op_filter_objs))
+                            info, lof_index, filter_objs))
 
     return variants
 
 
-def filter_plof_variants(records, annot, lof_index, op_filters):
+def filter_plof_variants(records, db_info, lof_index, filters):
     passed = []
-    conf_filter = "HC"
+    conf_filter = db_info['lof']['filters']['confidence']
     qual_filter = "PASS"
-    for record in records:
-        record = Variant(record)
+    lof_tool = db_info['lof']['id']
 
-        # LoF and quality filter
-        vep_str = record.info[annot]
-        lof = vep_str.split("|")[lof_index]
-        if not (lof == conf_filter and record.filter == qual_filter):
-            continue
+    try:
+        for record in records:
+            record = Variant(record)
+            # LoF and quality filter
+            vep_str = record.info[lof_tool]
+            lof = vep_str.split("|")[lof_index]
+            if not (lof == conf_filter and
+                    record.filter == qual_filter):
+                continue
 
-        # additional filters from user
-        # e.g. 'controls_nhomalt>0'
-        filters_passed = True
-        for op_filter in op_filters:
-            if not op_filter.apply(record):
-                filters_passed = False
-                break
-        if not filters_passed:
-            continue
-        passed.append(record)
-
+            # additional filters from user
+            filters_passed = True
+            for filt in filters:
+                if not filt.apply(record):
+                    filters_passed = False
+                    break
+            if not filters_passed:
+                continue
+            passed.append(record)
+    except Exception as error:
+        print(error)
+        raise
     return passed
 
 
@@ -337,6 +365,13 @@ def init_parser(id):
     parser.add_argument('-f', '--force',
                         action='store_true',
                         help='Force existing output folder to be overwritten')
+    parser.add_argument('-d', '--database',
+                        help='Database to query. Options: {}'
+                        .format([*get_db_config(DB_CONFIG_FILE, '').keys()]))
+    parser.add_argument('-V', '--version',
+                        action='version',
+                        version='%(prog)s {}'
+                        .format(pkg_resources.require("gnali")[0].version))
 
     return parser
 
@@ -356,10 +391,8 @@ def main():
         genes_df = get_test_gene_descriptions(genes)
         target_list = find_test_locations(genes_df)
 
-        op_filters = ["controls_nhomalt>0"]
-
-        variants = get_plof_variants(target_list, LOF_ANNOT,
-                                     op_filters, *GNOMAD_DBS)
+        db_info = get_db_config(DB_CONFIG_FILE, args.database)
+        variants = get_plof_variants(target_list, db_info)
 
         results, results_basic = extract_lof_annotations(variants)
         write_results(results, results_basic,
@@ -367,6 +400,7 @@ def main():
         print("Finished. Output in {}".format(results_dir))
     except Exception as error:
         print(error)
+        raise
 
 
 if __name__ == '__main__':

@@ -1,0 +1,22 @@
+default: gnomadv2.1.1
+databases:
+  gnomadv2.1.1:
+    exomes:
+      url: http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz
+      lof:
+        id: vep
+        annot: LoF
+        filters:
+          confidence: HC
+      default-filters: 
+        nonessentiality: controls_nhomalt>0 
+    genomes:
+      url: http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz
+      lof:
+        id: vep
+        annot: LoF
+        filters:
+          confidence: HC
+      default-filters: 
+        nonessentiality: controls_nhomalt>0
+
