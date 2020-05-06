@@ -367,12 +367,11 @@ def init_parser(id):
                         help='Force existing output folder to be overwritten')
     parser.add_argument('-d', '--database',
                         help='Database to query. Options: {}'
-                        .format([*get_db_config(DB_CONFIG_FILE, '').keys()])) 
-    parser.add_argument('-V', '--version', 
-                        action='version', 
+                        .format([*get_db_config(DB_CONFIG_FILE, '').keys()]))
+    parser.add_argument('-V', '--version',
+                        action='version',
                         version='%(prog)s {}'
                         .format(pkg_resources.require("gnali")[0].version))
-    
 
     return parser
 
