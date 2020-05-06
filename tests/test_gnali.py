@@ -33,8 +33,10 @@ from filelock import FileLock
 import time
 import yaml
 from gnali import gnali
-from gnali.exceptions import EmptyFileError, TBIDownloadError
+from gnali.exceptions import EmptyFileError, TBIDownloadError, InvalidConfigurationError
 from gnali.variants import Variant
+import gnali.parsers as parsers
+
 TEST_PATH = pathlib.Path(__file__).parent.absolute()
 TEST_INPUT_CSV = "{}/data/test_genes.csv".format(str(TEST_PATH))
 TEST_INPUT_TXT = "{}/data/test_genes.txt".format(str(TEST_PATH))
@@ -53,6 +55,8 @@ TEST_DB_TBI_URL = "http://fake_db.vcf.bgz"
 MAX_TIME = 180
 
 DB_CONFIG_FILE = "{}/data/db-config.yaml".format(str(TEST_PATH))
+DB_CONFIG_NO_DEFAULT = "{}/data/db-config-no-default.yaml".format(str(TEST_PATH))
+DB_CONFIG_MISSING_REQ = "{}/data/db-config-missing-req.yaml".format(str(TEST_PATH))
 
 class MockHeader:
     headers = {"Content-Length": 0}
@@ -147,6 +151,22 @@ class TestGNALI:
     ########################################################
 
     
+    ### Tests for get_db_config() ##########################
+
+    def test_get_db_config_happy(self):
+        assert gnali.get_db_config(DB_CONFIG_FILE, '')
+
+    def test_get_db_config_no_default(self):
+        with pytest.raises(InvalidConfigurationError):
+            assert gnali.get_db_config(DB_CONFIG_NO_DEFAULT, '')
+
+    def test_get_db_config_missing_req(self):
+        with pytest.raises(InvalidConfigurationError):
+            assert gnali.get_db_config(DB_CONFIG_MISSING_REQ, '')
+
+    ########################################################
+
+
     def test_get_test_gene_descs(self, monkeypatch):
         genes_list = ['CCR5', 'ALCAM']
         def mock_get_human_genes():

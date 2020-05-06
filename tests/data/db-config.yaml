@@ -1,31 +1,5 @@
 default: gnomadv2.1.1
-         # default database used when no databases are specified by the user, 
-         # given as the database id
 databases:
-  # Format to add a new database:
-  # <(REQUIRED) database id>:
-  #   - <(REQUIRED) database file name> (you will need to add one for every URL/file in the database)
-  #       url: <(REQUIRED) HTTP (not HTTPS) url of vcf database>
-  #       lof:
-  #         filters: ((REQUIRED) Filters specific to the loss-of-function annotations)
-  #           confidence: <(REQUIRED) annotation id signifying high-confidence used with 'lof-annot' specified above>
-  #                       (Currently there is no support to add additional filters in this section)
-  #         id: <(REQUIRED) id of the loss-of-function tool used for annotations in the INFO section 
-  #                   the vcf header)>
-  #         annot: <(REQUIRED) name of the annotation used to determine if a variant is loss-of-function>
-  #       default-filters: ((REQUIRED) If you have no default filters to specify, then leave this label in and
-  #                         and do not add anything under its indent.)
-  #         nonessentiality: (Required only if database has non-viable samples. If all sequences are 
-  #                           collected from healthy samples, do not include this label.)
-  #                          <filter specifying that number of controls is greater than zero>
-  #                          (Other filters can be specified with the format <name>: <filter>
-  #                           <name> is for your reference only 
-  #                           <filter> must be based on parameters appearing in the INFO section 
-  #                           equaling something, ex. 'controls_nhomalt=0'. 
-  #                           Comparison operators for filters should include one of:
-  #                             >, >=, <, <=, =, and !=.
-  #                           Filters can be comparisons by string or numerical values.)
-  #       
   gnomadv2.1.1:
     exomes:
       url: http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz

@@ -1,0 +1,9 @@
+databases:
+  fake_db:
+    fake_file:
+      url: http://www.com
+      lof:
+        id: vep
+        annot: LoF
+        filters:
+          confidence: HC

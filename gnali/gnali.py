@@ -139,8 +139,8 @@ def get_db_config(config_file, dbs):
     except InvalidConfigurationError:
         raise
     except Exception as error:
-        print("Could not read from database configuration \
-              file:", config_file)
+        print("Could not read from database configuration "
+              "file:", config_file)
         raise Exception(error)
 
 
