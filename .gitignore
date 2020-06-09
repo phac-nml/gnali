@@ -17,7 +17,6 @@ empty_file.csv
 # Data stuff
 .pybiomart.sqlite
 gnali/data*
-!gnali/data/.gitkeep
 !gnali/data/db-config.yaml
 !gnali/data/__init__.py
 
@@ -42,10 +41,13 @@ gNALI-results/
 .coverage
 test.txt
 results*
+vcf_results*
 *profile*.txt
 gnali/patch.txt
 chr18*
 gnomad3*
+gnomad2*
 
+# WFH
+.vscode
 # WIP
-gnali/output.py

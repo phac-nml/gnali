@@ -28,11 +28,13 @@ class Variant:
     filter = ''
     info = {}
     info_str = ''
+    record_str = ''
 
     def __init__(self, record):
+        self.record_str = record
         self.chrom, self.pos, self.id, self.ref, \
-                    self.alt, self.qual, self.filter, \
-                    self.info_str = record.split("\t")
+            self.alt, self.qual, self.filter, \
+            self.info_str = record.split("\t")
         self.info = dict([info_item.split("=") for
                           info_item in self.info_str.split(";")
                           if len(info_item.split("=")) > 1])

@@ -19,7 +19,6 @@ specific language governing permissions and limitations under the License.
 import pytest
 import pathlib
 import urllib
-from multiprocessing import Process
 from pybiomart import Dataset, Server
 import pysam
 import re
@@ -30,12 +29,11 @@ import numpy as np
 import csv
 import filelock
 from filelock import FileLock
-import time
 import yaml
 from gnali import gnali
 from gnali.exceptions import EmptyFileError, TBIDownloadError, InvalidConfigurationError
 from gnali.variants import Variant
-import gnali.parsers as parsers
+from gnali.filter import Filter
 
 TEST_PATH = pathlib.Path(__file__).parent.absolute()
 TEST_INPUT_CSV = "{}/data/test_genes.csv".format(str(TEST_PATH))
@@ -46,8 +44,6 @@ ENSEMBL_HUMAN_GENES = "{}/data/ensembl_hsapiens_dataset.csv".format(str(TEST_PAT
 EXPECTED_PLOF_VARIANTS = "{}/data/expected_plof_variants.txt".format(str(TEST_PATH))
 TEST_RESULTS = "{}/data/test_results.txt".format(str(TEST_PATH))
 TEST_RESULTS_BASIC = "{}/data/test_results.txt".format(str(TEST_PATH))
-
-START_DIR = os.getcwd()
 
 TEST_DB_TBI = "{}/data/fake_db.vcf.bgz.tbi".format(str(TEST_PATH))
 TEST_DB_TBI_NAME = TEST_DB_TBI.split("/")[-1]
@@ -63,10 +59,7 @@ class MockHeader:
     def read(self):
         return ""
 
-class TestGNALI:
-    @classmethod
-    def setup_class(cls):
-        sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+class TestGNALIMethods:
 
     ### Tests for open_test_file() ###########################
     def test_open_test_file_happy_csv(self):
@@ -207,7 +200,7 @@ class TestGNALI:
         assert method_test_locations == target_list
 
     ### Tests for get_plof_variants() ######################
-    def test_get_plof_variants_happy(self):
+    def test_get_variants_happy(self):
         target_list = ["3:46411633-46417697"]
         
         expected_variants = []
@@ -218,9 +211,9 @@ class TestGNALI:
         db_config_file = open(DB_CONFIG_FILE, 'r')
         db_config = yaml.load(db_config_file.read(), Loader=yaml.FullLoader)
         db_config = db_config['databases'][db_config['default']]
-        #print(db_config)
         
-        method_variants = gnali.get_plof_variants(target_list, db_config)
+        header, method_variants = gnali.get_variants(target_list, db_config, 
+                                                     [Filter("homozygous-controls","controls_nhomalt>0")])
         method_variants = [str(variant) for variant in method_variants]
 
         assert expected_variants == method_variants
@@ -233,7 +226,7 @@ class TestGNALI:
                 row = Variant(str(row))
                 test_variants.append(row)
 
-        method_results, method_results_basic = gnali.extract_lof_annotations(test_variants)
+        method_results, method_results_basic, results_as_vcf = gnali.extract_lof_annotations(test_variants)
 
         test_variants = [variant.as_tuple_vep() for variant in test_variants]
         results = np.asarray(test_variants, dtype=np.str)
@@ -268,5 +261,5 @@ class TestGNALI:
         test_results.to_csv("{}/{}".format(expected_results_dir, expected_results_file), sep='\t', mode='a', index=False)
         test_results_basic.to_csv("{}/{}".format(expected_results_dir, expected_results_basic_file), sep='\t', mode='a', index=False)
 
-        gnali.write_results(test_results, test_results_basic, method_results_dir, False)
+        gnali.write_results(test_results, test_results_basic, None, None, method_results_dir, False, False)
         assert filecmp.dircmp(expected_results_dir, method_results_dir)
