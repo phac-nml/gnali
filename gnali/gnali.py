@@ -31,10 +31,12 @@ import tempfile
 import yaml
 from filelock import FileLock
 from gnali.exceptions import EmptyFileError, TBIDownloadError, \
-                             InvalidConfigurationError
+                             InvalidConfigurationError, \
+                             InvalidFilterError
 from gnali.filter import Filter
 from gnali.variants import Variant
-import gnali.parsers as parsers
+from gnali.dbconfig import Config
+import gnali.outputs as outputs
 import pkg_resources
 
 SCRIPT_NAME = 'gNALI'
@@ -52,6 +54,7 @@ def open_test_file(input_file):
 
     Args:
         input_file: input file containing genes to find
+                    (csv, tsv/tab, txt)
     """
     test_genes_list = []
     try:
@@ -110,7 +113,7 @@ def find_test_locations(gene_descriptions):
 
     Args:
         gene_descriptions: results from Ensembl database
-        from get_test_gene_descriptions()
+                            from get_test_gene_descriptions()
     """
     target_list = []
     # Format targets for Tabix
@@ -125,24 +128,73 @@ def find_test_locations(gene_descriptions):
     return target_list
 
 
-def get_db_config(config_file, dbs):
+def get_db_config(config_file, db):
+    """Read and parse the database configuration file.
+
+    Args:
+        config_file: config file path (yaml)
+        db: database whose config we want to return
+    """
     try:
         with open(config_file, 'r') as config_stream:
-            config = yaml.load(config_stream.read(),
-                               Loader=yaml.FullLoader)
-            parsers.validate_config(config)
-            if dbs == '':
-                return config['databases']
-            elif dbs is None:
-                return config['databases'][config['default']]
-            else:
-                return config['databases'][dbs]
+            db_config = Config(db, yaml.load(config_stream.read(),
+                               Loader=yaml.FullLoader))
+            db_config.validate_config()
+            return db_config
+
     except InvalidConfigurationError:
         raise
     except Exception as error:
         print("Could not read from database configuration "
               "file:", config_file)
         raise Exception(error)
+
+
+def validate_filters(config, predefined_filters, additional_filters):
+    """Validate that user-given predefined filters exist in
+        the config file, and that additional filters are in the
+        correct format.
+
+    Args:
+        config: database configuration object
+        predefined_filters: list of user-specified predefined filters
+        additional_filters: list of user-given additional filters
+    """
+    if predefined_filters is not None:
+        for pre_filter in predefined_filters:
+            try:
+                config.validate_predefined_filter(pre_filter)
+            except InvalidFilterError:
+                raise InvalidFilterError(pre_filter)
+    if additional_filters is not None:
+        for add_filter in additional_filters:
+            try:
+                add_filter = Filter(add_filter, add_filter)
+            except ValueError:
+                raise InvalidFilterError(add_filter)
+
+
+def transform_filters(db_config, pre_filters, add_filters):
+    """Transform predefined and additional filters
+        into Filter objects in a single list.
+
+    Args:
+        db_config: database configuration object
+        pre_filters: list of user-specified predefined filters
+        add_filters: list of user-given additional filters
+    """
+    filter_objs = []
+    # add predefined filters specified
+    for db_file, info in db_config.config.items():
+        if pre_filters is not None:
+            filter_objs = {filt: info['predefined-filters'][filt]
+                           for filt in pre_filters}
+            filter_objs = [Filter(key, value) for key, value
+                           in filter_objs.items()]
+    # add additional filters specified
+    if add_filters is not None:
+        filter_objs.extend(add_filters)
+    return filter_objs
 
 
 def tbi_needed(url, dest_path):
@@ -228,13 +280,16 @@ def get_db_tbi(database, data_path, max_time):
     return tbi_path
 
 
-def get_plof_variants(target_list, db_info):
-    """Query the gnomAD database for loss of function variants
-        of those genes with Tabix.
+def get_variants(target_list, db_info, filter_objs):
+    """Query the gnomAD database for variants with Tabix,
+        apply loss-of-function filters, user-specified predefined
+        filters, and user-specified additional filters.
 
     Args:
         target_list: list of chromosome locations to check
-        *databases: list of databases to query
+        db_info: configuration of database
+        pre_filters: list of predefined filters
+        add_filters: list of additional filters
     """
     variants = []
     max_time = 180
@@ -243,41 +298,44 @@ def get_plof_variants(target_list, db_info):
         tbx = pysam.TabixFile(info['url'], index=tbi)
         header = tbx.header
 
-        # get index of LoF in header
-        annot_header = [line for line in header
-                        if "ID={}".format(info['lof']['id']) in line]
-        lof_index = str(annot_header).split("|").index(info['lof']['annot'])
-        test_locations = target_list
+        lof_index = None
+        if info.get('lof') is not None:
+            # get index of LoF in header
+            annot_header = [line for line in header
+                            if "ID={}".format(info['lof']['id']) in line]
+            lof_index = str(annot_header).split("|") \
+                .index(info['lof']['annot'])
 
-        # transform filters into objects
-        filter_objs = []
-        if info.get('default-filters') is not None:
-            filter_objs = [Filter(key, value) for key, value
-                           in info['default-filters'].items()]
+        test_locations = target_list
 
         # get records in locations
         for location in test_locations:
             records = tbx.fetch(reference=location)
-            variants.extend(filter_plof_variants(records,
-                            info, lof_index, filter_objs))
+            variants.extend(filter_variants(records,
+                            info, filter_objs, lof_index))
 
-    return variants
+    return header, variants
 
 
-def filter_plof_variants(records, db_info, lof_index, filters):
+def filter_variants(records, db_info, filters, lof_index):
+    """Apply all filters (loss-of-function, predefined,
+        additional).
+    Args:
+        records: list of records (from Tabix) to filter
+        db_info: database configuration
+        filters: list of filters as Filter objects
+        lof_index: index of loss-of-function flag
+                   (None if not applicable)
+    """
     passed = []
-    conf_filter = db_info['lof']['filters']['confidence']
     qual_filter = "PASS"
-    lof_tool = db_info['lof']['id']
 
     try:
         for record in records:
             record = Variant(record)
-            # LoF and quality filter
-            vep_str = record.info[lof_tool]
-            lof = vep_str.split("|")[lof_index]
-            if not (lof == conf_filter and
-                    record.filter == qual_filter):
+            # quality filter
+            if not (record.filter == qual_filter and
+                    filter_by_plof(record, db_info, lof_index)):
                 continue
 
             # additional filters from user
@@ -295,17 +353,43 @@ def filter_plof_variants(records, db_info, lof_index, filters):
     return passed
 
 
-def extract_lof_annotations(variants):
-    """Take the variants returned from get_plof_variants() and
-        organize them into dataframes, then extract the LoF annotations.
+def filter_by_plof(record, db_info, lof_index):
+    """Apply loss-of-function filters (if any).
 
     Args:
-        variants: list of variants from get_lof_variants()
+        record: Tabix record to check for loss-of-function flags
+        db_info: database configuration:
+        lof_index: index of loss-of-function flag
+                   (None if not applicable)
     """
+    if lof_index is not None:
+        lof_tool = db_info['lof']['id']
+        conf_filter = db_info['lof']['filters']['confidence']
+        vep_str = record.info[lof_tool]
+        lof = vep_str.split("|")[lof_index]
+        if lof == conf_filter:
+            return True
+        return False
+    else:
+        return True
+
+
+def extract_lof_annotations(variants):
+    """Take the variants returned from get_variants() and
+        organize them into dataframes, then extract the
+        loss-of-function annotations.
+
+    Args:
+        variants: list of variants from get_variants()
+                  as Variant objects
+    """
+    variant_records = [variant.record_str for variant in variants]
+    results_as_vcf = variant_records
     variants = [variant.as_tuple_vep() for variant in variants]
     results = np.asarray(variants, dtype=np.str)
     results = pd.DataFrame(data=results)
 
+    # Name columns
     results.columns = ["Chromosome", "Position_Start", "RSID",
                        "Reference_Allele", "Alternate_Allele",
                        "Score", "Quality", "VEP"]
@@ -324,36 +408,56 @@ def extract_lof_annotations(variants):
     results_basic = results["HGNC_Symbol"].drop_duplicates(keep='first',
                                                            inplace=False)
 
-    return results, results_basic
+    return results, results_basic, results_as_vcf
 
 
-def write_results(results, results_basic,
-                  results_dir, overwrite):
-    """ Write two output files:
-        - A detailed report outlining the gene variants, and
-        - A basic report listing only the genes with LoF variants
+def write_results(results, results_basic, header, results_as_vcf,
+                  results_dir, overwrite, keep_vcf):
+    """ Write output files:
+        - A detailed report outlining the gene variants
+        - A basic report listing only the genes with
+          loss-of-function variants
+        - (Optional) A vcf file of all variants passing filtering
+          if user uses -v/--vcf
 
     Args:
         results: detailed results from extract_lof_variants()
         results_basic: basic reuslts from extract_lof_variants
-        current_results_dir: directory to contain this run's results
+        header: database vcf header
         results_dir: directory containing all gNALI results
-        args: command line arguments
+        overwrite: whether or not we overwrite an existing output folder
+        keep_vcf: whether or not we create an additional vcf output
     """
     results_file = "Nonessential_Host_Genes_(Detailed).txt"
     results_basic_file = "Nonessential_Host_Genes_(Basic).txt"
 
+    results_path = "{}/{}".format(results_dir, results_file)
+    results_basic_path = "{}/{}".format(results_dir,
+                                        results_basic_file)
+
     Path(results_dir).mkdir(parents=True, exist_ok=overwrite)
-    results.to_csv("{}/{}".format(results_dir, results_file),
-                   sep='\t', mode='a', index=False)
-    results_basic.to_csv("{}/{}".format(results_dir,
-                         results_basic_file),
-                         sep='\t', mode='a', index=False)
+    outputs.write_to_tab(results_path, results)
+    outputs.write_to_tab(results_basic_path, results_basic)
+
+    if(keep_vcf):
+        results_vcf_file = "Nonessential_Gene_Variants.vcf"
+        results_vcf_path = "{}/{}".format(results_dir,
+                                          results_vcf_file)
+        outputs.write_to_vcf(results_vcf_path, header, results_as_vcf)
 
 
 def init_parser(id):
     parser = argparse.ArgumentParser(prog=SCRIPT_NAME,
                                      description=SCRIPT_INFO)
+    config = get_db_config(DB_CONFIG_FILE, '').config
+    dbs_and_filters = {}
+    for db, db_file in config['databases'].items():
+        current_db_filters = {}
+        for file_name, info in db_file.items():
+            pre_filters = info['predefined-filters']
+            current_db_filters[file_name] = str(pre_filters)
+        dbs_and_filters[str(db)] = current_db_filters
+
     parser.add_argument('-i', '--input_file',
                         required=True,
                         help='File of genes to test. \
@@ -366,8 +470,19 @@ def init_parser(id):
                         action='store_true',
                         help='Force existing output folder to be overwritten')
     parser.add_argument('-d', '--database',
-                        help='Database to query. Options: {}'
-                        .format([*get_db_config(DB_CONFIG_FILE, '').keys()]))
+                        help='Database to query. Default: {}\nOptions: {}'
+                        .format(config['default'],
+                                list(config['databases'].keys())))
+    parser.add_argument('-v', '--vcf',
+                        help='Generate vcf file for filtered variants',
+                        action='store_true')
+    parser.add_argument('-p', '--predefined_filters',
+                        nargs='*',
+                        help='Predefined filters. Options: {}'
+                        .format(dbs_and_filters))
+    parser.add_argument('-a', '--additional_filters',
+                        nargs='*',
+                        help='Additional filters')
     parser.add_argument('-V', '--version',
                         action='version',
                         version='%(prog)s {}'
@@ -383,7 +498,6 @@ def main():
         arg_parser.print_help()
         arg_parser.exit()
     args = arg_parser.parse_args()
-
     results_dir = args.output_dir
 
     try:
@@ -391,12 +505,18 @@ def main():
         genes_df = get_test_gene_descriptions(genes)
         target_list = find_test_locations(genes_df)
 
-        db_info = get_db_config(DB_CONFIG_FILE, args.database)
-        variants = get_plof_variants(target_list, db_info)
+        db_config = get_db_config(DB_CONFIG_FILE, args.database)
+        validate_filters(db_config, args.predefined_filters,
+                         args.additional_filters)
+        filters = transform_filters(db_config, args.predefined_filters,
+                                    args.additional_filters)
+        header, variants = get_variants(target_list, db_config.config,
+                                        filters)
 
-        results, results_basic = extract_lof_annotations(variants)
-        write_results(results, results_basic,
-                      results_dir, args.force)
+        results, results_basic, results_as_vcf = \
+            extract_lof_annotations(variants)
+        write_results(results, results_basic, header, results_as_vcf,
+                      results_dir, args.force, args.vcf)
         print("Finished. Output in {}".format(results_dir))
     except Exception as error:
         print(error)

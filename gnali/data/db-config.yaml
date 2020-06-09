@@ -33,8 +33,8 @@ databases:
         annot: LoF
         filters:
           confidence: HC
-      default-filters: 
-        nonessentiality: controls_nhomalt>0 
+      predefined-filters: 
+        homozygous-controls: controls_nhomalt>0 
     genomes:
       url: http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz
       lof:
@@ -42,6 +42,6 @@ databases:
         annot: LoF
         filters:
           confidence: HC
-      default-filters: 
-        nonessentiality: controls_nhomalt>0
+      predefined-filters: 
+        homozygous-controls: controls_nhomalt>0
 
