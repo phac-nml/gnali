@@ -34,6 +34,7 @@ from gnali import gnali
 from gnali.exceptions import EmptyFileError, TBIDownloadError, InvalidConfigurationError
 from gnali.variants import Variant
 from gnali.filter import Filter
+from gnali.dbconfig import Config
 
 TEST_PATH = pathlib.Path(__file__).parent.absolute()
 TEST_INPUT_CSV = "{}/data/test_genes.csv".format(str(TEST_PATH))
@@ -54,12 +55,21 @@ DB_CONFIG_FILE = "{}/data/db-config.yaml".format(str(TEST_PATH))
 DB_CONFIG_NO_DEFAULT = "{}/data/db-config-no-default.yaml".format(str(TEST_PATH))
 DB_CONFIG_MISSING_REQ = "{}/data/db-config-missing-req.yaml".format(str(TEST_PATH))
 
+
 class MockHeader:
     headers = {"Content-Length": 0}
     def read(self):
         return ""
 
 class TestGNALIMethods:
+
+    @classmethod
+    def get_db_config(cls, config_file, db):
+        with open(config_file, 'r') as config_stream:
+            db_config = Config(db, yaml.load(config_stream.read(),
+                               Loader=yaml.FullLoader))
+            db_config.validate_config()
+            return db_config
 
     ### Tests for open_test_file() ###########################
     def test_open_test_file_happy_csv(self):
@@ -226,7 +236,8 @@ class TestGNALIMethods:
                 row = Variant(str(row))
                 test_variants.append(row)
 
-        method_results, method_results_basic, results_as_vcf = gnali.extract_lof_annotations(test_variants)
+        config = self.get_db_config(DB_CONFIG_FILE, 'gnomadv2.1.1')
+        method_results, method_results_basic, results_as_vcf = gnali.extract_lof_annotations(test_variants, config, False)
 
         test_variants = [variant.as_tuple_vep() for variant in test_variants]
         results = np.asarray(test_variants, dtype=np.str)

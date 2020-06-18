@@ -23,14 +23,17 @@ class Config:
 
     config = {}
     is_full = False
+    name = ''
 
     def __init__(self, db, config):
         if db == '':
             self.config = config
             self.is_full = True
         elif db is None:
+            self.name = config['default']
             self.config = config['databases'][config['default']]
         else:
+            self.name = db
             self.config = config['databases'][db]
 
     def validate_config(self):

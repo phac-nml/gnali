@@ -30,6 +30,7 @@ import urllib
 import tempfile
 import yaml
 from filelock import FileLock
+from collections import OrderedDict
 from gnali.exceptions import EmptyFileError, TBIDownloadError, \
                              InvalidConfigurationError, \
                              InvalidFilterError
@@ -148,6 +149,13 @@ def get_db_config(config_file, db):
         print("Could not read from database configuration "
               "file:", config_file)
         raise Exception(error)
+
+
+def validate_pop_freqs_present(config):
+    for file_name, info in config.config.items():
+        if 'population-frequencies' not in info.keys():
+            raise Exception("Population frequencies are not available for "
+                            "database selected: {}".format(config.name))
 
 
 def validate_filters(config, predefined_filters, additional_filters):
@@ -374,7 +382,7 @@ def filter_by_plof(record, db_info, lof_index):
         return True
 
 
-def extract_lof_annotations(variants):
+def extract_lof_annotations(variants, db_info, get_pop_freqs):
     """Take the variants returned from get_variants() and
         organize them into dataframes, then extract the
         loss-of-function annotations.
@@ -385,8 +393,8 @@ def extract_lof_annotations(variants):
     """
     variant_records = [variant.record_str for variant in variants]
     results_as_vcf = variant_records
-    variants = [variant.as_tuple_vep() for variant in variants]
-    results = np.asarray(variants, dtype=np.str)
+    variant_tuple = [variant.as_tuple_vep() for variant in variants]
+    results = np.asarray(variant_tuple, dtype=np.str)
     results = pd.DataFrame(data=results)
 
     # Name columns
@@ -408,7 +416,38 @@ def extract_lof_annotations(variants):
     results_basic = results["HGNC_Symbol"].drop_duplicates(keep='first',
                                                            inplace=False)
 
+    if get_pop_freqs:
+        pop_freqs = extract_pop_freqs(variants, db_info)
+        results = results.merge(pop_freqs, left_index=True, right_index=True)
+
     return results, results_basic, results_as_vcf
+
+
+def extract_pop_freqs(variants, db_info):
+    """Get population frequencies for variants that passed filtering.
+
+    Args:
+        variants: list of variants as Variant objects
+        db_info: config as Config object
+    """
+    # Make a tuple list from the population-frequencies section in config file
+    pop_groups = [(name, group) for info in db_info.values()
+                  for name, group in (info['population-frequencies'].items())]
+    # Remove duplicates
+    pop_groups = OrderedDict(pop_groups)
+    pop_freqs = np.empty(shape=(len(variants), len(pop_groups)), dtype='str')
+
+    # Fill array with population frequencies by variant
+    for col, group in enumerate(list(pop_groups.values())):
+        for row, variant in enumerate(variants):
+            if group in variant.info:
+                pop_freqs[row][col] = variant.info[group]
+            else:
+                pop_freqs[row][col] = '-'
+
+    pop_freqs = pd.DataFrame(data=pop_freqs)
+    pop_freqs.columns = list(pop_groups.keys())
+    return pop_freqs
 
 
 def write_results(results, results_basic, header, results_as_vcf,
@@ -487,6 +526,10 @@ def init_parser(id):
                         action='version',
                         version='%(prog)s {}'
                         .format(pkg_resources.require("gnali")[0].version))
+    parser.add_argument('-P', '--pop_freqs',
+                        help='Get population frequencies '
+                             '(in detailed output file)',
+                        action='store_true')
 
     return parser
 
@@ -501,11 +544,14 @@ def main():
     results_dir = args.output_dir
 
     try:
+        db_config = get_db_config(DB_CONFIG_FILE, args.database)
+        if args.pop_freqs:
+            validate_pop_freqs_present(db_config)
+
         genes = open_test_file(args.input_file)
         genes_df = get_test_gene_descriptions(genes)
         target_list = find_test_locations(genes_df)
 
-        db_config = get_db_config(DB_CONFIG_FILE, args.database)
         validate_filters(db_config, args.predefined_filters,
                          args.additional_filters)
         filters = transform_filters(db_config, args.predefined_filters,
@@ -514,7 +560,7 @@ def main():
                                         filters)
 
         results, results_basic, results_as_vcf = \
-            extract_lof_annotations(variants)
+            extract_lof_annotations(variants, db_config.config, args.pop_freqs)
         write_results(results, results_basic, header, results_as_vcf,
                       results_dir, args.force, args.vcf)
         print("Finished. Output in {}".format(results_dir))
