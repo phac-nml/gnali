@@ -24,6 +24,9 @@ databases:
   #                           Comparison operators for filters should include one of:
   #                             >, >=, <, <=, =, and !=.
   #                           Filters can be comparisons by string or numerical values.)
+  #       population-frequencies:
+  #                               (List of annotations used to sort population groups, in the format
+  #                                 '<name of group>: <group annotation in database vcf>')
   #       
   gnomadv2.1.1:
     exomes:
@@ -35,6 +38,18 @@ databases:
           confidence: HC
       predefined-filters: 
         homozygous-controls: controls_nhomalt>0 
+        heterozygous-controls: controls_nhomalt=0
+      population-frequencies:
+        african: controls_AC_afr
+        ashkenazi-jewish: controls_AC_asj
+        european-non-finnish: controls_AC_nfe
+        finnish: controls_AC_fin
+        south-asian: controls_AC_sas
+        latino: controls_AC_amr
+        east-asian: controls_AC_eas
+        other: controls_AC_oth
+        male: controls_AC_male
+        female: controls_AC_female
     genomes:
       url: http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz
       lof:
@@ -44,4 +59,17 @@ databases:
           confidence: HC
       predefined-filters: 
         homozygous-controls: controls_nhomalt>0
+        heterozygous-controls: controls_nhomalt=0
+      population-frequencies:
+        african: controls_AC_afr
+        ashkenazi-jewish: controls_AC_asj
+        european-non-finnish: controls_AC_nfe
+        finnish: controls_AC_fin
+        south-asian: controls_AC_sas
+        latino: controls_AC_amr
+        east-asian: controls_AC_eas
+        other: controls_AC_oth
+        male: controls_AC_male
+        female: controls_AC_female
+
 

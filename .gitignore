@@ -50,4 +50,6 @@ gnomad2*
 
 # WFH
 .vscode
-# WIP
+
+# gnomAD stuff
+gnomad/
