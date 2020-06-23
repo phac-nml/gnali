@@ -30,7 +30,6 @@ import urllib
 import tempfile
 import yaml
 from filelock import FileLock
-from collections import OrderedDict
 from gnali.exceptions import EmptyFileError, TBIDownloadError, \
                              InvalidConfigurationError, \
                              InvalidFilterError
@@ -133,8 +132,8 @@ def get_db_config(config_file, db):
     """Read and parse the database configuration file.
 
     Args:
-        config_file: config file path (yaml)
-        db: database whose config we want to return
+        config_file: config file (.yaml) path
+        db: database whose config we want to use
     """
     try:
         with open(config_file, 'r') as config_stream:
@@ -149,13 +148,6 @@ def get_db_config(config_file, db):
         print("Could not read from database configuration "
               "file:", config_file)
         raise Exception(error)
-
-
-def validate_pop_freqs_present(config):
-    for file_name, info in config.config.items():
-        if 'population-frequencies' not in info.keys():
-            raise Exception("Population frequencies are not available for "
-                            "database selected: {}".format(config.name))
 
 
 def validate_filters(config, predefined_filters, additional_filters):
@@ -193,12 +185,11 @@ def transform_filters(db_config, pre_filters, add_filters):
     """
     filter_objs = []
     # add predefined filters specified
-    for db_file, info in db_config.config.items():
-        if pre_filters is not None:
-            filter_objs = {filt: info['predefined-filters'][filt]
-                           for filt in pre_filters}
-            filter_objs = [Filter(key, value) for key, value
-                           in filter_objs.items()]
+    if pre_filters is not None:
+        filter_objs = {filt: db_config.predefined_filters[filt]
+                       for filt in pre_filters}
+        filter_objs = [Filter(key, value) for key, value
+                       in filter_objs.items()]
     # add additional filters specified
     if add_filters is not None:
         filter_objs.extend(add_filters)
@@ -255,18 +246,18 @@ def download_file(url, dest_path, max_time):
         file_obj.write(url_data)
 
 
-def get_db_tbi(database, data_path, max_time):
+def get_db_tbi(url, data_path, max_time):
     """Download the index (.tbi) file for a database.
 
     Args:
-        database: a database config
+        url: a database file url
         data_path: where to save the index file
         max_time: maximum time to wait for
                   download. An exception is
                   raised if download doesn't
                   complete in this time.
     """
-    tbi_url = "{}.tbi".format(database['url'])
+    tbi_url = "{}.tbi".format(url)
     tbi_name = tbi_url.split("/")[-1]
     tbi_path = "{}{}".format(data_path, tbi_name)
     tbi_lock_path = "{}.{}.lock".format(tbi_path, tbi_name)
@@ -296,23 +287,23 @@ def get_variants(target_list, db_info, filter_objs):
     Args:
         target_list: list of chromosome locations to check
         db_info: configuration of database
-        pre_filters: list of predefined filters
-        add_filters: list of additional filters
+        filter_objs: list of all (predefined and additional)
+                        filters as Filter objects
     """
     variants = []
     max_time = 180
-    for info in db_info.values():
-        tbi = get_db_tbi(info, DATA_PATH, max_time)
-        tbx = pysam.TabixFile(info['url'], index=tbi)
+    for file_name, file_info in db_info.files.items():
+        tbi = get_db_tbi(file_info['url'], DATA_PATH, max_time)
+        tbx = pysam.TabixFile(file_info['url'], index=tbi)
         header = tbx.header
 
         lof_index = None
-        if info.get('lof') is not None:
-            # get index of LoF in header
-            annot_header = [line for line in header
-                            if "ID={}".format(info['lof']['id']) in line]
-            lof_index = str(annot_header).split("|") \
-                .index(info['lof']['annot'])
+        # get index of LoF in header
+        annot_header = [line for line in header
+                        if "ID={}".format(db_info.lof['id'])
+                        in line]
+        lof_index = str(annot_header).split("|") \
+            .index(db_info.lof['annot'])
 
         test_locations = target_list
 
@@ -320,7 +311,7 @@ def get_variants(target_list, db_info, filter_objs):
         for location in test_locations:
             records = tbx.fetch(reference=location)
             variants.extend(filter_variants(records,
-                            info, filter_objs, lof_index))
+                            db_info, filter_objs, lof_index))
 
     return header, variants
 
@@ -371,8 +362,8 @@ def filter_by_plof(record, db_info, lof_index):
                    (None if not applicable)
     """
     if lof_index is not None:
-        lof_tool = db_info['lof']['id']
-        conf_filter = db_info['lof']['filters']['confidence']
+        lof_tool = db_info.lof['id']
+        conf_filter = db_info.lof['filters']['confidence']
         vep_str = record.info[lof_tool]
         lof = vep_str.split("|")[lof_index]
         if lof == conf_filter:
@@ -390,6 +381,9 @@ def extract_lof_annotations(variants, db_info, get_pop_freqs):
     Args:
         variants: list of variants from get_variants()
                   as Variant objects
+        db_info: database configuration object
+        get_pop_freqs: whether or not we additionaly get the
+                        population frequencies
     """
     variant_records = [variant.record_str for variant in variants]
     results_as_vcf = variant_records
@@ -423,18 +417,16 @@ def extract_lof_annotations(variants, db_info, get_pop_freqs):
     return results, results_basic, results_as_vcf
 
 
-def extract_pop_freqs(variants, db_info):
+def extract_pop_freqs(variants, config):
     """Get population frequencies for variants that passed filtering.
 
     Args:
         variants: list of variants as Variant objects
-        db_info: config as Config object
+        config: database config as Config object
     """
-    # Make a tuple list from the population-frequencies section in config file
-    pop_groups = [(name, group) for info in db_info.values()
-                  for name, group in (info['population-frequencies'].items())]
-    # Remove duplicates
-    pop_groups = OrderedDict(pop_groups)
+    # Make a tuple list from the population-frequencies section
+    # in config file
+    pop_groups = config.population_frequencies
     pop_freqs = np.empty(shape=(len(variants), len(pop_groups)), dtype='str')
 
     # Fill array with population frequencies by variant
@@ -488,14 +480,7 @@ def write_results(results, results_basic, header, results_as_vcf,
 def init_parser(id):
     parser = argparse.ArgumentParser(prog=SCRIPT_NAME,
                                      description=SCRIPT_INFO)
-    config = get_db_config(DB_CONFIG_FILE, '').config
-    dbs_and_filters = {}
-    for db, db_file in config['databases'].items():
-        current_db_filters = {}
-        for file_name, info in db_file.items():
-            pre_filters = info['predefined-filters']
-            current_db_filters[file_name] = str(pre_filters)
-        dbs_and_filters[str(db)] = current_db_filters
+    config = get_db_config(DB_CONFIG_FILE, '')
 
     parser.add_argument('-i', '--input_file',
                         required=True,
@@ -510,15 +495,16 @@ def init_parser(id):
                         help='Force existing output folder to be overwritten')
     parser.add_argument('-d', '--database',
                         help='Database to query. Default: {}\nOptions: {}'
-                        .format(config['default'],
-                                list(config['databases'].keys())))
+                        .format(config.default,
+                                [db.name for db in config.configs]))
     parser.add_argument('-v', '--vcf',
                         help='Generate vcf file for filtered variants',
                         action='store_true')
     parser.add_argument('-p', '--predefined_filters',
                         nargs='*',
                         help='Predefined filters. Options: {}'
-                        .format(dbs_and_filters))
+                        .format({db.name: db.predefined_filters
+                                 for db in config.configs}))
     parser.add_argument('-a', '--additional_filters',
                         nargs='*',
                         help='Additional filters')
@@ -546,7 +532,7 @@ def main():
     try:
         db_config = get_db_config(DB_CONFIG_FILE, args.database)
         if args.pop_freqs:
-            validate_pop_freqs_present(db_config)
+            db_config.validate_pop_freqs_present()
 
         genes = open_test_file(args.input_file)
         genes_df = get_test_gene_descriptions(genes)
@@ -556,16 +542,15 @@ def main():
                          args.additional_filters)
         filters = transform_filters(db_config, args.predefined_filters,
                                     args.additional_filters)
-        header, variants = get_variants(target_list, db_config.config,
+        header, variants = get_variants(target_list, db_config,
                                         filters)
 
         results, results_basic, results_as_vcf = \
-            extract_lof_annotations(variants, db_config.config, args.pop_freqs)
+            extract_lof_annotations(variants, db_config, args.pop_freqs)
         write_results(results, results_basic, header, results_as_vcf,
                       results_dir, args.force, args.vcf)
         print("Finished. Output in {}".format(results_dir))
-    except Exception as error:
-        print(error)
+    except Exception:
         raise
 
 

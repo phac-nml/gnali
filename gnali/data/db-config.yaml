@@ -4,72 +4,51 @@ default: gnomadv2.1.1
 databases:
   # Format to add a new database:
   # <(REQUIRED) database id>:
-  #   - <(REQUIRED) database file name> (you will need to add one for every URL/file in the database)
+  #   files: (REQUIRED)
+  #     <(REQUIRED) database file name> (you will need to add one for every URL/file in the database)
   #       url: <(REQUIRED) HTTP (not HTTPS) url of vcf database>
-  #       lof:
-  #         filters: ((REQUIRED) Filters specific to the loss-of-function annotations)
-  #           confidence: <(REQUIRED) annotation id signifying high-confidence used with 'lof-annot' specified above>
-  #                       (Currently there is no support to add additional filters in this section)
-  #         id: <(REQUIRED) id of the loss-of-function tool used for annotations in the INFO section 
-  #                   the vcf header)>
-  #         annot: <(REQUIRED) name of the annotation used to determine if a variant is loss-of-function>
-  #       default-filters: (If you have no default filters to specify, omit this label.)
-  #         nonessentiality: (Required only if database has non-viable samples. If all sequences are 
-  #                           collected from healthy samples, do not include this label.)
-  #                          <filter specifying that number of controls is greater than zero>
-  #                          (Other filters can be specified with the format <name>: <filter>
-  #                           <name> is for your reference only 
-  #                           <filter> must be based on parameters appearing in the INFO section 
-  #                           equaling something, ex. 'controls_nhomalt=0'. 
-  #                           Comparison operators for filters should include one of:
-  #                             >, >=, <, <=, =, and !=.
-  #                           Filters can be comparisons by string or numerical values.)
-  #       population-frequencies:
-  #                               (List of annotations used to sort population groups, in the format
-  #                                 '<name of group>: <group annotation in database vcf>')
-  #       
+  #   lof:
+  #     id: <(REQUIRED) id of the loss-of-function tool used for annotations in the INFO section 
+  #           of the vcf header)>
+  #     annot: <(REQUIRED) name of the annotation used to determine if a variant is loss-of-function>
+  #     filters: (REQUIRED)
+  #       confidence: (REQUIRED)
+  #                   (Label for high-confidence loss-of-function variants according to the annotation
+  #                     tool you used.)                          
+  #   predefined-filters: (List of filters using the database annotations for use from the command line,
+  #                         in the format '<filter-name>: <filter>')\.
+  #                         <filter> must be based on parameters appearing in the INFO section 
+  #                         equaling something, ex. 'controls_nhomalt=0'.
+  #                         Filters can be comparisons by string or numerical values. 
+  #                         Comparison operators for filters should include one of:
+  #                           >, >=, <, <=, =, and !=.)
+  #   population-frequencies: (List of annotations used to sort population groups, in the format
+  #                           '<name of group>: <group annotation in database vcf>')      
   gnomadv2.1.1:
-    exomes:
-      url: http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz
-      lof:
-        id: vep
-        annot: LoF
-        filters:
-          confidence: HC
-      predefined-filters: 
-        homozygous-controls: controls_nhomalt>0 
-        heterozygous-controls: controls_nhomalt=0
-      population-frequencies:
-        african: controls_AC_afr
-        ashkenazi-jewish: controls_AC_asj
-        european-non-finnish: controls_AC_nfe
-        finnish: controls_AC_fin
-        south-asian: controls_AC_sas
-        latino: controls_AC_amr
-        east-asian: controls_AC_eas
-        other: controls_AC_oth
-        male: controls_AC_male
-        female: controls_AC_female
-    genomes:
-      url: http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz
-      lof:
-        id: vep
-        annot: LoF
-        filters:
-          confidence: HC
-      predefined-filters: 
-        homozygous-controls: controls_nhomalt>0
-        heterozygous-controls: controls_nhomalt=0
-      population-frequencies:
-        african: controls_AC_afr
-        ashkenazi-jewish: controls_AC_asj
-        european-non-finnish: controls_AC_nfe
-        finnish: controls_AC_fin
-        south-asian: controls_AC_sas
-        latino: controls_AC_amr
-        east-asian: controls_AC_eas
-        other: controls_AC_oth
-        male: controls_AC_male
-        female: controls_AC_female
+    files:
+      exomes:
+        url: http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz
+      genomes:
+        url: http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz
+    lof:
+      id: vep
+      annot: LoF
+      filters:
+        confidence: HC
+    predefined-filters: 
+      homozygous-controls: controls_nhomalt>0 
+      heterozygous-controls: controls_nhomalt=0
+    population-frequencies:
+      african: controls_AC_afr
+      ashkenazi-jewish: controls_AC_asj
+      european-non-finnish: controls_AC_nfe
+      finnish: controls_AC_fin
+      south-asian: controls_AC_sas
+      latino: controls_AC_amr
+      east-asian: controls_AC_eas
+      other: controls_AC_oth
+      male: controls_AC_male
+      female: controls_AC_female
+
 
 
