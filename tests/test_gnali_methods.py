@@ -134,8 +134,8 @@ class TestGNALIMethods:
         monkeypatch.setattr(gnali, "download_file", mock_download_file)
         with tempfile.TemporaryDirectory() as temp:
             db_config_file = open(DB_CONFIG_FILE, 'r')
-            db_config = yaml.load(db_config_file.read(), Loader=yaml.FullLoader)
-            assert gnali.get_db_tbi(db_config['databases']['gnomadv2.1.1']['exomes'], temp, MAX_TIME)
+            db_config = Config(None, yaml.load(db_config_file.read(), Loader=yaml.FullLoader))
+            assert gnali.get_db_tbi(db_config.files['exomes']['url'], temp, MAX_TIME)
     
     def test_get_db_tbi_lock_timeout_exception(self, monkeypatch):
         with tempfile.TemporaryDirectory() as temp:
@@ -149,8 +149,8 @@ class TestGNALIMethods:
                 dest_path = tempfile.TemporaryFile().name
             monkeypatch.setattr(gnali, "download_file", mock_download_file)
             db_config_file = open(DB_CONFIG_FILE, 'r')
-            db_config = yaml.load(db_config_file.read(), Loader=yaml.FullLoader)
-            assert gnali.get_db_tbi(db_config['databases']['gnomadv2.1.1']['exomes'], tbi_path, MAX_TIME)  
+            db_config = Config(None, yaml.load(db_config_file.read(), Loader=yaml.FullLoader))
+            assert gnali.get_db_tbi(db_config.files['exomes']['url'], tbi_path, MAX_TIME)  
     ########################################################
 
     
@@ -166,7 +166,6 @@ class TestGNALIMethods:
     def test_get_db_config_missing_req(self):
         with pytest.raises(InvalidConfigurationError):
             assert gnali.get_db_config(DB_CONFIG_MISSING_REQ, '')
-
     ########################################################
 
 
@@ -219,8 +218,7 @@ class TestGNALIMethods:
                 expected_variants.append(line)
 
         db_config_file = open(DB_CONFIG_FILE, 'r')
-        db_config = yaml.load(db_config_file.read(), Loader=yaml.FullLoader)
-        db_config = db_config['databases'][db_config['default']]
+        db_config = Config(None, yaml.load(db_config_file.read(), Loader=yaml.FullLoader))
         
         header, method_variants = gnali.get_variants(target_list, db_config, 
                                                      [Filter("homozygous-controls","controls_nhomalt>0")])

@@ -1,5 +1,7 @@
 default: fake_db
 databases:
   fake_db:
-    fake_file:
-      url: # no url
+    files:
+      fake_file:
+        url: http://www.com
+    lof: # missing req

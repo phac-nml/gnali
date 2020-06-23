@@ -21,69 +21,106 @@ from gnali.exceptions import InvalidConfigurationError, InvalidFilterError
 
 class Config:
 
-    config = {}
-    is_full = False
     name = ''
+
+    is_full = False
+    configs = []
+    default = None
+
+    files = {}
+    lof = {}
+    predefined_filters = {}
+    population_frequencies = {}
 
     def __init__(self, db, config):
         if db == '':
-            self.config = config
+            self.name = 'help'
+            self.default = config.get('default')
+            for db_name in config.get('databases'):
+                self.configs.append(Config(db_name, config))
             self.is_full = True
         elif db is None:
-            self.name = config['default']
-            self.config = config['databases'][config['default']]
+            self.name = config.get('default')
+            info = config.get('databases').get(config.get('default'))
+            self.files = info.get('files')
+            self.lof = info.get('lof')
+            self.predefined_filters = info.get('predefined-filters')
+            self.population_frequencies = info.get('population-frequencies')
         else:
             self.name = db
-            self.config = config['databases'][db]
+            info = config.get('databases').get(db)
+            self.files = info.get('files')
+            self.lof = info.get('lof')
+            self.predefined_filters = info.get('predefined-filters')
+            self.population_frequencies = info.get('population-frequencies')
 
     def validate_config(self):
         try:
-            config = self.config
             if self.is_full:
-                if 'default' not in config or \
-                   config['default'] is None:
+                if self.default is None:
                     raise InvalidConfigurationError("Missing default")
-                config = config['databases']
-                for db_name, db_file in config.items():
-                    self.validate_lof(db_file)
+                if self.configs is None:
+                    raise InvalidConfigurationError("Missing databases")
+                for db in self.configs:
+                    self.validate_db(db)
             else:
-                self.validate_lof(config)
+                self.validate_db(self)
         except Exception:
             raise
 
-    def validate_lof(self, config):
-        for db_file_name, db_info in config.items():
-            if 'url' not in db_info or db_info['url'] is None:
-                raise InvalidConfigurationError("Missing "
+    def validate_db(self, config):
+        if config.files is None:
+            raise InvalidConfigurationError("Missing files in {}"
+                                            .format(config.name))
+        if config.lof is None:
+            raise InvalidConfigurationError("Missing annotations in {}"
+                                            .format(config.name))
+        for file_name, url_info in config.files.items():
+            if 'url' not in url_info or url_info['url'] is None:
+                raise InvalidConfigurationError("Missing {}:{} "
                                                 "url in "
-                                                "configuration file")
-            if 'lof' not in db_info or db_info['lof'] is None:
-                raise InvalidConfigurationError("Missing "
-                                                "lof field in "
-                                                "configuration file")
-            lof_info = db_info['lof']
-            if 'id' not in lof_info or lof_info['id'] is None:
-                raise InvalidConfigurationError("Missing "
-                                                "lof id in "
-                                                "configuration file")
-            if 'annot' not in lof_info or lof_info['annot'] is None:
-                raise InvalidConfigurationError("Missing "
-                                                "lof annot in "
-                                                "configuration file")
-            if 'filters' not in lof_info or lof_info['filters'] is None:
-                raise InvalidConfigurationError("Missing "
-                                                "lof filters in "
-                                                "configuration file")
-            if 'confidence' not in lof_info['filters'] or \
-               db_info['lof']['filters']['confidence'] is None:
-                raise InvalidConfigurationError("Missing "
-                                                "lof confidence filter in"
-                                                " configuration file")
+                                                "configuration file"
+                                                .format(config.name,
+                                                        file_name))
+        if config.lof is None:
+            raise InvalidConfigurationError("Missing lof in {} in "
+                                            "configuration file"
+                                            .format(config.name))
+        if 'id' not in config.lof or config.lof['id'] is None:
+            raise InvalidConfigurationError("Missing lof id in {} in "
+                                            "configuration file"
+                                            .format(config.name))
+        if 'annot' not in config.lof or config.lof['annot'] is None:
+            raise InvalidConfigurationError("Missing lof annot annot for "
+                                            "{} in configuration file"
+                                            .format(config.name))
+        if 'filters' not in config.lof or config.lof['filters'] is None:
+            raise InvalidConfigurationError("Missing lof filters annot for "
+                                            "{} in configuration file"
+                                            .format(config.name))
+        if 'confidence' not in config.lof['filters'] or \
+           config.lof['filters']['confidence'] is None:
+            raise InvalidConfigurationError("Missing lof filter: confidence "
+                                            " for {} in configuration file"
+                                            .format(config.name))
 
     def validate_predefined_filter(self, filt):
-        defined_filters = []
-        for db_file, file_info in self.config.items():
-            defined_filters.extend(list(file_info['predefined-filters']
-                                   .keys()))
-        if filt not in defined_filters:
+        if filt not in self.predefined_filters:
             raise InvalidFilterError(filt)
+
+    def validate_pop_freqs_present(self):
+        if self.population_frequencies is None:
+            raise Exception("Population frequencies are not available for "
+                            "database selected: {}".format(self.name))
+
+    def __str__(self):
+        if self.is_full:
+            return "name: {}; default: {}; configs: {}" \
+                   .format(self.name, self.default,
+                           [str(config) for config in self.configs])
+        else:
+            return "name: {}; files: {}; lof: {}; predefined_filters: {};" \
+                   "population_frequencies: {}" \
+                   .format(self.name, str(self.files), str(self.lof),
+                           str(self.predefined_filters),
+                           str(self.population_frequencies))
