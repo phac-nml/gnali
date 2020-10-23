@@ -2,7 +2,9 @@ databases:
   fake_db:
     files:
       fake_file:
-        url: http://www.com
+        path: http://www.com
+    cache:
+      path: ./
     lof:
       id: vep
       annot: LoF

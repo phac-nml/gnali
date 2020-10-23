@@ -15,9 +15,11 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 import os
+import subprocess
 from setuptools import find_packages, setup
 
-dependencies = ['pybiomart', 'numpy', 'pandas', 'pysam', 'filelock', 'cython', 'pyyaml']
+dependencies = ['pybiomart', 'numpy', 'pandas', 'cython',
+                'pysam', 'filelock', 'pyyaml', 'bgzip']
 
 if os.getenv('PATCH') is not None:
     PATCH = "rc.dev{}".format(os.getenv('PATCH'))

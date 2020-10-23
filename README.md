@@ -2,12 +2,16 @@
 ------------------
 
 gNALI (gene nonessentiality and loss-of-function identifier) is a tool to find (high confidence) 
-potential loss of function variants of genes.
+potential loss of function variants of genes. gNALI has built-in support for gnomADv2.1.1 and gnomadv3
+(https://gnomad.broadinstitute.org/) and can be set up to be used with other VCF databases.
+
+NOTE: loss-of-function is influenced by the genome build. Not all variants available in gnomADv2.1.1 are
+available in gnomADv3 and vice versa.
 
 ## Getting Started ##
 ---------------------
 
-1. Install Python 3.6 or later.
+1. Install Python>=3.6 and use `pip install gnali` or clone the repository and use `pip install /path/to/gnali`
 2. From a terminal, type `gnali --help` to display options.
 
 ## Usage ##
