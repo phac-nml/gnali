@@ -6,15 +6,15 @@ channels:
   - defaults
 dependencies:
   - python=3.6.11=h4d41432_2_cpython
-  - ensembl-vep=101.0=pl526hecda079_0
-  - pybiomart=0.2.0=pyh864c0ab_1
-  - pandas=1.1.3=py36h831f99a_0
-  - libcurl=7.71.1=hcdd3856_8
-  - numpy=1.19.2=py36he0f5f23_1
-  - cython= 0.29.17=py36h90709c0_0
-  - pysam=0.16.0.1=py36h71d3148_0
-  - filelock=3.0.12=pyh9f0ad1d_0
-  - pyyaml=5.3.1=py36he6145b8_1
+  - pysam-0.16.0.1-py36h4c34d4e_1
+  - libcurl-7.71.1-hcdd3856_8
+  - ensembl-vep-101.0-pl526hecda079_0
+  - tabix-0.2.6-ha92aebf_0
+  - pandas-1.1.3-py36h66e3816_2
+  - numpy-1.19.2-py36h68c22af_1
+  - cython-0.29.21-py36ha357f81_1
+  - filelock-3.0.12-pyh9f0ad1d_0
+  - pyyaml-5.3.1-py36he6145b8_1
   - pip:
     - bgzip==0.3.5
     - .

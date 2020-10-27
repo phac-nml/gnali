@@ -58,8 +58,7 @@ ccr5*
 quick.py
 1var*
 test_temp*
-environment-old.yml
-
+environment-*.yml
 # WFH
 .vscode
 *.lnk
