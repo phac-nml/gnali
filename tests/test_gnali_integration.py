@@ -63,12 +63,12 @@ class TestGNALIIntegration:
             assert db.name in captured
         assert results.returncode == 0
     """
-    def test_gnali_gnomadv2_no_lof_annots(self):
+    def test_gnali_gnomadv2(self):
         temp_dir = tempfile.TemporaryDirectory()
         temp_path = temp_dir.name
         gnali_results = "{}/ccr5_results".format(temp_path)
         command_str = "gnali -i {in_ccr5} " \
-                      "-d gnomadv2.1.1nolof " \
+                      "-d gnomadv2.1.1 " \
                       "-p homozygous-controls " \
                       "-c {config} " \
                       "-o {out_ccr5}" \

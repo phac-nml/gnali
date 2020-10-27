@@ -15,6 +15,7 @@ dependencies:
   - cython=0.29.21=py36ha357f81_1
   - filelock=3.0.12=pyh9f0ad1d_0
   - pyyaml=5.3.1=py36he6145b8_1
+  - samtools=1.7-1
   - pip=20.2.4=py_0
   - pip:
     - bgzip==0.3.5
