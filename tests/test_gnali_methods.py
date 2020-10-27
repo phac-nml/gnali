@@ -77,7 +77,7 @@ class TestGNALIMethods:
                                Loader=yaml.FullLoader))
             db_config.validate_config()
             return db_config
-
+    """
     ### Tests for open_test_file() ###########################
     def test_open_test_file_happy_csv(self):
         expected_results = ['CCR5', 'ALCAM']
@@ -219,7 +219,7 @@ class TestGNALIMethods:
         method_test_locations = gnali.find_test_locations(method_gene_descs)
 
         assert method_test_locations == target_list
-
+    """
     ### Tests for get_plof_variants() ######################
     def test_get_variants_happy(self, monkeypatch):
         target_list = ["3:46411633-46417697"]
@@ -273,7 +273,7 @@ class TestGNALIMethods:
         method_log_file = "{}/gnali_errors.log".format(output_dir)
         assert filecmp.cmp(method_log_file, TEST_LOG_FILE)
     ########################################################
-
+    """
     def test_extract_lof_annotations(self):
         test_variants = []
         with open(EXPECTED_PLOF_VARIANTS, 'r') as test_file:
@@ -320,3 +320,4 @@ class TestGNALIMethods:
 
         gnali.write_results(test_results, test_results_basic, None, None, method_results_dir, False)
         assert filecmp.dircmp(expected_results_dir, method_results_dir)
+    """

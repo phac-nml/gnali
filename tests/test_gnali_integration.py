@@ -40,7 +40,7 @@ GNOMADV3_RESULTS = "{}/data/gnomadv3_results/"
 NO_VARIANTS_INPUT = "{}/data/alcam_no_variants.txt".format(TEST_PATH)
 
 class TestGNALIIntegration:
-
+    """
     def test_display_predefined_filters(self, capfd):
         # Make sure all predefined filters in config file show up in help command
         results = subprocess.run(["gnali", "--help"])
@@ -62,7 +62,25 @@ class TestGNALIIntegration:
                 continue
             assert db.name in captured
         assert results.returncode == 0
-    
+    """
+    def test_gnali_gnomadv2_no_lof_annots(self):
+        temp_dir = tempfile.TemporaryDirectory()
+        temp_path = temp_dir.name
+        gnali_results = "{}/ccr5_results".format(temp_path)
+        command_str = "gnali -i {in_ccr5} " \
+                      "-d gnomadv2.1.1nolof " \
+                      "-p homozygous-controls " \
+                      "-c {config} " \
+                      "-o {out_ccr5}" \
+                      .format(in_ccr5=TEST_INPUT_CCR5,
+                              config=DB_CONFIG_FILE,
+                              out_ccr5=gnali_results)
+        results = subprocess.run(command_str.split())
+
+        assert filecmp.dircmp(EXOMES_CCR5_RESULTS, gnali_results)
+        assert results.returncode == 0
+
+    """
     def test_gnali_gnomadv2_no_lof_annots(self):
         temp_dir = tempfile.TemporaryDirectory()
         temp_path = temp_dir.name
@@ -96,7 +114,7 @@ class TestGNALIIntegration:
 
         assert filecmp.dircmp(GNOMADV3_RESULTS, gnali_results)
         assert results.returncode == 0
-
+    """
     def test_no_vars_after_filtering(self):
         temp_dir = tempfile.TemporaryDirectory()
         temp_path = temp_dir.name

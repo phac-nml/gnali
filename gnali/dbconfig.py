@@ -252,7 +252,8 @@ class DataFile:
         path_info = urllib.parse.urlparse(file_info.get('path'))
         self.is_local = (path_info.scheme == b'' or
                          path_info.scheme == '')
-        self.is_http = (path_info.scheme == 'http')
+        self.is_http = (path_info.scheme == 'http') or \
+                       (path_info.scheme == 'https')
         if not self.is_local and not self.is_http:
             # TODO: update pysam dependencies, check if
             #       that adds support for HTTPS
