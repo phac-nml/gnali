@@ -2,8 +2,8 @@
 ------------------
 
 gNALI (gene nonessentiality and loss-of-function identifier) is a tool to find (high confidence) 
-potential loss of function variants of genes. gNALI has built-in support for gnomADv2.1.1 and gnomadv3
-(https://gnomad.broadinstitute.org/) and can be set up to be used with other VCF databases.
+potential loss of function variants of genes. gNALI has built-in support for [gnomADv2.1.1 and gnomadv3](https://gnomad.broadinstitute.org/) 
+and can be configured to be used with other VCF databases.
 
 NOTE: loss-of-function is influenced by the genome build. Not all variants available in gnomADv2.1.1 are
 available in gnomADv3 and vice versa.
@@ -11,8 +11,16 @@ available in gnomADv3 and vice versa.
 ## Getting Started ##
 ---------------------
 
-1. Install Python>=3.6 and use `pip install gnali` or clone the repository and use `pip install /path/to/gnali`
-2. From a terminal, type `gnali --help` to display options.
+**PyPI/GitHub Install**
+1. Install the following dependencies:
+    * [Ensembl-VEP==101](http://uswest.ensembl.org/info/docs/tools/vep/script/vep_download.html)
+    * Samtools>=1.7
+    * Tabix
+    * Libcurl
+    * [Bio-BigFile](https://metacpan.org/pod/Bio::DB::BigFile)
+2. Install Python>=3.6 and use `pip install gnali` or clone the repository and use `pip install /path/to/gnali`
+3. Use the command `gnali_setup` to install [LOFTEE](https://github.com/konradjk/loftee) and VEP/LOFTEE required files
+4. From a terminal, type `gnali --help` to display options.
 
 ## Usage ##
 -----------
@@ -38,10 +46,25 @@ Example commands:
 * The output folder will be called `results-ID` with a randomly generated unique ID,
     and will contain both detailed results and basic results
 
-`gnali -i my_genes.csv -o my_results`
+`gnali -i my_genes.csv -o my_results --vcf`
 
 * Like above, an input file called `my_genes.csv` is tested for PLoF variants
 * The output folder will be called `my_results`
+* There will be an additional output file containing all variants that passed filtering in a `vcf` file
+
+
+**Population Frequencies**
+
+When using the population frequencies feature (`-P/--pop_freqs`):
+
+Per population group:
+* AC denotes allele count
+* AN denotes allele number
+* AF denotes allele frequency
+
+## Testing ##
+-------------
+Before running tests, run `gnali_setup test` to install required files. This is not necessary if you have already run `gnali_setup` after the initial installation of gNALI.
 
 ## Legal ##
 -----------

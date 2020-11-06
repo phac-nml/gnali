@@ -12,10 +12,10 @@ databases: # REQUIRED
       name: GRCh38
       path: http://ensembl.org
     ref-files: # REQUIRED. Leave this section as is
-      human-ancestor: gnali/data/vep/GRCh37/human_ancestor.fa.gz
-      assembly-fasta: gnali/data/vep/GRCh37/Homo_sapiens.GRCh37.75.dna.primary_assembly.fa.gz
-      conservation-db: gnali/data/vep/GRCh37/tools_vep_loftee_data_phylocsf.sql
-      gerp-scores: gnali/data/vep/GRCh37/GERP_scores.final.sorted.txt.gz
+      human-ancestor: gnali/data/vep/GRCh38/human_ancestor.fa.gz
+      assembly-fasta: gnali/data/vep/homo_sapiens/101_GRCh38/Homo_sapiens.GRCh38.dna.toplevel.fa.gz
+      conservation-db: gnali/data/vep/GRCh38/loftee.sql
+      gerp-scores: gnali/data/vep/GRCh38/gerp_conservation_scores.homo_sapiens.GRCh38.bw
     cache: # REQUIRED. Leave this section as is
       path: gnali/data/vep
     lof: # REQUIRED IF your database already contains loss-of-function annotations. Otherwise remove this section.

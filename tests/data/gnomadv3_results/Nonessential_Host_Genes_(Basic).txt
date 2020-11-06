@@ -1,0 +1,2 @@
+HGNC_Symbol
+COL6A5

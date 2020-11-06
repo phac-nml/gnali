@@ -19,9 +19,18 @@ specific language governing permissions and limitations under the License.
 import os
 import subprocess
 import tempfile
+from pathlib import Path
 from gnali.variants import Variant
 from gnali.exceptions import VEPRuntimeError
+import gnali.gnali_setup
 import gnali.outputs as outputs
+
+
+GNALI_PATH = Path(__file__).parent.absolute()
+DATA_PATH = "{}/data".format(str(GNALI_PATH))
+LOFTEE_PATH_GRCH37 = "{}/loftee-grch37".format(DATA_PATH)
+LOFTEE_PATH_GRCH38 = "{}/loftee-grch38".format(DATA_PATH)
+VEP_PATH = "{}/vep".format(DATA_PATH)
 
 
 class VEP:
@@ -41,7 +50,11 @@ class VEP:
         outputs.write_to_vcf(input_path, header, records)
 
         assembly = db_config.ref_genome_name
-        loftee_path = os.getenv('LOFTEE_PATH_{}'.format(assembly.upper()))
+        loftee_path = ''
+        if assembly == 'GRCh37':
+            loftee_path = LOFTEE_PATH_GRCH37
+        elif assembly == 'GRCh38':
+            loftee_path = LOFTEE_PATH_GRCH38
         os.environ["PERL5LIB"] = loftee_path
 
         gerp_format = db_config.gerp_format
@@ -51,6 +64,7 @@ class VEP:
         gerp_scores = db_config.ref_gerp_scores_path
         cache_path = db_config.cache_path
 
+        gnali.gnali_setup.verify_files_present()
         run_vep_str = "vep " \
                       "-i {in_file} " \
                       "--format vcf " \

@@ -25,28 +25,40 @@ import pathlib
 import tempfile
 import filecmp
 import re
+from pathlib import Path
+from filelock import FileLock
+from gnali.gnali import download_file, get_db_config
+from gnali.gnali_setup import Dependencies
 
-from gnali import gnali
 
-TEST_PATH = pathlib.Path(__file__).parent.absolute()
-DB_CONFIG_FILE = "{}/data/db-config.yaml".format(str(TEST_PATH))
+TEST_PATH = str(Path(__file__).parent.absolute())
+DB_CONFIG_FILE = "{}/data/db-config.yaml".format(TEST_PATH)
 
-TEST_PATH = pathlib.Path(__file__).parent.absolute()
-TEST_INPUT_CCR5 = "{}/data/ccr5.txt".format(TEST_PATH)
-TEST_INPUT_COL6A5 = "{}/data/col6a5.txt".format(TEST_PATH)
-EXOMES_CCR5_NO_LOF = "{}/data/exomes_ccr5_no_lof.vcf".format(TEST_PATH)
-EXOMES_CCR5_RESULTS = "{}/data/ccr5_results/".format(TEST_PATH)
-GNOMADV3_RESULTS = "{}/data/gnomadv3_results/"
-NO_VARIANTS_INPUT = "{}/data/alcam_no_variants.txt".format(TEST_PATH)
+TEST_PATH = Path(__file__).parent.absolute()
+TEST_DATA_PATH = "{}/data".format(str(TEST_PATH))
+TEST_INPUT_CCR5 = "{}/ccr5.txt".format(TEST_DATA_PATH)
+TEST_INPUT_COL6A5 = "{}/col6a5.txt".format(TEST_DATA_PATH)
+EXOMES_CCR5_NO_LOF = "{}/exomes_ccr5_no_lof.vcf".format(TEST_DATA_PATH)
+EXOMES_CCR5_RESULTS = "{}/ccr5_results/".format(TEST_DATA_PATH)
+GNOMADV3_RESULTS = "{}/gnomadv3_results/".format(TEST_DATA_PATH)
+NO_VARIANTS_INPUT = "{}/alcam_no_variants.txt".format(TEST_DATA_PATH)
+
+GNALI_ROOT_PATH = Path(TEST_PATH).parent.absolute()
+GNALI_PATH = "{}/gnali".format(str(GNALI_ROOT_PATH))
+TEST_REFS_PATH = "{}/dependencies-dev.yaml".format(str(GNALI_ROOT_PATH))
+DEPS_SUMS_FILE = "{}/dependency_sums.txt".format(TEST_DATA_PATH)
+DEPS_VERSION_FILE = "{}/data/dependency_version.txt".format(GNALI_PATH)
+VEP_PATH = "{}/vep".format(TEST_DATA_PATH)
+
 
 class TestGNALIIntegration:
-
+    
     def test_display_predefined_filters(self, capfd):
         # Make sure all predefined filters in config file show up in help command
         results = subprocess.run(["gnali", "--help"])
         captured = str(capfd.readouterr()).replace("\\n", "")
         captured = re.sub("  +", "", captured)
-        db_config = gnali.get_db_config(DB_CONFIG_FILE, '')
+        db_config = get_db_config(DB_CONFIG_FILE, '')
         for db in db_config.configs:
             for filt in db.predefined_filters:
                 assert filt in captured
@@ -56,7 +68,7 @@ class TestGNALIIntegration:
         # Make sure all databases in config file show up in help command
         results = subprocess.run(["gnali", "--help"])
         captured = str(capfd.readouterr())
-        db_config = gnali.get_db_config(DB_CONFIG_FILE, '')
+        db_config = get_db_config(DB_CONFIG_FILE, '')
         for db in db_config.configs:
             if db.name == "gnomadv2.1.1nolof":
                 continue
@@ -64,6 +76,11 @@ class TestGNALIIntegration:
         assert results.returncode == 0
     
     def test_gnali_gnomadv2_no_lof_annots(self):
+        deps_exist_prior = True
+        if not os.path.exists(DEPS_VERSION_FILE):
+            deps_exist_prior = False
+            with open(DEPS_VERSION_FILE, 'w') as fh:
+                fh.write(Dependencies.version)
         temp_dir = tempfile.TemporaryDirectory()
         temp_path = temp_dir.name
         gnali_results = "{}/ccr5_results".format(temp_path)
@@ -76,11 +93,17 @@ class TestGNALIIntegration:
                               config=DB_CONFIG_FILE,
                               out_ccr5=gnali_results)
         results = subprocess.run(command_str.split())
-
-        assert filecmp.dircmp(EXOMES_CCR5_RESULTS, gnali_results)
+        if not deps_exist_prior:
+            os.remove(DEPS_VERSION_FILE)
+        assert filecmp.dircmp(EXOMES_CCR5_RESULTS, gnali_results).diff_files == []
         assert results.returncode == 0
     
     def test_gnali_gnomadv3_no_lof_annots(self):
+        deps_exist_prior = True
+        if not os.path.exists(DEPS_VERSION_FILE):
+            deps_exist_prior = False
+            with open(DEPS_VERSION_FILE, 'w') as fh:
+                fh.write(Dependencies.version)
         temp_dir = tempfile.TemporaryDirectory()
         temp_path = temp_dir.name
         gnali_results = "{}/gnomadv3_full_results".format(temp_path)
@@ -93,8 +116,9 @@ class TestGNALIIntegration:
                               config=DB_CONFIG_FILE,
                               out_gnomadv3=gnali_results)
         results = subprocess.run(command_str.split())
-
-        assert filecmp.dircmp(GNOMADV3_RESULTS, gnali_results)
+        if not deps_exist_prior:
+            os.remove(DEPS_VERSION_FILE)
+        assert filecmp.dircmp(GNOMADV3_RESULTS, gnali_results).diff_files == []
         assert results.returncode == 0
 
     def test_no_vars_after_filtering(self):

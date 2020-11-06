@@ -1,0 +1,2 @@
+0f8424c5acf2e513cd6b3df8843853eb  gnali/data/vep/GRCh38/loftee.sql
+d37141461f5c80632045fb2f2ac9fc6a  gnali/data/vep/GRCh37/phylocsf_gerp.sql

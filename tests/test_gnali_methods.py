@@ -38,6 +38,7 @@ from gnali.exceptions import EmptyFileError, TBIDownloadError, InvalidConfigurat
 from gnali.variants import Variant
 from gnali.filter import Filter
 from gnali.dbconfig import Config, RuntimeConfig, DataFile
+from gnali import gnali_setup
 
 TEST_PATH = pathlib.Path(__file__).parent.absolute()
 TEST_INPUT_CSV = "{}/data/test_genes.csv".format(str(TEST_PATH))
@@ -104,14 +105,14 @@ class TestGNALIMethods:
 
     ### Tests for tbi_needed() ##############################
     def test_tbi_needed_is_needed(self, monkeypatch):
-        def mock_open_header(req):
+        def mock_open_header(req, *args, **kwargs):
             return MockHeader
         monkeypatch.setattr(urllib.request, "urlopen", mock_open_header)
         with tempfile.TemporaryDirectory() as temp:
             assert gnali.tbi_needed(TEST_DB_TBI_URL, temp)
     
     def test_tbi_needed_not_needed(self, monkeypatch):
-        def mock_open_header(req):
+        def mock_open_header(req, *args, **kwargs):
             return MockHeader
         monkeypatch.setattr(urllib.request, "urlopen", mock_open_header)
         with tempfile.TemporaryDirectory() as temp:
@@ -123,12 +124,9 @@ class TestGNALIMethods:
 
     def test_download_file_invalid_url(self, monkeypatch):
         url = "http://badurl.com"
-        def mock_open_header(req):
-            return MockHeader
-        monkeypatch.setattr(urllib.request, "urlopen", mock_open_header)
         with tempfile.TemporaryDirectory() as temp:
-            with pytest.raises(TBIDownloadError):
-                assert gnali.download_file(url, "{}/{}".format(temp, "/bad_url"), MAX_TIME)
+            with pytest.raises(Exception):
+                assert gnali_setup.download_file(url, "{}/{}".format(temp, "/bad_url"), MAX_TIME)
 
 
     ### Tests for get_db_tbi() ##############################

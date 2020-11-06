@@ -254,8 +254,6 @@ class DataFile:
                          path_info.scheme == '')
         self.is_http = (path_info.scheme == 'http')
         if not self.is_local and not self.is_http:
-            # TODO: update pysam dependencies, check if
-            #       that adds support for HTTPS
             raise InvalidConfigurationError("Invalid file {} ({}): "
                                             "file must be local or http"
                                             .format(self.name, self.path))
