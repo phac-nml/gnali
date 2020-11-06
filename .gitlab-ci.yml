@@ -15,19 +15,12 @@ tests:3.6:
     - conda config --add channels bioconda
     - conda config --add channels conda-forge
     - conda config --set always_yes yes --set changeps1 no
-    - conda env create -f environment.yml
+    - conda env create -f environment-dev.yml
     - source activate gnali-env
-    - git clone --depth 1 https://github.com/konradjk/loftee.git loftee-grch37
-    - git clone -b grch38 --depth 1 https://github.com/konradjk/loftee.git loftee-grch38
-    - export LOFTEE_PATH_GRCH37="${PWD}/loftee-grch37"
-    - export LOFTEE_PATH_GRCH38="${PWD}/loftee-grch38"
     - export HOME=$CI_BUILDS_DIR
-    - bash ${PWD}/download_references.sh test
     - pip install tox
-  variables:
-    LOFTEE_PATH_GRCH37: $LOFTEE_PATH_GRCH37
-    LOFTEE_PATH_GRCH38: $LOFTEE_PATH_GRCH38
   script:
+    - gnali_setup test
     - tox -r -e py36
 
 flake8:

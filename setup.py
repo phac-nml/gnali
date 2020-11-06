@@ -43,7 +43,8 @@ setup(
     packages=find_packages(exclude=['tests']),
     install_requires=dependencies,
     entry_points = {
-        'console_scripts': ['gnali=gnali.gnali:main'],
+        'console_scripts': ['gnali=gnali.gnali:main',
+                            'gnali_setup=gnali.gnali_setup:main'],
     },
     classifiers=[
         'Development Status :: 3 - Alpha',

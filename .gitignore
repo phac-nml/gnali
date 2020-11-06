@@ -21,6 +21,7 @@ gnali/data*
 !gnali/data/db-config-template-grch37.yaml
 !gnali/data/db-config-template-grch38.yaml
 !gnali/data/__init__.py
+!gnali/data/dependency_sums.txt
 Bio/
 
 # Any slurm output
@@ -58,6 +59,11 @@ ccr5*
 quick.py
 1var*
 test_temp*
+.coverage*
+environment-*
+!environment-dev.yml
+tests/data/vep/GRCh38/col6a5_gerp_scores.txt
+tests/data/vep/GRCh38/col6a5_gerp_scores.wig
 
 # WFH
 .vscode

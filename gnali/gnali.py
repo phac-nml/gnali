@@ -41,6 +41,7 @@ from gnali.variants import Variant
 from gnali.dbconfig import Config, RuntimeConfig, create_template
 import gnali.outputs as outputs
 from gnali.vep import VEP
+from gnali.gnali_setup import download_file
 import pkg_resources
 
 SCRIPT_NAME = 'gNALI'
@@ -228,27 +229,6 @@ def tbi_needed(url, dest_path):
        file_size != os.path.getsize(dest_path):
         return True
     return False
-
-
-def download_file(url, dest_path, max_time):
-    """Download a file from a url.
-
-    Args:
-        url: url for a file
-        dest_path: where to save file
-        max_time: maximum time to wait for
-                  download. An exception is
-                  raised if download doesn't
-                  complete in this time.
-    """
-    with open(dest_path, 'wb') as file_obj:
-        try:
-            url_open = urllib.request.urlopen(url, timeout=max_time)
-            url_data = url_open.read()
-        except Exception:
-            raise TBIDownloadError("could not get download "
-                                   ".tbi file for {}".format(url))
-        file_obj.write(url_data)
 
 
 def get_db_tbi(file_info, data_path, max_time):
@@ -503,16 +483,19 @@ def extract_pop_freqs(variants, config):
     # in config file
     pop_groups = config.population_frequencies
     pop_freqs = np.empty(shape=(len(variants), len(pop_groups)), dtype='str')
-
+    pop_freqs = pd.DataFrame(data=pop_freqs)
     # Fill array with population frequencies by variant
     for col, group in enumerate(list(pop_groups.values())):
         for row, variant in enumerate(variants):
             if group in variant.info:
-                pop_freqs[row][col] = variant.info[group]
+                val = variant.info[group]
+                # Convert allele frequencies to exponential form
+                if "AF" in group:
+                    val = '{:.10e}'.format(float(val))
+                pop_freqs.loc[row, col] = str(val)
             else:
                 pop_freqs[row][col] = '-'
 
-    pop_freqs = pd.DataFrame(data=pop_freqs)
     pop_freqs.columns = list(pop_groups.keys())
     return pop_freqs
 

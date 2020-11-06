@@ -1,0 +1,13 @@
+GRCh37:
+  - https://personal.broadinstitute.org/konradk/loftee_data/GRCh37/phylocsf_gerp.sql
+  - https://personal.broadinstitute.org/konradk/loftee_data/GRCh37/GERP_scores.final.sorted.txt.gz
+  - https://personal.broadinstitute.org/konradk/loftee_data/GRCh37/GERP_scores.final.sorted.txt.gz.tbi
+  - https://s3.amazonaws.com/bcbio_nextgen/human_ancestor.fa.gz
+  - https://s3.amazonaws.com/bcbio_nextgen/human_ancestor.fa.gz.gzi
+  - https://s3.amazonaws.com/bcbio_nextgen/human_ancestor.fa.gz.fai
+GRCh38:
+  - https://personal.broadinstitute.org/konradk/loftee_data/GRCh38/loftee.sql.gz
+  - https://personal.broadinstitute.org/konradk/loftee_data/GRCh38/gerp_conservation_scores.homo_sapiens.GRCh38.bw
+  - https://personal.broadinstitute.org/konradk/loftee_data/GRCh38/human_ancestor.fa.gz
+  - https://personal.broadinstitute.org/konradk/loftee_data/GRCh38/human_ancestor.fa.gz.fai
+  - https://personal.broadinstitute.org/konradk/loftee_data/GRCh38/human_ancestor.fa.gz.gzi

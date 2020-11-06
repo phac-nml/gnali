@@ -60,24 +60,44 @@ databases:
       path: http://ensembl.org
     ref-files:
       human-ancestor: tests/data/vep/GRCh38/human_ancestor_col6a5.fa.gz
-      assembly-fasta: tests/data/vep/GRCh38/homo_sapiens/101_GRCh38/col6a5.fa.gz
+      assembly-fasta: tests/data/vep/homo_sapiens/101_GRCh38/col6a5.fa.gz
       conservation-db: gnali/data/vep/GRCh38/loftee.sql
-      gerp-scores: tests/data/vep/GRCh38/col6a5_gerp_scores.txt.gz
+      gerp-scores: tests/data/vep/GRCh38/col6a5_gerp_scores.bigwig
     cache:
-      path: tests/data/vep/GRCh38
+      path: tests/data/vep
     predefined-filters:
       homozygous: nhomalt>0
     population-frequencies:
       african-AC: AC_afr
+      african-AN: AN_afr
+      african-AF: AF_afr
       ashkenazi-jewish-AC: AC_asj
+      ashkenazi-jewish-AN: AN_asj
+      ashkenazi-jewish-AF: AF_asj
       european-non-finnish-AC: AC_nfe
+      european-non-finnish-AN: AN_nfe
+      european-non-finnish-AF: AF_nfe
       finnish-AC: AC_fin
+      finnish-AN: AN_fin
+      finnish-AF: AF_fin
       south-asian-AC: AC_sas
+      south-asian-AN: AN_sas
+      south-asian-AF: AF_sas
       latino-AC: AC_amr
+      latino-AN: AN_amr
+      latino-AF: AF_amr
       east-asian-AC: AC_eas
+      east-asian-AN: AN_eas
+      east-asian-AF: AF_eas
       other-AC: AC_oth
+      other-AF: AF_oth
+      other-AN: AN_oth
       male-AC: AC_male
+      male-AF: AF_male
+      male-AN: AN_male
       female-AC: AC_female
+      female-AN: AN_female
+      female-AF: AF_female
   gnomadv2.1.1nolof:
     files:
       ccr5:
@@ -87,11 +107,11 @@ databases:
       path: http://grch37.ensembl.org
     ref-files:
       human-ancestor: tests/data/vep/GRCh37/human_ancestor_ccr5.fa.gz
-      assembly-fasta: tests/data/vep/GRCh37/homo_sapiens/101_GRCh37/ccr5.fa.bgz
+      assembly-fasta: tests/data/vep/homo_sapiens/101_GRCh37/ccr5.fa.bgz
       conservation-db: gnali/data/vep/GRCh37/phylocsf_gerp.sql
       gerp-scores: tests/data/vep/GRCh37/GERP_scores_ccr5.txt.bgz
     cache:
-      path: tests/data/vep/GRCh37
+      path: tests/data/vep
     predefined-filters: 
       homozygous-controls: controls_nhomalt>0 
       heterozygous-controls: controls_nhomalt=0
