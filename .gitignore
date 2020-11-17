@@ -17,8 +17,12 @@ empty_file.csv
 # Data stuff
 .pybiomart.sqlite
 gnali/data*
-!gnali/data/.gitkeep
+!gnali/data/db-config.yaml
+!gnali/data/db-config-template-grch37.yaml
+!gnali/data/db-config-template-grch38.yaml
 !gnali/data/__init__.py
+!gnali/data/dependency_sums.txt
+Bio/
 
 # Any slurm output
 *.out
@@ -41,9 +45,29 @@ gNALI-results/
 .coverage
 test.txt
 results*
+vcf_results*
 *profile*.txt
 gnali/patch.txt
 chr18*
+gnomad3*
+gnomad2*
+genes.txt
+hiv.txt
+gnali/vep_scripts/*
+gnomad*
+ccr5*
+quick.py
+1var*
+test_temp*
+.coverage*
+environment-*
+!environment-dev.yml
+tests/data/vep/GRCh38/col6a5_gerp_scores.txt
+tests/data/vep/GRCh38/col6a5_gerp_scores.wig
 
-# WIP
-gnali/output.py
+# WFH
+.vscode
+*.lnk
+
+# gnomAD stuff
+gnomad/

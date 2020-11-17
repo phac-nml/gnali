@@ -28,19 +28,26 @@ class Variant:
     filter = ''
     info = {}
     info_str = ''
+    record_str = ''
 
     def __init__(self, record):
+        self.record_str = record
         self.chrom, self.pos, self.id, self.ref, \
-                    self.alt, self.qual, self.filter, \
-                    self.info_str = record.split("\t")
+            self.alt, self.qual, self.filter, \
+            self.info_str = record.split("\t")
         self.info = dict([info_item.split("=") for
                           info_item in self.info_str.split(";")
                           if len(info_item.split("=")) > 1])
 
     def __str__(self):
-        return "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n" \
-               .format(self.chrom, self.pos, self.id, self.ref,
-                       self.alt, self.qual, self.filter, self.info_str)
+        if self.info_str[-1] == '\n':
+            return "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}" \
+                .format(self.chrom, self.pos, self.id, self.ref,
+                        self.alt, self.qual, self.filter, self.info_str)
+        else:
+            return "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n" \
+                .format(self.chrom, self.pos, self.id, self.ref,
+                        self.alt, self.qual, self.filter, self.info_str)
 
     @classmethod
     def get_fields(self):
@@ -52,6 +59,7 @@ class Variant:
         return (self.chrom, self.pos, self.id, self.ref,
                 self.alt, self.qual, self.filter, self.info_str)
 
-    def as_tuple_vep(self):
+    def as_tuple_vep(self, lof_id):
+        vep_str = self.info.get(lof_id)
         return (self.chrom, self.pos, self.id, self.ref,
-                self.alt, self.qual, self.filter, self.info['vep'])
+                self.alt, self.qual, self.filter, vep_str)

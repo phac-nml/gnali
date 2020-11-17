@@ -15,12 +15,14 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 import os
+import subprocess
 from setuptools import find_packages, setup
 
-dependencies = ['pybiomart', 'numpy', 'pandas', 'pysam', 'filelock', 'cython']
+dependencies = ['pybiomart', 'numpy', 'pandas',
+                'pysam', 'filelock', 'pyyaml', 'bgzip']
 
 if os.getenv('PATCH') is not None:
-    PATCH = "rc.dev{}".format(os.getenv('PATCH'))
+    PATCH = "rc0.dev{}".format(os.getenv('PATCH'))
 else:
     PATCH = ""
 
@@ -30,7 +32,7 @@ def readme():
 
 setup(
     name='gNALI',
-    version = ("0.1.1{}".format(PATCH)),
+    version = ("1.0.0{}".format(PATCH)),
     url="https://github.com/phac-nml/gnali",
     license='Apache License, Version 2.0',
     author='Xia Liu',
@@ -39,9 +41,17 @@ setup(
     long_description=readme(),
     long_description_content_type="text/markdown",
     packages=find_packages(exclude=['tests']),
+    package_data={
+        'gnali.data': ['db-config.yaml',
+                       'db-config-template-grch37.yaml',
+                       'db-config-template-grch38.yaml',
+                       'dependency_sums.txt',
+                       'dependency_version.txt'],
+    },
     install_requires=dependencies,
     entry_points = {
-        'console_scripts': ['gnali=gnali.gnali:main'],
+        'console_scripts': ['gnali=gnali.gnali:main',
+                            'gnali_setup=gnali.gnali_setup:main'],
     },
     classifiers=[
         'Development Status :: 3 - Alpha',

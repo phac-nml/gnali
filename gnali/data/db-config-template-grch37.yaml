@@ -1,0 +1,45 @@
+default: <my_database>
+         # REQUIRED. Default database used when no databases are specified by the user. 
+         # Replace with name of one of your databases specified in the "databases" section.
+gerp-formats: # REQUIRED. Leave this section as is
+  GRCh37: gerp_file
+databases: # REQUIRED   
+  <my_database>: # REQUIRED. Replace with name of your database. If you have more than one, duplicate this section
+    files: # REQUIRED
+      <file name>: # REQUIRED for every file in the database, add this field
+        path: # REQUIRED. path to file, can be local or HTTP
+    ref-genome: # REQUIRED. Leave this section as is
+      name: GRCh37 
+      path: http://grch37.ensembl.org
+    ref-files: # REQUIRED. Leave this section as is
+      human-ancestor: gnali/data/vep/GRCh37/human_ancestor.fa.gz
+      assembly-fasta: gnali/data/vep/homo_sapiens/101_GRCh37/Homo_sapiens.GRCh37.75.dna.primary_assembly.fa.gz
+      conservation-db: gnali/data/vep/GRCh37/phylocsf_gerp.sql
+      gerp-scores: gnali/data/vep/GRCh37/GERP_scores.final.sorted.txt.gz
+    cache: # REQUIRED. Leave this section as is
+      path: gnali/data/vep
+    lof: # REQUIRED IF your database already contains loss-of-function annotations. Otherwise remove this section.
+      id: # String used to indicate the start of loss-of-function annotations, given in the VCF headers
+      annot: # String used to indicate where location of loss-of-function confidence is
+      filters:
+        confidence: # String used to indicate high-confidence loss-of-function
+    predefined-filters: # Specify some predefined filters you'd like to use. 
+                        # Some examples are given below. Remove this section if you don't have any. 
+      homozygous-controls: controls_nhomalt>0 
+      heterozygous-controls: controls_nhomalt=0
+      homozygous: nhomalt>0
+    population-frequencies: # Specify strings used to indicate population groups.
+                            # Some examples are given below. Remove this section if info not available
+                            # or you don't want to use the --pop_freqs feature.
+      african: controls_AC_afr
+      ashkenazi-jewish: controls_AC_asj
+      european-non-finnish: controls_AC_nfe
+      finnish: controls_AC_fin
+      south-asian: controls_AC_sas
+      latino: controls_AC_amr
+      east-asian: controls_AC_eas
+      other: controls_AC_oth
+      male: controls_AC_male
+      female: controls_AC_female
+
+

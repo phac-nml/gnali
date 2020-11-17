@@ -1,0 +1,11 @@
+9cd9261895c025110367b435d0a160f8  gnali/data/vep/GRCh38/gerp_conservation_scores.homo_sapiens.GRCh38.bw
+5f25081ddc9745eea18a59287274e0a1  gnali/data/vep/GRCh38/human_ancestor.fa.gz
+4702c5b1a20ad9b872af9b7ca47a8add  gnali/data/vep/GRCh38/human_ancestor.fa.gz.fai
+f41ec630c75971cdb0d4b464ef7a3839  gnali/data/vep/GRCh38/human_ancestor.fa.gz.gzi
+0f8424c5acf2e513cd6b3df8843853eb  gnali/data/vep/GRCh38/loftee.sql
+d37141461f5c80632045fb2f2ac9fc6a  gnali/data/vep/GRCh37/phylocsf_gerp.sql
+f8c79d45c8fdffb52ef6926d540f2dd3  gnali/data/vep/GRCh37/human_ancestor.fa.gz
+205a31051be5f1a312c31abf8a298ed7  gnali/data/vep/GRCh37/human_ancestor.fa.gz.fai
+66c048f442ba165004fdb2dc3b867677  gnali/data/vep/GRCh37/human_ancestor.fa.gz.gzi
+e6d772b0c6a9dd5b5ddb812d70fc8cd2  gnali/data/vep/GRCh37/GERP_scores.final.sorted.txt.gz
+9ee293c46bc1daac5e6cc5edfd1351d3  gnali/data/vep/GRCh37/GERP_scores.final.sorted.txt.gz.tbi

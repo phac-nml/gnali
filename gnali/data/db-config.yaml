@@ -1,0 +1,125 @@
+default: gnomadv2.1.1
+         # default database used when no databases are specified by the user, 
+         # given as the database id
+gerp-formats:
+  GRCh38: gerp_bigwig
+databases:
+  # Format to add a new database:
+  # <(REQUIRED) database id>:
+  #   files: (REQUIRED)
+  #     <(REQUIRED) database file name> (you will need to add one for every URL/file in the database)
+  #       path: <(REQUIRED) path to database file, can either be a local file or HTTP>
+  #   lof:
+  #     id: <(REQUIRED) id of the loss-of-function tool used for annotations in the INFO section 
+  #           of the vcf header)>
+  #     annot: <(REQUIRED) name of the annotation used to determine if a variant is loss-of-function>
+  #     filters: (REQUIRED)
+  #       confidence: (REQUIRED)
+  #                   (Label for high-confidence loss-of-function variants according to the annotation
+  #                     tool you used.)                          
+  #   predefined-filters: (List of filters using the database annotations for use from the command line,
+  #                         in the format '<filter-name>: <filter>')\.
+  #                         <filter> must be based on parameters appearing in the INFO section 
+  #                         equaling something, ex. 'controls_nhomalt=0'.
+  #                         Filters can be comparisons by string or numerical values. 
+  #                         Comparison operators for filters should include one of:
+  #                           >, >=, <, <=, =, and !=.)
+  #   population-frequencies: (List of annotations used to sort population groups, in the format
+  #                           '<name of group>: <group annotation in database vcf>')      
+  gnomadv2.1.1:
+    files:
+      exomes:
+        path: http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz
+      genomes:
+        path: http://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz
+    ref-genome:
+      name: GRCh37 
+      path: http://grch37.ensembl.org
+    lof:
+      id: vep
+      annot: LoF
+      filters:
+        confidence: HC
+    predefined-filters: 
+      homozygous-controls: controls_nhomalt>0 
+      heterozygous-controls: controls_nhomalt=0
+      homozygous: nhomalt>0
+    population-frequencies:
+      african-AC: AC_afr
+      african-AN: AN_afr
+      african-AF: AF_afr
+      ashkenazi-jewish-AC: AC_asj
+      ashkenazi-jewish-AN: AN_asj
+      ashkenazi-jewish-AF: AF_asj
+      european-non-finnish-AC: AC_nfe
+      european-non-finnish-AN: AN_nfe
+      european-non-finnish-AF: AF_nfe
+      finnish-AC: AC_fin
+      finnish-AN: AN_fin
+      finnish-AF: AF_fin
+      south-asian-AC: AC_sas
+      south-asian-AN: AN_sas
+      south-asian-AF: AF_sas
+      latino-AC: AC_amr
+      latino-AN: AN_amr
+      latino-AF: AF_amr
+      east-asian-AC: AC_eas
+      east-asian-AN: AN_eas
+      east-asian-AF: AF_eas
+      other-AC: AC_oth
+      other-AF: AF_oth
+      other-AN: AN_oth
+      male-AC: AC_male
+      male-AF: AF_male
+      male-AN: AN_male
+      female-AC: AC_female
+      female-AN: AN_female
+      female-AF: AF_female
+  gnomadv3:
+    files:
+      genomes:
+        path: http://storage.googleapis.com/gnomad-public/release/3.0/vcf/genomes/gnomad.genomes.r3.0.sites.vcf.bgz
+    ref-genome:
+      name: GRCh38
+      path: http://ensembl.org
+    ref-files:
+      human-ancestor: gnali/data/vep/GRCh38/human_ancestor.fa.gz
+      assembly-fasta: gnali/data/vep/homo_sapiens/101_GRCh38/Homo_sapiens.GRCh38.dna.toplevel.fa.gz
+      conservation-db: gnali/data/vep/GRCh38/loftee.sql
+      gerp-scores: gnali/data/vep/GRCh38/gerp_conservation_scores.homo_sapiens.GRCh38.bw
+    cache:
+      path: gnali/data/vep
+    predefined-filters:
+      homozygous: nhomalt>0
+    population-frequencies:
+      african-AC: AC_afr
+      african-AN: AN_afr
+      african-AF: AF_afr
+      ashkenazi-jewish-AC: AC_asj
+      ashkenazi-jewish-AN: AN_asj
+      ashkenazi-jewish-AF: AF_asj
+      european-non-finnish-AC: AC_nfe
+      european-non-finnish-AN: AN_nfe
+      european-non-finnish-AF: AF_nfe
+      finnish-AC: AC_fin
+      finnish-AN: AN_fin
+      finnish-AF: AF_fin
+      south-asian-AC: AC_sas
+      south-asian-AN: AN_sas
+      south-asian-AF: AF_sas
+      latino-AC: AC_amr
+      latino-AN: AN_amr
+      latino-AF: AF_amr
+      east-asian-AC: AC_eas
+      east-asian-AN: AN_eas
+      east-asian-AF: AF_eas
+      other-AC: AC_oth
+      other-AF: AF_oth
+      other-AN: AN_oth
+      male-AC: AC_male
+      male-AF: AF_male
+      male-AN: AN_male
+      female-AC: AC_female
+      female-AN: AN_female
+      female-AF: AF_female
+

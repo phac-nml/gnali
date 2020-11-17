@@ -1,0 +1,24 @@
+name: gnali-env
+channels:
+  - anaconda
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.6
+  - pysam=0.16
+  - libcurl
+  - ensembl-vep=101
+  - perl-bio-bigfile
+  - tabix
+  - pandas
+  - numpy
+  - cython
+  - filelock
+  - pyyaml
+  - samtools
+  - git
+  - pip
+  - pip:
+    - bgzip==0.3.5
+    - .

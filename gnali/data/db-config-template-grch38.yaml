@@ -1,0 +1,43 @@
+default: <my_database>
+         # REQUIRED. Default database used when no databases are specified by the user. 
+         # Replace with name of one of your databases specified in the "databases" section.
+gerp-formats: # REQUIRED. Leave this section as is
+  GRCh38: gerp_bigwig
+databases: # REQUIRED 
+  <my_database>: # REQUIRED. Replace with name of your database. If you have more than one, duplicate this section
+    files: # REQUIRED
+      <file name>: # REQUIRED for every file in the database, add this field
+        path: # REQUIRED. path to file, can be local or HTTP
+    ref-genome: # REQUIRED. Leave this section as is
+      name: GRCh38
+      path: http://ensembl.org
+    ref-files: # REQUIRED. Leave this section as is
+      human-ancestor: gnali/data/vep/GRCh38/human_ancestor.fa.gz
+      assembly-fasta: gnali/data/vep/homo_sapiens/101_GRCh38/Homo_sapiens.GRCh38.dna.toplevel.fa.gz
+      conservation-db: gnali/data/vep/GRCh38/loftee.sql
+      gerp-scores: gnali/data/vep/GRCh38/gerp_conservation_scores.homo_sapiens.GRCh38.bw
+    cache: # REQUIRED. Leave this section as is
+      path: gnali/data/vep
+    lof: # REQUIRED IF your database already contains loss-of-function annotations. Otherwise remove this section.
+      id: # String used to indicate the start of loss-of-function annotations, given in the VCF headers
+      annot: # String used to indicate where location of loss-of-function confidence is
+      filters:
+        confidence: # String used to indicate high-confidence loss-of-function
+    predefined-filters: # Specify some predefined filters you'd like to use. 
+                        # An example are given below. Remove this section if you don't have any. 
+      homozygous: nhomalt>0
+    population-frequencies: # Specify strings used to indicate population groups.
+                            # Some examples are given below. Remove this section if info not available
+                            # or you don't want to use the --pop_freqs feature.
+      african: AC_afr
+      ashkenazi-jewish: AC_asj
+      european-non-finnish: AC_nfe
+      finnish: AC_fin
+      south-asian: AC_sas
+      latino: AC_amr
+      east-asian: AC_eas
+      other: AC_oth
+      male: AC_male
+      female: AC_female
+
+
