@@ -18,7 +18,7 @@ import os
 import subprocess
 from setuptools import find_packages, setup
 
-dependencies = ['pybiomart', 'numpy', 'pandas', 'cython',
+dependencies = ['pybiomart', 'numpy', 'pandas',
                 'pysam', 'filelock', 'pyyaml', 'bgzip']
 
 if os.getenv('PATCH') is not None:
