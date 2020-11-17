@@ -41,6 +41,13 @@ setup(
     long_description=readme(),
     long_description_content_type="text/markdown",
     packages=find_packages(exclude=['tests']),
+    package_data={
+        'gnali.data': ['db-config.yaml',
+                       'db-config-template-grch37.yaml',
+                       'db-config-template-grch38.yaml',
+                       'dependency_sums.txt',
+                       'dependency_version.txt'],
+    },
     install_requires=dependencies,
     entry_points = {
         'console_scripts': ['gnali=gnali.gnali:main',
