@@ -139,7 +139,7 @@ def download_references(assembly):
             # Get url to install file
             url = [url for url in refs if
                    dep_file_name in url][0]
-            download_file(url, "{}/{}".format(data_path_asm, dep_file),
+            download_file(url, dep_file_path,
                           max_download_time)
             if needs_decompress(dep_file_name, hashes, refs):
                 decompress_file(dep_file_path)
@@ -157,7 +157,7 @@ def download_references(assembly):
             if file_decompressed:
                 dep_file_name = dep_file.split("/")[-1]
                 dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
-            download_file(url, "{}/{}".format(data_path_asm, dep_file_path),
+            download_file(url, dep_file_path,
                           max_download_time)
             if needs_decompress(dep_file_name, hashes, refs):
                 decompress_file(dep_file_path)
