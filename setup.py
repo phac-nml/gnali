@@ -46,7 +46,9 @@ setup(
                        'db-config-template-grch37.yaml',
                        'db-config-template-grch38.yaml',
                        'dependency_sums.txt',
-                       'dependency_version.txt'],
+                       'dependency_version.txt',
+                       'dependencies.yaml',
+                       'dependencies-dev.yaml'],
     },
     install_requires=dependencies,
     entry_points = {

@@ -34,8 +34,8 @@ GNALI_ROOT_PATH = GNALI_PATH.parent.absolute()
 DATA_PATH = "{}/data".format(str(GNALI_PATH))
 VEP_PATH = "{}/vep".format(DATA_PATH)
 DEPS_SUMS_FILE = "{}/dependency_sums.txt".format(DATA_PATH)
-REFS_PATH = "{}/dependencies.yaml".format(str(GNALI_ROOT_PATH))
-TEST_REFS_PATH = "{}/dependencies-dev.yaml".format(str(GNALI_ROOT_PATH))
+REFS_PATH = "{}/dependencies.yaml".format(DATA_PATH)
+TEST_REFS_PATH = "{}/dependencies-dev.yaml".format(DATA_PATH)
 DEPS_VERSION_FILE = "{}/dependency_version.txt".format(DATA_PATH)
 
 
