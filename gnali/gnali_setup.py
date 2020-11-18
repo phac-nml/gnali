@@ -137,7 +137,7 @@ def download_references(assembly):
         # Check that file exists
         if not (os.path.isfile(dep_file_path)):
             # Get url to install file
-            url = [url for url in refs[assembly] if
+            url = [url for url in refs if
                    dep_file_name in url][0]
             download_file(url, "{}/{}".format(data_path_asm, dep_file),
                           max_download_time)
