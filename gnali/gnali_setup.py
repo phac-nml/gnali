@@ -124,12 +124,13 @@ def download_references(assembly):
     try:
         with lock.acquire(timeout=max_wait):
             fh_in = open(DEPS_SUMS_FILE, 'r')
-            hashes_raw = fh_in.readlines()
+            hashes_raw = fh_in.read()
             fh_in.close()
     except TimeoutError:
         raise TimeoutError("Could not gain access to reference "
                            "file hashes in time. Please try again")
-    hashes = dict(tuple(item.split())[::-1] for item in hashes_raw)
+    hashes = dict(tuple(item.split())[::-1] for item in hashes_raw.split("\n")
+                        if len(item) > 0)
     for dep_file in refs:
         dep_file_name = dep_file.split("/")[-1]
         dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
@@ -195,7 +196,7 @@ def decompress_file(file_path):
 
 
 def download_cache(assembly):
-    cache_path = "{}/homo_sapiens/101_{}".format(VEP_PATH, assembly)
+    cache_path = VEP_PATH
     if not os.path.isdir(cache_path):
         install_cache_cmd = "vep_install -a cf -s homo_sapiens " \
                             "-y {} -c {} --CONVERT" \
