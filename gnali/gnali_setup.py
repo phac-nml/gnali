@@ -151,7 +151,7 @@ def download_references(assembly):
                                     .read()).hexdigest()
         expected_hash = hashes.get(dep_file_path.split("gnali/", 1)[-1])
         if not (computed_hash == expected_hash):
-            url = [url for url in refs[assembly] if
+            url = [url for url in refs if
                    dep_file_name in url][0]
             # Re-download file
             if file_decompressed:
