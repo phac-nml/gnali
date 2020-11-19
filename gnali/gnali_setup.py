@@ -30,12 +30,11 @@ from gnali.exceptions import ReferenceDownloadError
 
 CURRENT_DEPS_VERSION = "1.0.0"
 GNALI_PATH = Path(__file__).parent.absolute()
-GNALI_ROOT_PATH = GNALI_PATH.parent.absolute()
 DATA_PATH = "{}/data".format(str(GNALI_PATH))
 VEP_PATH = "{}/vep".format(DATA_PATH)
 DEPS_SUMS_FILE = "{}/dependency_sums.txt".format(DATA_PATH)
-REFS_PATH = "{}/dependencies.yaml".format(str(GNALI_ROOT_PATH))
-TEST_REFS_PATH = "{}/dependencies-dev.yaml".format(str(GNALI_ROOT_PATH))
+REFS_PATH = "{}/dependencies.yaml".format(DATA_PATH)
+TEST_REFS_PATH = "{}/dependencies-dev.yaml".format(DATA_PATH)
 DEPS_VERSION_FILE = "{}/dependency_version.txt".format(DATA_PATH)
 
 
@@ -132,38 +131,38 @@ def download_references(assembly):
                            "file hashes in time. Please try again")
     hashes = dict(tuple(item.split())[::-1] for item in hashes_raw)
     for dep_file in refs:
-        dep_file_name = dep_file.split("gnali/", 1)[-1]
-        dep_file_path = "{}/{}".format(GNALI_ROOT_PATH, dep_file_name)
+        dep_file_name = dep_file.split("/")[-1]
+        dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
         file_decompressed = False
         # Check that file exists
         if not (os.path.isfile(dep_file_path)):
             # Get url to install file
-            url = [url for url in refs[assembly] if
-                   dep_file.split("/")[-1] in url][0]
-            download_file(url, "{}/{}".format(GNALI_ROOT_PATH, dep_file),
+            url = [url for url in refs if
+                   dep_file_name in url][0]
+            download_file(url, dep_file_path,
                           max_download_time)
             if needs_decompress(dep_file_name, hashes, refs):
                 decompress_file(dep_file_path)
                 dep_file_name = dep_file_name[0:-3]
-                dep_file_path = "{}/{}".format(GNALI_ROOT_PATH, dep_file_name)
+                dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
                 file_decompressed = True
         # Check if hashes are as expected
         computed_hash = hashlib.md5(open(dep_file_path, 'rb')
                                     .read()).hexdigest()
-        expected_hash = hashes.get(dep_file_name)
+        expected_hash = hashes.get(dep_file_path.split("gnali/", 1)[-1])
         if not (computed_hash == expected_hash):
-            url = [url for url in refs[assembly] if
+            url = [url for url in refs if
                    dep_file_name in url][0]
             # Re-download file
             if file_decompressed:
-                dep_file_name = dep_file.split("gnali/", 1)[-1]
-                dep_file_path = "{}/{}".format(GNALI_ROOT_PATH, dep_file_name)
-            download_file(url, "{}/{}".format(GNALI_ROOT_PATH, dep_file_path),
+                dep_file_name = dep_file.split("/")[-1]
+                dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
+            download_file(url, dep_file_path,
                           max_download_time)
             if needs_decompress(dep_file_name, hashes, refs):
                 decompress_file(dep_file_path)
                 dep_file_name = dep_file_name[0:-3]
-                dep_file_path = "{}/{}".format(GNALI_ROOT_PATH, dep_file_name)
+                dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
             # Check hash again, update hash if necessary
             # (in case file has changed)
             computed_hash = hashlib.md5(open(dep_file_path, 'rb')

@@ -22,6 +22,8 @@ gnali/data*
 !gnali/data/db-config-template-grch38.yaml
 !gnali/data/__init__.py
 !gnali/data/dependency_sums.txt
+!gnali/data/dependencies.yaml
+!gnali/data/dependencies-dev.yaml
 Bio/
 
 # Any slurm output
