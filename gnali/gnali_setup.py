@@ -130,7 +130,7 @@ def download_references(assembly):
         raise TimeoutError("Could not gain access to reference "
                            "file hashes in time. Please try again")
     hashes = dict(tuple(item.split())[::-1] for item in hashes_raw.split("\n")
-                        if len(item) > 0)
+                  if len(item) > 0)
     for dep_file in refs:
         dep_file_name = dep_file.split("/")[-1]
         dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
