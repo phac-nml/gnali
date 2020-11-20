@@ -141,7 +141,8 @@ def download_references(assembly):
                    dep_file_name in url][0]
             download_file(url, dep_file_path,
                           max_download_time)
-            if needs_decompress(dep_file_path.split("gnali/")[-1], hashes, refs):
+            if needs_decompress(dep_file_path.split("gnali/")[-1],
+                                hashes, refs):
                 decompress_file(dep_file_path)
                 dep_file_name = dep_file_name[0:-3]
                 dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
@@ -159,7 +160,8 @@ def download_references(assembly):
                 dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
             download_file(url, dep_file_path,
                           max_download_time)
-            if needs_decompress(dep_file_path.split("gnali/")[-1], hashes, refs):
+            if needs_decompress(dep_file_path.split("gnali/")[-1],
+                                hashes, refs):
                 decompress_file(dep_file_path)
                 dep_file_name = dep_file_name[0:-3]
                 dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
