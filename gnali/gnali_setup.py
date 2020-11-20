@@ -124,13 +124,12 @@ def download_references(assembly):
     try:
         with lock.acquire(timeout=max_wait):
             fh_in = open(DEPS_SUMS_FILE, 'r')
-            hashes_raw = fh_in.read()
+            hashes_raw = fh_in.readlines()
             fh_in.close()
     except TimeoutError:
         raise TimeoutError("Could not gain access to reference "
                            "file hashes in time. Please try again")
-    hashes = dict(tuple(item.split())[::-1] for item in hashes_raw.split("\n")
-                  if len(item) > 0)
+    hashes = dict(tuple(item.split())[::-1] for item in hashes_raw)
     for dep_file in refs:
         dep_file_name = dep_file.split("/")[-1]
         dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
@@ -142,7 +141,7 @@ def download_references(assembly):
                    dep_file_name in url][0]
             download_file(url, dep_file_path,
                           max_download_time)
-            if needs_decompress(dep_file_name, hashes, refs):
+            if needs_decompress(dep_file_path.split("gnali/")[-1], hashes, refs):
                 decompress_file(dep_file_path)
                 dep_file_name = dep_file_name[0:-3]
                 dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
@@ -160,7 +159,7 @@ def download_references(assembly):
                 dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
             download_file(url, dep_file_path,
                           max_download_time)
-            if needs_decompress(dep_file_name, hashes, refs):
+            if needs_decompress(dep_file_path.split("gnali/")[-1], hashes, refs):
                 decompress_file(dep_file_path)
                 dep_file_name = dep_file_name[0:-3]
                 dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
@@ -169,11 +168,13 @@ def download_references(assembly):
             computed_hash = hashlib.md5(open(dep_file_path, 'rb')
                                         .read()).hexdigest()
             if not (computed_hash == expected_hash):
-                hashes_raw = hashes_raw.replace(expected_hash, computed_hash)
+                hashes_raw = [item.replace(expected_hash, computed_hash) if
+                              expected_hash in item else
+                              item for item in hashes_raw]
                 try:
                     with lock.acquire(timeout=max_wait):
                         fh_out = open(DEPS_SUMS_FILE, 'w')
-                        fh_out.write(hashes_raw)
+                        fh_out.writelines(hashes_raw)
                         fh_out.close()
                 except TimeoutError:
                     raise TimeoutError("Could not gain access to reference "
@@ -181,8 +182,9 @@ def download_references(assembly):
                                        "again")
 
 
-def needs_decompress(file_name, file_hashes, ref_urls):
-    if file_name[:-3] in file_hashes.keys() and \
+def needs_decompress(file_path, file_hashes, ref_urls):
+    file_name = file_path.split("/")[-1]
+    if file_path[:-3] in file_hashes.keys() and \
        file_name in str(ref_urls) and \
        file_name.split(".")[-1] == "gz":
         return True
