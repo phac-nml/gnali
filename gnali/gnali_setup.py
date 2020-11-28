@@ -247,7 +247,9 @@ def main():
     if len(sys.argv) == 1:
         verify_files_present()
     elif sys.argv[1] == 'test':
-        install_loftee()
+        assemblies = ['GRCh37', 'GRCh38']
+        for assembly in assemblies:
+            install_loftee(assembly)
         download_test_references()
 
 
