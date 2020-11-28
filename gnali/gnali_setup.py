@@ -68,9 +68,9 @@ def install_loftee(assembly):
     if os.path.exists(loftee_path):
         shutil.rmtree(loftee_path)
     loftee_install_cmd = "git clone --depth 1 " \
-                        "https://github.com/konradjk/loftee.git " \
-                        "{dest_path}" \
-                        .format(dest_path=loftee_path)
+                         "https://github.com/konradjk/loftee.git " \
+                         "{dest_path}" \
+                         .format(dest_path=loftee_path)
     print("Installing LOFTEE for {}...".format(assembly))
     results = subprocess.run(loftee_install_cmd.split())
     if results.returncode == 0:
@@ -211,7 +211,7 @@ def download_cache(assembly):
         print("Downloaded cache for {}".format(assembly))
     else:
         raise ReferenceDownloadError("Error downloading {} cache, please "
-                                        "try again.".format(assembly))
+                                     "try again.".format(assembly))
     print("Finished downloading required caches.")
 
 
