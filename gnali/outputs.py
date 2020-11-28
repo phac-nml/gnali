@@ -29,3 +29,6 @@ def write_to_vcf(path, headers, data):
                 stream.write('\n')
         for line in data:
             stream.write(str(line))
+            if line[-1] != '\n':
+                stream.write('\n')
+
