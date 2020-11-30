@@ -67,10 +67,12 @@ def install_loftee(assembly):
     loftee_path = "{}/loftee-{}".format(DATA_PATH, asm)
     if os.path.exists(loftee_path):
         shutil.rmtree(loftee_path)
-    loftee_install_cmd = "git clone --depth 1 " \
+    loftee_install_cmd = "git clone --depth 1 -b {branch}" \
                          "https://github.com/konradjk/loftee.git " \
                          "{dest_path}" \
-                         .format(dest_path=loftee_path)
+                         .format(dest_path=loftee_path,
+                                 branch="grch38" if asm == "grch38"
+                                 else "master")
     print("Installing LOFTEE for {}...".format(assembly))
     results = subprocess.run(loftee_install_cmd.split())
     if results.returncode == 0:
