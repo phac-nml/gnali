@@ -68,8 +68,8 @@ def open_test_file(input_file):
                     break
                 test_genes_list.append(", ".join(gene))
     except FileNotFoundError:
-        raise FileNotFoundError("input file {} was not \
-                                 found".format(input_file))
+        raise FileNotFoundError("Input file {} was not "
+                                "found".format(input_file))
     except Exception:
         raise Exception("something went wrong, try again")
     if len(test_genes_list) == 0:
