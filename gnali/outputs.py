@@ -24,10 +24,12 @@ def write_to_tab(path, data):
 def write_to_vcf(path, headers, data):
     with open(path, 'w+') as stream:
         for line in headers:
-            stream.write(str(line))
+            line = str(line)
+            stream.write(line)
             if line[-1] != '\n':
                 stream.write('\n')
         for line in data:
-            stream.write(str(line))
+            line = str(line)
+            stream.write(line)
             if line[-1] != '\n':
                 stream.write('\n')
