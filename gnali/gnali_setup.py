@@ -62,21 +62,21 @@ def download_file(url, dest_path, max_time):
             raise ReferenceDownloadError("Error downloading {}".format(url))
 
 
-def install_loftee():
-    loftee_grch37_install_cmd = "git clone --depth 1 " \
-                                "https://github.com/konradjk/loftee.git " \
-                                "{data_path}/loftee-grch37" \
-                                .format(data_path=DATA_PATH)
-    loftee_grch38_install_cmd = "git clone -b grch38 --depth 1 " \
-                                "https://github.com/konradjk/loftee.git " \
-                                "{data_path}/loftee-grch38" \
-                                .format(data_path=DATA_PATH)
-    print("Installing LOFTEE...")
-    results1 = subprocess.run(loftee_grch37_install_cmd.split())
-    results2 = subprocess.run(loftee_grch38_install_cmd.split())
-    if results1.returncode == 0 and \
-       results2.returncode == 0:
-        print("Installed LOFTEE to {}".format(DATA_PATH))
+def install_loftee(assembly):
+    asm = assembly.lower()
+    loftee_path = "{}/loftee-{}".format(DATA_PATH, asm)
+    if os.path.exists(loftee_path):
+        shutil.rmtree(loftee_path)
+    loftee_install_cmd = "git clone --depth 1 -b {branch} --single-branch " \
+                         "https://github.com/konradjk/loftee.git " \
+                         "{dest_path}" \
+                         .format(dest_path=loftee_path,
+                                 branch="grch38" if asm == "grch38"
+                                 else "master")
+    print("Installing LOFTEE for {}...".format(assembly))
+    results = subprocess.run(loftee_install_cmd.split())
+    if results.returncode == 0:
+        print("Installed LOFTEE for {} to {}".format(assembly, DATA_PATH))
     else:
         raise ReferenceDownloadError("Error while installing LOFTEE")
 
@@ -201,24 +201,26 @@ def decompress_file(file_path):
 
 def download_cache(assembly):
     cache_path = VEP_PATH
-    if not os.path.isdir(cache_path):
-        install_cache_cmd = "vep_install -a cf -s homo_sapiens " \
-                            "-y {} -c {} --CONVERT" \
-                            .format(assembly, VEP_PATH)
-        print("Downloading cache for {}...".format(assembly))
-        results = subprocess.run(install_cache_cmd.split())
-        if results.returncode == 0:
-            print("Downloaded cache for {}".format(assembly))
-        else:
-            raise ReferenceDownloadError("Error downloading {} cache, please "
-                                         "try again.".format(assembly))
+    homo_sapiens_path = "{}/homo_sapiens".format(VEP_PATH)
+    if os.path.exists(homo_sapiens_path):
+        shutil.rmtree(homo_sapiens_path)
+    install_cache_cmd = "vep_install -a cf -s homo_sapiens " \
+                        "-y {} -c {} --CONVERT" \
+                        .format(assembly, cache_path)
+    print("Downloading cache for {}...".format(assembly))
+    results = subprocess.run(install_cache_cmd.split())
+    if results.returncode == 0:
+        print("Downloaded cache for {}".format(assembly))
+    else:
+        raise ReferenceDownloadError("Error downloading {} cache, please "
+                                     "try again.".format(assembly))
     print("Finished downloading required caches.")
 
 
 def download_all_refs():
-    install_loftee()
     assemblies = ['GRCh37', 'GRCh38']
     for assembly in assemblies:
+        install_loftee(assembly)
         print("Downloading references for {}...".format(assembly))
         download_references(assembly)
         print("Finished downloading references for {}.".format(assembly))
@@ -247,7 +249,9 @@ def main():
     if len(sys.argv) == 1:
         verify_files_present()
     elif sys.argv[1] == 'test':
-        install_loftee()
+        assemblies = ['GRCh37', 'GRCh38']
+        for assembly in assemblies:
+            install_loftee(assembly)
         download_test_references()
 
 
