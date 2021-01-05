@@ -1,0 +1,13 @@
+site_name: gNALI
+
+theme: readthedocs
+repo_url: "https://github.com/phac-nml/neptune"
+copyright: "gNALI is licensed under the <a href='https://github.com/phac-nml/neptune/blob/release/1.2/LICENSE.txt'>Apache License Version 2.0</a><br>Copyright Government of Canada 2020-2021"
+
+pages:
+    - Home: index.md
+    - News:
+        - news.md
+        - CHANGELOG.md
+    - Install:
+        - gNALI: install.md
