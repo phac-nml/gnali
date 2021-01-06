@@ -107,6 +107,7 @@ Install the following dependencies according to their instructions:
 * [Bio-BigFile](https://metacpan.org/pod/Bio::DB::BigFile)
 
 And the following dependencies using `sudo apt install <package>`:
+
 * [Samtools](http://www.htslib.org/)
 * [Tabix](http://www.htslib.org/doc/tabix.html)
 * [Libcurl](https://curl.se/libcurl/)
