@@ -2,7 +2,7 @@
 
 ## Overview ##
 
-The purpose of this walkthrough will be to illustrate a simple, but complete example of using Neptune to locate discriminatory sequences. We will identity signature sequences within an artificial data set containing three inclusion sequences and three exclusion sequences. The output will be a list of signatures, sorted by score, for each inclusion target, and one consolidated signatures file, sorted by signature score, containing signatures from all inclusion targets.
+The purpose of this walkthrough will be to illustrate a simple, but complete example of using gNALI to find high-confidence loss-of-function variants of genes.
 
 ## Input Data ##
 

@@ -44,7 +44,7 @@ You will need to add the following channels to conda. They must be added in this
 ```bash
 conda config --add channels conda-forge
 conda config --add channels defaults
-conda config --add channels r
+conda config --add channels anaconda
 conda config --add channels bioconda
 ```
 
@@ -67,6 +67,12 @@ You can check if gNALI was installed correctly with the following:
 
 ```bash
 gnali --version
+```
+
+To install gNALI's reference data and tools for adding loss-of-function annotations, use the following:
+
+```bash
+gnali_setup_
 ```
 
 The current environment may be deactivated with the following:
@@ -115,8 +121,9 @@ And the following dependencies using `sudo apt install <package>`:
 
 ### gNALI ###
 
-To install gNALI, use:
+To install gNALI and its reference data, use:
 
 ```bash
 pip install https://github.com/phac-nml/gnali/archive/v1.0.0.tar.gz
+gnali_setup
 ```
