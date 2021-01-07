@@ -72,7 +72,7 @@ The following command-line flags relate to gNALI output:
 
 | Option | Alternative | Parameter | Description |
 |--------|-------------|-----------|-------------|
-| -o | --output | /path/to/output/directory | Path to an output directory (must not exist yet). |
+| -o | --output | /path/to/output/directory | Path to an output directory (must not exist yet). Defaults to ./results-<id\> if unspecified. |
 | -f | --force | None | Overwrite an existing directory. |
 
 The following command-line flags relate to gNALI additional output:

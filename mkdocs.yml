@@ -12,3 +12,5 @@ pages:
     - Install:
         - gNALI: install.md
     - Parameters: parameters.md
+    - Examples:
+        - Walkthrough: walkthrough.md
