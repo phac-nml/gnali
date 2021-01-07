@@ -20,7 +20,7 @@ The following parameters are required by gNALI:
 
 | Option | Alternative | Parameter | Description |
 |--------|-------------|-----------|-------------|
-| -i | --input | `txt` or `tsv` or `csv` | A list of input genes (as HGNC symbols), separated by newlines. Examples of valid input files can be found [here](url_placeholder) |
+| -i | --input | `txt` or `tsv` or `csv` | A list of input genes (as HGNC symbols), separated by newlines. Examples of valid input files can be found [here](walkthrough.md#input-data) |
 
 
 ## Optional ##
