@@ -72,7 +72,7 @@ gnali --version
 To install gNALI's reference data and tools for adding loss-of-function annotations, use the following:
 
 ```bash
-gnali_setup_
+gnali_setup
 ```
 
 The current environment may be deactivated with the following:
@@ -112,7 +112,7 @@ Install the following dependencies according to their instructions:
 * [Ensembl VEP](http://uswest.ensembl.org/info/docs/tools/vep/script/vep_download.html)
 * [Bio-BigFile](https://metacpan.org/pod/Bio::DB::BigFile)
 
-And the following dependencies using `sudo apt install <package>`:
+And the following dependencies using `sudo apt install <package>` (requires administrative privilages):
 
 * [Samtools](http://www.htslib.org/)
 * [Tabix](http://www.htslib.org/doc/tabix.html)
@@ -121,7 +121,7 @@ And the following dependencies using `sudo apt install <package>`:
 
 ### gNALI ###
 
-To install gNALI and its reference data, use:
+To install gNALI and its reference data and tools for adding loss-of-function annotations, use:
 
 ```bash
 pip install https://github.com/phac-nml/gnali/archive/v1.0.0.tar.gz

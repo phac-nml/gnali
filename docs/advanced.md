@@ -1,8 +1,8 @@
-# Walkthrough #
+# Advanced Walkthrough #
 
 ## Overview ##
 
-The purpose of this walkthrough will be to illustrate a simple, but complete example of using gNALI to find high-confidence loss-of-function variants of genes.
+The purpose of this walkthrough will be to illustrate an execution gNALI to find high-confidence loss-of-function variants of genes using optional parameters.
 
 ## Input Data ##
 
@@ -34,7 +34,7 @@ Here is what such a command would look like:
 ```bash
 gnali
     --input my_gnali_stuff/data/genes.txt
-    --predefined-filters homozygous-controls
+    --predefined_filters homozygous-controls
     --vcf
     --output my_results/
 ```

@@ -64,7 +64,7 @@ The following command-line parameters relate to variant filtering:
 | Option | Alternative | Parameter | Description |
 |--------|-------------|-----------|-------------|
 | -p | --predefined_filters | string | Filter variants with predefined filters. Using the help command will show available filters for each supported database. To use several filters, separate them with a space. |
-| -a | --additional_filters | string | Filter variants based on the INFO column in the VCF database. You can filter based on annotations with the format "<field\>=<value\>". Enclose in quotes. To use several filters, separate them with a space. Examples can be found [here](url_placeholder)|
+| -a | --additional_filters | string | Filter variants based on the INFO column in the VCF database. You can filter based on annotations with the format "<field\>=<value\>". Enclose in quotes. To use several filters, separate them with a space. Examples can be found [here](url_placeholder), and filters available for natively supported databases can be found [here](filtering.md#additional-filters)|
   
 ### Output ###
 

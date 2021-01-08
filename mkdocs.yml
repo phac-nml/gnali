@@ -1,6 +1,6 @@
 site_name: gNALI
 
-theme: mkdocs-basic-theme
+theme: mkdocs
 repo_url: "https://github.com/phac-nml/gnali"
 copyright: "gNALI is licensed under the <a href='https://github.com/phac-nml/gnali/blob/master/LICENSE.txt'>Apache License Version 2.0</a><br>Copyright Government of Canada 2020-2021"
 
@@ -13,8 +13,9 @@ pages:
         - gNALI: install.md
     - Parameters: parameters.md
     - Examples:
-        - Walkthrough: walkthrough.md
-        - Filtering: filtering.md
+        - Walkthrough (Simple): simple.md
+        - Walkthrough (Advanced): advanced.md
+    - Filtering: filtering.md
 
 markdown_extensions:
   - toc:

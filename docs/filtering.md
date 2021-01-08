@@ -1,8 +1,27 @@
 # Filtering #
 
+Note that by default, gNALI filters for high-confidence loss-of-function variants. There is currently no way to disable this.
+
 ## Additional Filters ##
 
-To use filters not natively included (predefined filters)
+The below filters are available through the `-a`/`--additional_filters` parameter.
+
+For example, if we were using gnomADv2.1.1 and wanted to filter for variants with an alternate allele count greater than 3, we would find the following annotation below:
+
+| Annotation | Value Type | Description |
+|------------|------------|-------------|
+| AC | Integer | Alternate allele count for samples |
+
+... and add the expression "AC>3" to our command, like so:
+
+```bash
+gnali
+    --input my_gnali_stuff/data/genes.txt
+    --predefined_filters homozygous-controls
+    --additional_filters "AC>3"
+    --vcf
+    --output my_results/
+```
 
 ### gnomADv2.1.1 Filters ###
 | Annotation | Value Type | Description |
