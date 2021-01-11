@@ -114,11 +114,11 @@ databases:
       east-asian-AN: AN_eas
       east-asian-AF: AF_eas
       other-AC: AC_oth
-      other-AF: AF_oth
       other-AN: AN_oth
+      other-AF: AF_oth
       male-AC: AC_male
-      male-AF: AF_male
       male-AN: AN_male
+      male-AF: AF_male
       female-AC: AC_female
       female-AN: AN_female
       female-AF: AF_female

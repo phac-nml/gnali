@@ -18,7 +18,7 @@ available in gnomADv3 and vice versa.
     * Tabix
     * Libcurl
     * [Bio-BigFile](https://metacpan.org/pod/Bio::DB::BigFile)
-2. Install Python>=3.6 and use `pip install -i https://test.pypi.org/simple/ gNALI` OR download the latest [release](https://github.com/phac-nml/gnali/archive/v1.0.0.tar.gz), unzip it, and use `pip install /path/to/gnali`
+2. Install Python>=3.6 and use `pip install -i https://test.pypi.org/simple/ gNALI` OR download the latest [release](https://github.com/phac-nml/gnali/releases), unzip it, and use `pip install /path/to/gnali`
 3. Use the command `gnali_setup` to install [LOFTEE](https://github.com/konradjk/loftee) and VEP/LOFTEE required files
 4. From a terminal, type `gnali --help` to display options.
 
