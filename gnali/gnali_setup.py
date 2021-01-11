@@ -28,7 +28,7 @@ import shutil
 from filelock import FileLock
 from gnali.exceptions import ReferenceDownloadError
 
-CURRENT_DEPS_VERSION = "1.0.0"
+CURRENT_DEPS_VERSION = "1.0.1"
 GNALI_PATH = Path(__file__).parent.absolute()
 DATA_PATH = "{}/data".format(str(GNALI_PATH))
 VEP_PATH = "{}/vep".format(DATA_PATH)
