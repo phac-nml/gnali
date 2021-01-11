@@ -11,7 +11,6 @@ All notable changes to gNALI will be documented in this file.
 
 - Fixed population frequency output column order
 
-
 ## 1.0.0 ##
 
 2020-11-06
@@ -41,7 +40,6 @@ Modules:
     - Contains VEP class
 - `gnali_setup.py`: to install LOFTEE, download required files for VEP/LOFTEE
     - Contains Dependencies class 
-
 
 ### Changed ###
 
