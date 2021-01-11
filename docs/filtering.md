@@ -17,9 +17,7 @@ For example, if we were using gnomADv2.1.1 and wanted to filter for variants wit
 ```bash
 gnali
     --input my_gnali_stuff/data/genes.txt
-    --predefined_filters homozygous-controls
     --additional_filters "AC>3"
-    --vcf
     --output my_results/
 ```
 

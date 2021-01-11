@@ -19,7 +19,7 @@ The example input file contains the following contents:
 ```bash
 > cat my_gnali_stuff/data/genes.txt
 ALCAM
-	CCR5
+CCR5
 ```
 
 
@@ -50,7 +50,7 @@ The basic output file contains a subset of the input genes, the ones that have h
 ```bash
 > cat my_results/Nonessential_Host_Genes_\(Basic\).txt
 HGNC_Symbol
-	CCR5
+CCR5
 ```
 
 
