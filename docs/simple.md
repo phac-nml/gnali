@@ -41,7 +41,7 @@ gnali
 
 ## Output ##
 
-By default, gNALI will have two output files in `my_results/`: a basic output file, and a detailed output file. When using the `-v`/`--vcf` flag, a third additional output file will be generated. Examples of such output can be found [here](advanced.md#vcf-output-optional).
+By default, gNALI will have two output files in `my_results/`: a basic output file, and a detailed output file. When using the `-v`/`--vcf` flag, a third additional output file will be generated. An example of such output can be found in the [advanced walkthrough](advanced.md#vcf-output-optional).
 
 ### Basic Output ###
 

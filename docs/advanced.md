@@ -41,7 +41,7 @@ gNALI only requires an input file, and has other optional parameters. We will us
 
 Available additional filters can be found [here](filtering.md#additional-filters).
 
-Next, we will filter the variants keeping only those with a non-zero number of homozygous control samples (available as a predefined filter) and alternate allele count greater than 2 (by specifying an additional filter), generate a VCF file for variants passing filtering, generate population frequencies, and write our results to a directory called `my_results`.
+Next, we will filter the variants keeping only those with a non-zero number of homozygous control samples (available as a predefined filter) and alternate allele count greater than 2 (by specifying an additional filter). We will also generate a VCF file for variants passing filtering, generate population frequencies, and write our results to a directory called `my_results`.
 
 Here is what such a command would look like:
 

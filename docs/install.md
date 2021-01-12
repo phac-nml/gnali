@@ -124,6 +124,6 @@ And the following dependencies using `sudo apt install <package>` (requires admi
 To install gNALI and its reference data and tools for adding loss-of-function annotations, use:
 
 ```bash
-pip install https://github.com/phac-nml/gnali/archive/v1.0.0.tar.gz
+pip install https://github.com/phac-nml/gnali/archive/v1.0.1.tar.gz
 gnali_setup
 ```
