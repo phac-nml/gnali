@@ -1,6 +1,6 @@
 site_name: gNALI
 
-theme: readthedocs
+theme: cinder
 repo_url: "https://github.com/phac-nml/gnali"
 copyright: "gNALI is licensed under the <a href='https://github.com/phac-nml/gnali/blob/master/LICENSE.txt'>Apache License Version 2.0</a><br>Copyright Government of Canada 2020-2021"
 
@@ -20,3 +20,5 @@ pages:
 markdown_extensions:
   - toc:
         permalink: true
+
+extra_css: [css/extra.css]

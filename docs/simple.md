@@ -58,7 +58,7 @@ CCR5
 
 The detailed output file contains the high-confidence loss-of-function varaints that pass filtering as VCF records, and replaces the INFO column with loss-of-function annotations extracted from it.
 
-```vcf
+```bash
 > cat my_results/Nonessential_Host_Genes_\(Detailed\).txt
 Chromosome	Position_Start	RSID	        Reference_Allele	                Alternate_Allele	Score	    Quality	LoF_Variant	LoF_Annotation      HGNC_Symbol	Ensembl Code	    
 3			46414403		rs748244565	    CAA	                                C	                2676.90	    PASS	-			frameshift_variant	CCR5	    ENSG00000160791

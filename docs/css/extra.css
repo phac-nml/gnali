@@ -1,0 +1,7 @@
+
+pre code {
+    overflow-x: auto;
+    white-space: pre;
+    word-break: break-word;
+    display: flex;
+   }
