@@ -9,9 +9,9 @@ available in gnomADv3 and vice versa.
 
 ## Release ##
 
-**gNALI 1.0.0**
+**gNALI 1.0.1**
 
-This release adds support for more databases and functionality to work with databases without loss-of-function annotations.
+This release fixes population frequency output column order.
 
 
 ## Resources ##
