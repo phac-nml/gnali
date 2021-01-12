@@ -4,7 +4,7 @@ Note that by default, gNALI filters for high-confidence loss-of-function variant
 
 ## Additional Filters ##
 
-The below filters are available through the `-a`/`--additional_filters` parameter.
+To filter based on an annotation, construct an expression of the form <annotation\><operator\><value\>, where `annotation` appears in the below available filters or in the VCF header of your database, `operator` is one of `!=`/`==`/`<`/`>`/`<=`/`>=`, and `value` is a value to compare to, subject to the value type (ex. integer, floating point, string, etc).
 
 For example, if we were using gnomADv2.1.1 and wanted to filter for variants with an alternate allele count greater than 3, we would find the following annotation below:
 
@@ -21,6 +21,8 @@ gnali
     --output my_results/
 ```
 
+Note that not all gnomAD annotations are supported as filters by gNALI.
+
 ### gnomADv2.1.1 Filters ###
 | Annotation | Value Type | Description |
 |------------|------------|-------------|
@@ -35,27 +37,15 @@ gnali
 | QD | Float | Variant call confidence normalized by depth of sample reads supporting a variant |
 | ReadPosRankSum | Float | Z-score from Wilcoxon rank sum test of alternate vs. reference read position bias |
 | SOR | Float | Strand bias estimated by the symmetric odds ratio test |
-| VQSR_POSITIVE_TRAIN_SITE | Flag | Variant was used to build the positive training set of high-quality variants for VQSR |
-| VQSR_NEGATIVE_TRAIN_SITE | Flag | Variant was used to build the negative training set of low-quality variants for VQSR |
 | BaseQRankSum | Float | Z-score from Wilcoxon rank sum test of alternate vs. reference base qualities |
 | ClippingRankSum | Float | Z-score from Wilcoxon rank sum test of alternate vs. reference number of hard clipped bases |
 | DP | Integer | Depth of informative coverage for each sample; reads with MQ=255 or with bad mates are filtered |
 | VQSLOD | Float | Log-odds ratio of being a true variant versus being a false positive under the trained VQSR Gaussian mixture model |
 | VQSR_culprit | String | Worst-performing annotation in the VQSR Gaussian mixture model |
-| segdup | Flag | Variant falls within a segmental duplication region |
-| lcr | Flag | Variant falls within a low complexity region |
-| decoy | Flag | Variant falls within a reference decoy region |
-| nonpar | Flag | Variant (on sex chromosome) falls outside a pseudoautosomal region |
-| rf_positive_label | Flag | Variant was labelled as a positive example for training of random forest model |
-| rf_negative_label | Flag | Variant was labelled as a negative example for training of random forest model |
 | rf_label | String | Random forest training label |
-| rf_train | Flag | Variant was used in training random forest model |
-| transmitted_singleton | Flag | Variant was a callset-wide doubleton that was transmitted within a family (i.e.
 | variant_type | String | Variant type (snv, indel, multi-snv, multi-indel, or mixed) |
 | allele_type | String | Allele type (snv, indel, multi-snv, multi-indel, or mixed) |
 | n_alt_alleles | Integer | Total number of alternate alleles observed at variant locus |
-| was_mixed | Flag | Variant type was mixed |
-| has_star | Flag | Variant locus coincides with a spanning deletion (represented by a star) observed elsewhere in the callset |
 | pab_max | Float | Maximum p-value over callset for binomial test of observed allele balance for a heterozygous genotype
 | gq_hist_alt_bin_freq | String | Histogram for GQ in heterozygous individuals; bin edges are: 0|5|10|15|20|25|30|35|40|45|50|55|60|65|70|75|80|85|90|95|100 |
 | gq_hist_all_bin_freq | String | Histogram for GQ; bin edges are: 0|5|10|15|20|25|30|35|40|45|50|55|60|65|70|75|80|85|90|95|100 |
@@ -901,8 +891,6 @@ gnali
 | AC | Integer | Alternate allele count for samples |
 | AN | Integer | Total number of alleles in samples |
 | AF | Float | Alternate allele frequency in samples |
-| non_par | Flag | Variant (on sex chromosome) falls outside a pseudoautosomal region |
-| lcr | Flag | Variant falls within a low complexity region |
 | variant_type | String | Variant type (snv, indel, multi-snv, multi-indel, or mixed) |
 | n_alt_alleles | Integer | Total number of alternate alleles observed at variant locus |
 | ReadPosRankSum | Float | Z-score from Wilcoxon rank sum test of alternate vs. reference read position bias |
@@ -917,8 +905,6 @@ gnali
 | SB | Integer | (No description from gnomAD) |
 | InbreedingCoeff | Float | Inbreeding coefficient as estimated from the genotype likelihoods per-sample when compared against the Hardy-Weinberg expectation |
 | AS_VQSLOD | Float | Log-odds ratio of being a true variant versus being a false positive under the trained allele-specific VQSR Gaussian mixture model |
-| NEGATIVE_TRAIN_SITE | Flag | Variant was used to build the negative training set of low-quality variants for VQSR |
-| POSITIVE_TRAIN_SITE | Flag | Variant was used to build the positive training set of high-quality variants for VQSR |
 | culprit | String | Worst-performing annotation in the VQSR Gaussian mixture model |
 | SOR | Float | Strand bias estimated by the symmetric odds ratio test |
 | AC_asj_female | Integer | Alternate allele count for female samples of Ashkenazi Jewish ancestry |

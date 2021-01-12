@@ -17,6 +17,7 @@ This release fixes population frequency output column order.
 ## Resources ##
 
 * **Source**: [https://github.com/phac-nml/gnali](https://github.com/phac-nml/gnali)
+* **Bioconda**: [https://bioconda.github.io/recipes/gnali/README.html](https://bioconda.github.io/recipes/gnali/README.html)
 
 ## Contact ##
 

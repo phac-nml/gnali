@@ -64,7 +64,7 @@ The following command-line parameters relate to variant filtering:
 | Option | Alternative | Parameter | Description |
 |--------|-------------|-----------|-------------|
 | -p | --predefined_filters | string | Filter variants with predefined filters. Using the help command will show available filters for each supported database. To use several filters, separate them with a space. |
-| -a | --additional_filters | string | Filter variants based on the INFO column in the VCF database. You can filter based on annotations with the format "<field\>=<value\>". Enclose in quotes. To use several filters, separate them with a space. An example can be found [here](advanced.md#running-gnali), and more info as well as filters available for natively supported databases can be found [here](filtering.md#additional-filters)|
+| -a | --additional_filters | string | Filter variants based on the INFO column in the VCF database. Enclose in quotes. To use several filters, separate them with a space. An example can be found [here](advanced.md#running-gnali). More info as well as filters available for natively supported databases can be found [here](filtering.md#additional-filters)|
   
 ### Output ###
 
@@ -80,5 +80,5 @@ The following command-line flags relate to gNALI additional output:
 | Option | Alternative | Parameter |Description |
 |--------|-------------|-----------|-------------|
 | -P | --pop_freqs | None | If selected, gNALI will find the allele count (AC), allele number (AN), and allele frequency (AF) by population group for every variant passing filtering. This information will be included in the detailed output file. |
-| -v | --vcf | None | If selected, gNALI will generate an additional output file, a VCF file containing headers and all variants passing filtering. |
+| -v | --vcf | None | If selected, gNALI will generate an additional output file, a VCF file containing headers from the database selected and all variants passing filtering. |
 
