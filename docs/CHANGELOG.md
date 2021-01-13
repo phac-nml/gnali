@@ -1,1 +1,1 @@
-/Drives/K/xiliu/Git/gnali/CHANGELOG.md
+../CHANGELOG.md
