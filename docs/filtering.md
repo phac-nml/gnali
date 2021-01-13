@@ -1084,5 +1084,3 @@ Note that not all gnomAD annotations are supported as filters by gNALI.
 | faf99_nfe | Float | Filtering allele frequency (using Poisson 99% CI) for samples of Non-Finnish European ancestry |
 | faf95_eas | Float | Filtering allele frequency (using Poisson 95% CI) for samples of East Asian ancestry |
 | faf99_eas | Float | Filtering allele frequency (using Poisson 99% CI) for samples of East Asian ancestry |
-
-
