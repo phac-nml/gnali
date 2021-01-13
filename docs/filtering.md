@@ -47,8 +47,7 @@ An example execution using predefined filters can be found [here](advanced.md).
 
 To filter based on an annotation, construct an expression of the form <annotation\><operator\><value\>, where `annotation` appears in the below available filters or in the VCF header of your database, `operator` is one of `!=`/`==`/`<`/`>`/`<=`/`>=`, and `value` is a value to compare to, subject to the value type (ex. integer, floating point, string, etc). Enclose them in quotes and separate by spaces if you're using several additional filters at once.
 
-For example, if we were using gnomADv2.1.1 and wanted to filter for variants with an alternate allele count greater than 3, and total allele number greater than 10, we would find the following annotations [below](filtering.md#gnomadv211-filters-1):
-# TODO: fix above link
+For example, if we were using gnomADv2.1.1 and wanted to filter for variants with an alternate allele count greater than 3, and total allele number greater than 10, we would find the following annotations [below](filtering.md#gnomadv211-filters\_1):
 
 | Annotation | Value Type | Description |
 |------------|------------|-------------|
