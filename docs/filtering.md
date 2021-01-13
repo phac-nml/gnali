@@ -1,25 +1,70 @@
 # Filtering #
 
-Note that by default, gNALI filters for high-confidence loss-of-function variants. There is currently no way to disable this.
+Note that by default, gNALI filters for high-confidence loss-of-function variants. There is currently no way to disable this. Other filters are available through optional parameters.
 
-## Additional Filters ##
+## Predefined Filters ##
 
-To filter based on an annotation, construct an expression of the form <annotation\><operator\><value\>, where `annotation` appears in the below available filters or in the VCF header of your database, `operator` is one of `!=`/`==`/`<`/`>`/`<=`/`>=`, and `value` is a value to compare to, subject to the value type (ex. integer, floating point, string, etc).
+gNALI defines a few filters natively. We can view them using the help command.
 
-For example, if we were using gnomADv2.1.1 and wanted to filter for variants with an alternate allele count greater than 3, we would find the following annotation below:
+```bash
+> gnali --help
+...
+-p [PREDEFINED_FILTERS [PREDEFINED_FILTERS ...]], --predefined_filters [PREDEFINED_FILTERS [PREDEFINED_FILTERS ...]]
+                        Predefined filters. To use multiple, separate them by
+                        spaces. Options: {'gnomadv2.1.1': {'homozygous-
+                        controls': 'controls_nhomalt>0', 'heterozygous-
+                        controls': 'controls_nhomalt=0', 'homozygous':
+                        'nhomalt>0'}, 'gnomadv3': {'homozygous': 'nhomalt>0'}}
+...
+```
 
-| Annotation | Value Type | Description |
-|------------|------------|-------------|
-| AC | Integer | Alternate allele count for samples |
+### gnomADv2.1.1 Filters ###
+We can see we have three predefined filters (and the filter expressions they use) for gnomADv2.1.1 available:
 
-... and add the expression "AC>3" to our command, like so:
+* `homozygous-controls` will filter for variants with a non-zero number of homozygous samples in the control group
+* `heterozygous-samples` will filter for variants with a non-zero number of heterozygous samples in the control group 
+* `homozygous` will filter for variants with a non-zero number of homozygous samples
+
+### gnomADv3 Filters ###
+We can see we have one predefined filters (and the filter expression it usse) for gnomADv3 available:
+
+* `homozygous` will filter for variants with a non-zero number of homozygous samples
+
+For example, if we were using gnomADv2.1.1 and wanted to filter for variants with a non-zero number of homozygous samples in the control group, we could use the following command:
 
 ```bash
 gnali
     --input my_gnali_stuff/data/genes.txt
-    --additional_filters "AC>3"
+    --predefined_filters homozygous-controls
     --output my_results/
 ```
+
+To use several predefined filters, separate them with spaces in your command. 
+
+An example execution using predefined filters can be found [here](advanced.md).
+
+## Additional Filters ##
+
+To filter based on an annotation, construct an expression of the form <annotation\><operator\><value\>, where `annotation` appears in the below available filters or in the VCF header of your database, `operator` is one of `!=`/`==`/`<`/`>`/`<=`/`>=`, and `value` is a value to compare to, subject to the value type (ex. integer, floating point, string, etc). Enclose them in quotes and separate by spaces if you're using several additional filters at once.
+
+For example, if we were using gnomADv2.1.1 and wanted to filter for variants with an alternate allele count greater than 3, and total allele number greater than 10, we would find the following annotations [below](filtering.md#gnomadv211-filters-1):
+# TODO: fix above link
+
+| Annotation | Value Type | Description |
+|------------|------------|-------------|
+| AC | Integer | Alternate allele count for samples |
+| AN | Integer | Total number of alleles in samples |
+
+... and add the expressions "AC>3" and "AN>10" to our command, like so:
+
+```bash
+gnali
+    --input my_gnali_stuff/data/genes.txt
+    --additional_filters "AC>3" "AC>10"
+    --output my_results/
+```
+
+An example execution using additional filters can be found [here](advanced.md).
 
 Note that not all gnomAD annotations are supported as filters by gNALI.
 

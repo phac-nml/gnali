@@ -2,7 +2,7 @@
 
 ## Overview ##
 
-The purpose of this walkthrough will be to illustrate an execution gNALI to find high-confidence loss-of-function variants of genes using optional parameters.
+The purpose of this walkthrough will be to illustrate an execution gNALI to find high-confidence loss-of-function variants of genes using additional optional parameters.
 
 ## Input Data ##
 
@@ -25,21 +25,7 @@ CCR5
 
 ## Running gNALI ##
 
-gNALI only requires an input file, and has other optional parameters. We will use an input file with the path `my_gnali_stuff/data/genes.txt` and query gnomADv2.1.1. Since gnomADv2.1.1 is the default database, we do not have to specify it with the `-d`/`--database` parameter. To see what predefined filters are available with this database, we use the help command:
-
-```bash
-> gnali --help
-...
--p [PREDEFINED_FILTERS [PREDEFINED_FILTERS ...]], --predefined_filters [PREDEFINED_FILTERS [PREDEFINED_FILTERS ...]]
-                        Predefined filters. To use multiple, separate them by
-                        spaces. Options: {'gnomadv2.1.1': {'homozygous-
-                        controls': 'controls_nhomalt>0', 'heterozygous-
-                        controls': 'controls_nhomalt=0', 'homozygous':
-                        'nhomalt>0'}, 'gnomadv3': {'homozygous': 'nhomalt>0'}}
-...
-```
-
-Available additional filters can be found [here](filtering.md#additional-filters).
+gNALI only requires an input file, and has other optional parameters. We will use an input file with the path `my_gnali_stuff/data/genes.txt` and query gnomADv2.1.1. Since gnomADv2.1.1 is the default database, we do not have to specify it with the `-d`/`--database` parameter. To see what predefined filters are available with this database, we can use the help command (more info [here](filtering.md#predefined-filters)). Available additional filters can be found [here](filtering.md#additional-filters).
 
 Next, we will filter the variants keeping only those with a non-zero number of homozygous control samples (available as a predefined filter) and alternate allele count greater than 2 (by specifying an additional filter). We will also generate a VCF file for variants passing filtering, generate population frequencies, and write our results to a directory called `my_results`.
 
