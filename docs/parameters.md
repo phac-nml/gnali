@@ -20,16 +20,16 @@ The following parameters are required by gNALI:
 
 | Option | Alternative | Parameter | Description |
 |--------|-------------|-----------|-------------|
-| -i | --input | `txt` or `tsv` or `csv` | A list of input genes (as HGNC symbols), separated by newlines. Examples of valid input files can be found [here](walkthrough.md#input-data) |
+| -i | --input | `txt` or `tsv` or `csv` | A list of input genes (as HGNC symbols), separated by newlines. An example of a valid input file can be found [here](simple.md#input-data). |
 
 
 ## Optional ##
 
-The optional parameters will either be automatically calculated or be assigned default values.
+The optional parameters can be used to add additional functionality. Some will be assigned default values if unspecified.
 
 ### Databases ###
 
-The following parameter relate to database queried:
+The following parameter relates to the database queried:
 
 | Option | Alternative | Parameter | Description |
 |--------|-------------|-----------|-------------|
@@ -37,8 +37,8 @@ The following parameter relate to database queried:
 
 gNALI can use:
 
-* [gnomADv2.1.1](https://gnomad.broadinstitute.org/downloads) (GRCh37)
-* [gnomADv3](https://gnomad.broadinstitute.org/downloads) (GRCh38)
+* [gnomADv2.1.1](https://gnomad.broadinstitute.org/downloads) (GRCh37/hg19)
+* [gnomADv3](https://gnomad.broadinstitute.org/downloads) (GRCh38/hg38)
 * A custom user-given database, with use of a custom database configuration file (see below)
 
 
@@ -46,13 +46,7 @@ The following parameters relate to custom configuration files:
 
 | Option | Alternative | Parameter | Description |
 |--------|-------------|-----------|-------------|
-| -c | --config | `yaml` | Path to a custom configuration file (see below). Defaults to gNALI's own configuration file if unspecified. |
-
-
-The following parameters relate to custom configuration file creation:
-
-| Option | Alternative | Parameter | Description |
-|--------|-------------|-----------|-------------|
+| -c | --config | `yaml` | Path to a configuration file (see below). Defaults to gNALI's own configuration file (with support for gnomADv2.1.1 and gnomADv3) if unspecified. |
 | None | --config_template_grch37 | None | Running gNALI with this parameter will generate a fillable configuration file template in the current directory for a VCF database using the GRCh37 reference genome. |
 | None | --config_template_grch38 | None | Running gNALI with this parameter will generate a fillable configuration file template in the current directory for a VCF database using the GRCh38 reference genome. |
 
@@ -64,7 +58,7 @@ The following command-line parameters relate to variant filtering:
 | Option | Alternative | Parameter | Description |
 |--------|-------------|-----------|-------------|
 | -p | --predefined_filters | string | Filter variants with predefined filters. Using the help command will show available filters for each supported database. To use several filters, separate them with a space. |
-| -a | --additional_filters | string | Filter variants based on the INFO column in the VCF database. Enclose in quotes. To use several filters, separate them with a space. An example can be found [here](advanced.md#running-gnali). More info as well as filters available for natively supported databases can be found [here](filtering.md#additional-filters)|
+| -a | --additional_filters | string | Filter variants based on the INFO column in the VCF database. Enclose in quotes. To use several filters, separate them with a space. An example can be found [here](advanced.md#running-gnali). More info as well as filters available for natively supported databases can be found [here](filtering.md#additional-filters). |
   
 ### Output ###
 
@@ -72,13 +66,13 @@ The following command-line flags relate to gNALI output:
 
 | Option | Alternative | Parameter | Description |
 |--------|-------------|-----------|-------------|
-| -o | --output | /path/to/output/directory | Path to an output directory (must not exist yet). Defaults to ./results-<id\> if unspecified. |
+| -o | --output | /path/to/output/directory | Path to an output directory (must not exist yet). Defaults to results-<id\> if unspecified. |
 | -f | --force | None | Overwrite an existing directory. |
 
 The following command-line flags relate to gNALI additional output:
 
 | Option | Alternative | Parameter |Description |
 |--------|-------------|-----------|-------------|
-| -P | --pop_freqs | None | If selected, gNALI will find the allele count (AC), allele number (AN), and allele frequency (AF) by population group for every variant passing filtering. This information will be included in the detailed output file. |
-| -v | --vcf | None | If selected, gNALI will generate an additional output file, a VCF file containing headers from the database selected and all variants passing filtering. |
+| -P | --pop_freqs | None | If selected, gNALI will find the allele count (AC), allele number (AN), and allele frequency (AF) by population group for every variant passing filtering. This information will be included in the detailed output file. An example can be found [here](advanced.md#detailed-output).|
+| -v | --vcf | None | If selected, gNALI will generate an additional output file, a VCF file containing headers from the database selected and all variants passing filtering. An example can be found [here](advanced.md#vcf-output).|
 

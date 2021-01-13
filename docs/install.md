@@ -4,7 +4,7 @@ This installation guide assumes the use of the [BASH](https://en.wikipedia.org/w
 
 ## Bioconda ##
 
-The simpliest way to install gNALI is using the [Bioconda](https://bioconda.github.io/) channel for the [conda](https://conda.io/docs/intro.html) package management system. We recommend installing conda with the [Miniconda](https://conda.io/miniconda.html) package. Note that the choice of Miniconda only affects the Python version in root environment. We recommend installing Miniconda using Python 3.8 64-bit Linux [installer](https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh). Otherwise, you will need to explicitly use gNALI within a [conda environment](https://conda.io/docs/using/envs.html).
+The simpliest and recommended way to install gNALI is using the [Bioconda](https://bioconda.github.io/) channel for the [conda](https://conda.io/docs/intro.html) package management system. We recommend installing conda with the [Miniconda](https://conda.io/miniconda.html) package. Note that the choice of Miniconda only affects the Python version in root environment. We recommend installing Miniconda using Python 3.8 64-bit Linux [installer](https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh).
 
 ### Overview ###
 

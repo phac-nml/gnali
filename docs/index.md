@@ -1,6 +1,6 @@
 # gNALI #
 
-gNALI (gene nonessentiality and loss-of-function identifier) is a tool to find and filter (high-confidence) 
+gNALI (**g**ene **n**onessentiality **a**nd **l**oss-of-function **i**dentifier) is a tool to find and filter (high-confidence) 
 potential loss-of-function variants of human genes. gNALI has built-in support for [gnomADv2.1.1 and gnomadv3](https://gnomad.broadinstitute.org/) 
 and can be configured to be used with other VCF databases.
 

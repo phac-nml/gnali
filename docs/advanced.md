@@ -84,7 +84,7 @@ Chromosome	Position_Start	RSID	    Reference_Allele	                Alternate_Al
 ```
 
 
-### VCF Output (Optional) ###
+### VCF Output ###
 
 When using the `-v`/`--vcf` flag, variants passing filtering as well as headers from the database will be written to a VCF file. 
 
