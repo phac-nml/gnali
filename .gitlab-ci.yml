@@ -29,7 +29,7 @@ flake8:
   script:
     - tox -e flake8
 
-docs-build:
+pages:
   before_script:
     - pip install mkdocs
     - pip install mkdocs-cinder
