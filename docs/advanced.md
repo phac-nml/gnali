@@ -14,12 +14,12 @@ The example input file located in the following location:
 my_gnali_stuff/data/genes.txt
 ```
 
-The example input file contains the following contents:
+The example input file contains the following contents and can be found [here](https://github.com/phac-nml/gnali/blob/docs/examples/inputs/genes.txt):
 
 ```bash
 > cat my_gnali_stuff/data/genes.txt
-ALCAM
 CCR5
+ALCAM
 ```
 
 
@@ -47,9 +47,13 @@ gnali
 
 By default, gNALI will have two output files in `my_results/`: a basic output file, and a detailed output file. When using the `-v`/`--vcf` flag, a third additional output file will be generated.
 
+Output files for this example can be found [here](https://github.com/phac-nml/gnali/tree/docs/examples/outputs/output-advanced).
+
 ### Basic Output ###
 
 The basic output file contains a subset of the input genes, the ones that have high-confidence loss-of-function variants that pass filtering.
+
+The file shown below can also be found [here](https://github.com/phac-nml/gnali/blob/docs/examples/outputs/output-advanced/Nonessential_Host_Genes_(Basic).txt).
 
 ```txt
 > cat my_results/Nonessential_Host_Genes_\(Basic\).txt
@@ -62,6 +66,8 @@ CCR5
 
 The detailed output file contains the high-confidence loss-of-function varaints that pass filtering as VCF records, and replaces the INFO column with loss-of-function annotations extracted from it. Since we are using the `--pop_freqs` flag, we will also have the population frequency data added.
 
+The file shown below can also be found [here](https://github.com/phac-nml/gnali/blob/docs/examples/outputs/output-advanced/Nonessential_Host_Genes_(Detailed).txt).
+
 ```txt
 > cat my_results/Nonessential_Host_Genes_\(Detailed\).txt
 Chromosome	Position_Start	RSID	    Reference_Allele	                Alternate_Allele	Score	    Quality	LoF_Variant	LoF_Annotation	    HGNC_Symbol	Ensembl Code	african-AC	african-AN	african-AF	        ashkenazi-jewish-AC	ashkenazi-jewish-AN	ashkenazi-jewish-AF	european-non-finnish-AC	european-non-finnish-AN	european-non-finnish-AF	finnish-AC	finnish-AN	finnish-AF	        south-asian-AC	south-asian-AN	south-asian-AF	    latino-AC	latino-AN	latino-AF	        east-asian-AC	east-asian-AN	east-asian-AF	    other-AC	other-AN    other-AF	        male-AC	male-AN	male-AF             female-AC	female-AN	female-AF
@@ -73,6 +79,8 @@ Chromosome	Position_Start	RSID	    Reference_Allele	                Alternate_Al
 ### VCF Output ###
 
 When using the `-v`/`--vcf` flag, variants passing filtering as well as headers from the database will be written to a VCF file. 
+
+The file shown below can also be found [here](https://github.com/phac-nml/gnali/blob/docs/examples/outputs/output-advanced/Nonessential_Gene_Variants.vcf).
 
 ```txt
 > cat my_results/Nonessential_Gene_Variants.vcf
