@@ -11,13 +11,13 @@ The input file should contain a list of genes as HGNC symbols, separated by a ne
 The example input file located in the following location:
 
 ```bash
-my_gnali_stuff/data/genes.txt
+inputs/genes.txt
 ```
 
 The example input file contains the following contents and can be found [here](https://github.com/phac-nml/gnali/blob/docs/examples/inputs/genes.txt):
 
 ```bash
-> cat my_gnali_stuff/data/genes.txt
+> cat inputs/genes.txt
 CCR5
 ALCAM
 ```
@@ -25,7 +25,7 @@ ALCAM
 
 ## Running gNALI ##
 
-gNALI only requires an input file, and has other optional parameters. We will use an input file with the path `my_gnali_stuff/data/genes.txt`, filter for high-confidence loss-of-function variants,  and write our results to a directory called `my_results`.
+gNALI only requires an input file, and has other optional parameters. We will use an input file with the path `inputs/genes.txt`, filter for high-confidence loss-of-function variants,  and write our results to a directory called `output-simple`.
 
 Since we have not selected a database to use, gNALI will default to gnomADv2.1.1.
 
@@ -33,15 +33,15 @@ Here is what such a command would look like:
 
 ```bash
 gnali
-    --input my_gnali_stuff/data/genes.txt
-    --output my_results/
+    --input inputs/genes.txt
+    --output output-simple/
 ```
 
 
 
 ## Output ##
 
-By default, gNALI will have two output files in `my_results/`: a basic output file, and a detailed output file. When using the `-v`/`--vcf` flag, a third additional output file will be generated. An example of such output can be found in the [advanced walkthrough](advanced.md#vcf-output).
+By default, gNALI will have two output files in `output-simple/`: a basic output file, and a detailed output file. When using the `-v`/`--vcf` flag, a third additional output file will be generated. An example of such output can be found in the [advanced walkthrough](advanced.md#vcf-output).
 
 Output files for this example can be found [here](https://github.com/phac-nml/gnali/tree/docs/examples/outputs/output-simple).
 
@@ -52,7 +52,7 @@ The basic output file contains a subset of the input genes, the ones that have h
 The file shown below can also be found [here](https://github.com/phac-nml/gnali/blob/docs/examples/outputs/output-simple/Nonessential_Host_Genes_(Basic).txt).
 
 ```bash
-> cat my_results/Nonessential_Host_Genes_\(Basic\).txt
+> cat output-simple/Nonessential_Host_Genes_\(Basic\).txt
 HGNC_Symbol
 CCR5
 ALCAM
@@ -66,7 +66,7 @@ The detailed output file contains the high-confidence loss-of-function varaints 
 The file shown below can also be found [here](https://github.com/phac-nml/gnali/blob/docs/examples/outputs/output-simple/Nonessential_Host_Genes_(Detailed).txt).
 
 ```bash
-> cat my_results/Nonessential_Host_Genes_\(Detailed\).txt
+> cat output-simple/Nonessential_Host_Genes_\(Detailed\).txt
 Chromosome	Position_Start	RSID	        Reference_Allele	                Alternate_Allele	Score	    Quality	LoF_Variant	LoF_Annotation                          HGNC_Symbol	Ensembl Code	    
 3			46414403		rs748244565	    CAA	                                C	                2676.90	    PASS	-			frameshift_variant	    				CCR5		ENSG00000160791
 3			46414434		rs758662716	    AT	                                A	                4280.25	    PASS	-			frameshift_variant	    				CCR5		ENSG00000160791
