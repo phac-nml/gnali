@@ -36,6 +36,9 @@ pages:
   script:
     - mkdocs build
     - mv site public
+  only:
+    refs:
+      - master
   artifacts:
     paths:
       - public
