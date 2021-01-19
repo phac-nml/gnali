@@ -27,6 +27,7 @@ import gzip
 import shutil
 from filelock import FileLock
 from gnali.exceptions import ReferenceDownloadError
+import gnali.cache as cache
 
 CURRENT_DEPS_VERSION = "1.0.0"
 GNALI_PATH = Path(__file__).parent.absolute()
@@ -81,7 +82,7 @@ def install_loftee(assembly):
         raise ReferenceDownloadError("Error while installing LOFTEE")
 
 
-def download_test_references():
+def download_test_refs():
     refs = None
     with open(TEST_REFS_PATH, 'r') as config_stream:
         refs = yaml.load(config_stream.read(),
@@ -217,42 +218,41 @@ def download_cache(assembly):
     print("Finished downloading required caches.")
 
 
-def download_all_refs():
+def download_all_refs(assemblies):
     assemblies = ['GRCh37', 'GRCh38']
     for assembly in assemblies:
         install_loftee(assembly)
         print("Downloading references for {}...".format(assembly))
         download_references(assembly)
         print("Finished downloading references for {}.".format(assembly))
-        print("Downloading cache for {}...".format(assembly))
-        download_cache(assembly)
-        print("Finished downloading cache for {}.".format(assembly))
         print("Finished downloading files required for {}.".format(assembly))
     print("Finished downloading all required files.")
 
 
-def verify_files_present():
+def verify_files_present(assemblies):
+    for assembly in assemblies:
+        cache.verify_cache(assembly)
     if os.path.exists(DEPS_VERSION_FILE):
         with open(DEPS_VERSION_FILE, 'r') as fh:
             deps_version = fh.read()
             if not deps_version == CURRENT_DEPS_VERSION:
-                download_all_refs()
+                download_all_refs(assemblies)
             else:
                 return
     else:
-        download_all_refs()
+        download_all_refs(assemblies)
     with open(DEPS_VERSION_FILE, 'w') as fh:
         fh.write(CURRENT_DEPS_VERSION)
 
 
 def main():
+    assemblies = ['GRCh37', 'GRCh38']
     if len(sys.argv) == 1:
-        verify_files_present()
+        verify_files_present(assemblies)
     elif sys.argv[1] == 'test':
-        assemblies = ['GRCh37', 'GRCh38']
         for assembly in assemblies:
             install_loftee(assembly)
-        download_test_references()
+        download_test_refs()
 
 
 if __name__ == '__main__':

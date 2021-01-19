@@ -21,6 +21,7 @@ import os
 import subprocess
 from gnali.exceptions import ReferenceDownloadError
 
+
 GNALI_PATH = Path(__file__).parent.absolute()
 DATA_PATH = "{}/data".format(str(GNALI_PATH))
 VEP_PATH = "{}/vep".format(DATA_PATH)
@@ -63,16 +64,8 @@ def get_vep_version():
 
 
 def verify_cache(assembly):
+    print("verifying cache:")
     cache_root_path = VEP_PATH
     vep_version = get_vep_version()
     if not is_cache_present(vep_version, assembly):
         install_cache(assembly, cache_root_path)
-
-
-def main():
-    verify_cache("GRCh37")
-    verify_cache("GRCh38")
-
-
-if __name__ == "__main__":
-    main()
