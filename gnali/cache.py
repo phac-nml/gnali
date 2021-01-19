@@ -63,8 +63,7 @@ def get_vep_version():
     return vep_version
 
 
-def verify_cache(assembly):
-    cache_root_path = VEP_PATH
+def verify_cache(assembly, cache_root_path):
     vep_version = get_vep_version()
     if not is_cache_present(vep_version, assembly):
         install_cache(assembly, cache_root_path)
