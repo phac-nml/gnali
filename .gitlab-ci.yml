@@ -28,3 +28,17 @@ flake8:
     - pip install tox
   script:
     - tox -e flake8
+
+pages:
+  before_script:
+    - pip install mkdocs
+    - pip install mkdocs-cinder
+  script:
+    - mkdocs build
+    - mv site public
+  only:
+    refs:
+      - master
+  artifacts:
+    paths:
+      - public
