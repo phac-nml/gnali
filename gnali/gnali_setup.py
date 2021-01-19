@@ -200,24 +200,6 @@ def decompress_file(file_path):
             shutil.copyfileobj(fh_in, fh_out)
 
 
-def download_cache(assembly):
-    cache_path = VEP_PATH
-    homo_sapiens_path = "{}/homo_sapiens".format(VEP_PATH)
-    if os.path.exists(homo_sapiens_path):
-        shutil.rmtree(homo_sapiens_path)
-    install_cache_cmd = "vep_install -a cf -s homo_sapiens " \
-                        "-y {} -c {} --CONVERT" \
-                        .format(assembly, cache_path)
-    print("Downloading cache for {}...".format(assembly))
-    results = subprocess.run(install_cache_cmd.split())
-    if results.returncode == 0:
-        print("Downloaded cache for {}".format(assembly))
-    else:
-        raise ReferenceDownloadError("Error downloading {} cache, please "
-                                     "try again.".format(assembly))
-    print("Finished downloading required caches.")
-
-
 def download_all_refs(assemblies):
     assemblies = ['GRCh37', 'GRCh38']
     for assembly in assemblies:
@@ -229,9 +211,9 @@ def download_all_refs(assemblies):
     print("Finished downloading all required files.")
 
 
-def verify_files_present(assemblies):
+def verify_files_present(assemblies, cache_path):
     for assembly in assemblies:
-        cache.verify_cache(assembly)
+        cache.verify_cache(assembly, cache_path)
     if os.path.exists(DEPS_VERSION_FILE):
         with open(DEPS_VERSION_FILE, 'r') as fh:
             deps_version = fh.read()
