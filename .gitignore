@@ -67,6 +67,7 @@ environment-*
 !environment-dev.yml
 tests/data/vep/GRCh38/col6a5_gerp_scores.txt
 tests/data/vep/GRCh38/col6a5_gerp_scores.wig
+site/
 
 # WFH
 .vscode
@@ -74,3 +75,6 @@ tests/data/vep/GRCh38/col6a5_gerp_scores.wig
 
 # gnomAD stuff
 gnomad/
+
+# WIP
+docs/customization.md
