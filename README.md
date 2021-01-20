@@ -8,6 +8,14 @@ and can be configured to be used with other VCF databases.
 NOTE: loss-of-function is influenced by the genome build. Not all variants available in gnomADv2.1.1 are
 available in gnomADv3 and vice versa.
 
+## Resources ##
+---------------
+
+* **Website**: [https://phac-nml.github.io/gnali/](https://phac-nml.github.io/gnali/)
+* **Installation**: [https://phac-nml.github.io/gnali/install/](https://phac-nml.github.io/gnali/install/)
+* **Parameters**: [https://phac-nml.github.io/gnali/parameters/](https://phac-nml.github.io/gnali/parameters/)
+
+
 ## Getting Started ##
 ---------------------
 
