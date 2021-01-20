@@ -75,3 +75,6 @@ site/
 
 # gnomAD stuff
 gnomad/
+
+# WIP
+docs/customization.md
