@@ -206,8 +206,8 @@ class RuntimeConfig:
                                                    config.ref_files
                                                    .get('assembly-fasta'))
             self.ref_assembly_fasta_path = self.ref_assembly_fasta_path \
-                                           .replace("<vep_version>",
-                                                    str(vep_version))           
+                .replace("<vep_version>",
+                         str(vep_version))
             self.ref_conservation_db_path = "{}/{}" \
                                             .format(GNALI_ROOT_DIR,
                                                     config.ref_files
