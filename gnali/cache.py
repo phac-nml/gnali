@@ -27,7 +27,7 @@ DATA_PATH = "{}/data".format(str(GNALI_PATH))
 VEP_PATH = "{}/vep".format(DATA_PATH)
 
 
-def install_cache(assembly, cache_path):
+def install_cache(vep_version, assembly, cache_path):
     install_cache_cmd = "vep_install -a cf -s homo_sapiens " \
                         "-y {} -c {} --CONVERT" \
                         .format(assembly, cache_path)
@@ -36,8 +36,9 @@ def install_cache(assembly, cache_path):
     if results.returncode == 0:
         print("Downloaded cache for {}".format(assembly))
     else:
-        raise ReferenceDownloadError("Error downloading {} cache, please "
-                                     "try again.".format(assembly))
+        raise ReferenceDownloadError("Error downloading cache for VEP {}, "
+                                     "reference {}. Please try again."
+                                     .format(vep_version, assembly))
     print("Finished downloading required caches.")
 
 
@@ -66,4 +67,4 @@ def get_vep_version():
 def verify_cache(assembly, cache_root_path):
     vep_version = get_vep_version()
     if not is_cache_present(vep_version, assembly, cache_root_path):
-        install_cache(assembly, cache_root_path)
+        install_cache(vep_version, assembly, cache_root_path)
