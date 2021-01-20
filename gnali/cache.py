@@ -41,8 +41,8 @@ def install_cache(assembly, cache_path):
     print("Finished downloading required caches.")
 
 
-def is_cache_present(vep_version, assembly):
-    homo_sapiens_path = "{}/homo_sapiens".format(VEP_PATH)
+def is_cache_present(vep_version, assembly, cache_root_path):
+    homo_sapiens_path = "{}/homo_sapiens".format(cache_root_path)
     cache_path = "{}/{}_{}".format(homo_sapiens_path, vep_version, assembly)
     if os.path.exists(cache_path):
         print("Found cache for VEP version {}, reference {}"
@@ -65,5 +65,5 @@ def get_vep_version():
 
 def verify_cache(assembly, cache_root_path):
     vep_version = get_vep_version()
-    if not is_cache_present(vep_version, assembly):
+    if not is_cache_present(vep_version, assembly, cache_root_path):
         install_cache(assembly, cache_root_path)
