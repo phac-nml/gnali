@@ -230,7 +230,7 @@ def verify_files_present(assemblies, cache_path):
 def main():
     assemblies = ['GRCh37', 'GRCh38']
     if len(sys.argv) == 1:
-        verify_files_present(assemblies)
+        verify_files_present(assemblies, VEP_PATH)
     elif sys.argv[1] == 'test':
         for assembly in assemblies:
             install_loftee(assembly)
