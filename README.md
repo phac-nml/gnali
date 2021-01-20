@@ -66,10 +66,10 @@ gNALI by default provides two output files:
 
 gNALI requires at minimum an input file. Here is a simple example of running gNALI:
 
-`gnali -i my_genes.txt`
+`gnali -i my_genes.txt -o my_results`
 
 * An input file called `my_genes.txt` is tested for high-confidence loss-of-function variants
-* The output folder will contain both basic results and detailed results
+* The output folder `my_results` will contain the output files
 
 [Simple](https://phac-nml.github.io/gnali/simple/) and [advanced](https://phac-nml.github.io/gnali/advanced/) walkthroughs are available in the [documentation](https://phac-nml.github.io/gnali/)
 
@@ -78,9 +78,9 @@ gNALI requires at minimum an input file. Here is a simple example of running gNA
 When using the population frequencies feature (`-P/--pop_freqs`):
 
 Per population group:
-* AC denotes allele count
-* AN denotes allele number
-* AF denotes allele frequency
+* "AC" denotes allele count
+* "AN" denotes allele number
+* "AF" denotes allele frequency
 
 
 # Testing #
