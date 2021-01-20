@@ -22,11 +22,6 @@ import subprocess
 from gnali.exceptions import ReferenceDownloadError
 
 
-GNALI_PATH = Path(__file__).parent.absolute()
-DATA_PATH = "{}/data".format(str(GNALI_PATH))
-VEP_PATH = "{}/vep".format(DATA_PATH)
-
-
 def install_cache(vep_version, assembly, cache_path):
     install_cache_cmd = "vep_install -a cf -s homo_sapiens " \
                         "-y {} -c {} --CONVERT" \
