@@ -203,7 +203,8 @@ def decompress_file(file_path):
 def download_all_refs(assemblies):
     for assembly in assemblies:
         install_loftee(assembly)
-        print("Downloading references for {} (this may take a while)...".format(assembly))
+        print("Downloading references for {} (this may take a while)..."
+              .format(assembly))
         download_references(assembly)
         print("Finished downloading references for {}.".format(assembly))
         print("Finished downloading files required for {}.".format(assembly))
