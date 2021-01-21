@@ -201,19 +201,18 @@ def decompress_file(file_path):
 
 
 def download_all_refs(assemblies):
-    assemblies = ['GRCh37', 'GRCh38']
     for assembly in assemblies:
         install_loftee(assembly)
-        print("Downloading references for {}...".format(assembly))
+        print("Downloading references for {} (this may take a while)...".format(assembly))
         download_references(assembly)
         print("Finished downloading references for {}.".format(assembly))
         print("Finished downloading files required for {}.".format(assembly))
     print("Finished downloading all required files.")
 
 
-def verify_files_present(assemblies, cache_path):
+def verify_files_present(assemblies, cache_root_path):
     for assembly in assemblies:
-        cache.verify_cache(assembly, cache_path)
+        cache.verify_cache(assembly, cache_root_path)
     if os.path.exists(DEPS_VERSION_FILE):
         with open(DEPS_VERSION_FILE, 'r') as fh:
             deps_version = fh.read()
