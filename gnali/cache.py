@@ -25,15 +25,16 @@ def install_cache(vep_version, assembly, cache_path):
     install_cache_cmd = "vep_install -a cf -s homo_sapiens " \
                         "-y {} -c {} --CONVERT" \
                         .format(assembly, cache_path)
-    print("Downloading cache for {}...".format(assembly))
+    print("Downloading cache for VEP version {}, reference {}..."
+          .format(vep_version, assembly))
     results = subprocess.run(install_cache_cmd.split())
     if results.returncode == 0:
-        print("Downloaded cache for {}".format(assembly))
+        print("Downloaded cache for VEP version {}, reference {}"
+              .format(vep_version, assembly))
     else:
         raise ReferenceDownloadError("Error downloading cache for VEP {}, "
                                      "reference {}. Please try again."
                                      .format(vep_version, assembly))
-    print("Finished downloading required caches.")
 
 
 def is_cache_present(vep_version, assembly, cache_root_path):
