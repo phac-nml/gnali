@@ -60,7 +60,7 @@ databases:
       path: http://ensembl.org
     ref-files:
       human-ancestor: tests/data/vep/GRCh38/human_ancestor_col6a5.fa.gz
-      assembly-fasta: tests/data/vep/homo_sapiens/101_GRCh38/col6a5.fa.gz
+      assembly-fasta: tests/data/vep/homo_sapiens/<vep_version>_GRCh38/col6a5.fa.gz
       conservation-db: gnali/data/vep/GRCh38/loftee.sql
       gerp-scores: tests/data/vep/GRCh38/col6a5_gerp_scores.bigwig
     cache:
@@ -107,7 +107,7 @@ databases:
       path: http://grch37.ensembl.org
     ref-files:
       human-ancestor: tests/data/vep/GRCh37/human_ancestor_ccr5.fa.gz
-      assembly-fasta: tests/data/vep/homo_sapiens/101_GRCh37/ccr5.fa.bgz
+      assembly-fasta: tests/data/vep/homo_sapiens/<vep_version>_GRCh37/ccr5.fa.bgz
       conservation-db: gnali/data/vep/GRCh37/phylocsf_gerp.sql
       gerp-scores: tests/data/vep/GRCh37/GERP_scores_ccr5.txt.bgz
     cache:
