@@ -110,6 +110,7 @@ def get_test_gene_descriptions(genes_list, db_info):
                                           .str.contains('PATCH')]
     gene_descriptions = gene_descriptions[(gene_descriptions['hgnc_symbol']
                                           .isin(genes_list))]
+    outputs.write_to_tab("gene_descriptions.txt", gene_descriptions)
     return gene_descriptions
 
 
@@ -296,7 +297,7 @@ def compress_vcf(path, data_path, file_name):
     return data_bgz
 
 
-def get_variants(target_list, db_info, filter_objs, output_dir):
+def get_variants(genes, target_list, db_info, filter_objs, output_dir):
     """Query the gnomAD database for variants with Tabix,
         apply loss-of-function filters, user-specified predefined
         filters, and user-specified additional filters.
@@ -331,7 +332,7 @@ def get_variants(target_list, db_info, filter_objs, output_dir):
         if db_info.ref_genome_name == 'GRCh38':
             test_locations = ["chr{}".format(loc) for loc in test_locations]
         # get records in locations
-        for location in test_locations:
+        for index, location in enumerate(test_locations):
             try:
                 records = tbx.fetch(reference=location)
                 # update to convert to Variants before filter calls
@@ -349,9 +350,9 @@ def get_variants(target_list, db_info, filter_objs, output_dir):
                                          .format(output_dir))
                 fh.setLevel(logging.DEBUG)
                 logger.addHandler(fh)
-                logger.error("{}, it is likely that the region "
-                             "does not exist in file '{}'"
-                             .format(error, data_file.name))
+                logger.error("Error for gene {}: {}, it is likely that the "
+                             "region does not exist in file '{}'"
+                             .format(genes[index], error, data_file.name))
 
     if not db_info.has_lof_annots:
         header, variants = VEP.annotate_vep_loftee(header, variants,
@@ -627,7 +628,7 @@ def main():
         filters = transform_filters(db_config, args.predefined_filters,
                                     args.additional_filters)
         Path(results_dir).mkdir(parents=True, exist_ok=args.force)
-        header, variants = get_variants(target_list, db_config,
+        header, variants = get_variants(genes, target_list, db_config,
                                         filters, results_dir)
 
         results, results_basic, results_as_vcf = \
