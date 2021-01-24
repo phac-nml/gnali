@@ -13,7 +13,7 @@ available in gnomADv3 and vice versa.
 
 **TestPyPI/GitHub Install**
 1. Install the following dependencies:
-    * [Ensembl-VEP==101](http://uswest.ensembl.org/info/docs/tools/vep/script/vep_download.html)
+    * [Ensembl-VEP](http://uswest.ensembl.org/info/docs/tools/vep/script/vep_download.html)
     * Samtools>=1.7
     * Tabix
     * Libcurl
