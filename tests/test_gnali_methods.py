@@ -239,7 +239,7 @@ class TestGNALIMethods:
         monkeypatch.setattr(gnali, "get_db_tbi", mock_get_db_tbi)
 
         temp_dir = tempfile.TemporaryDirectory()
-        header, method_variants = gnali.get_variants(target_list, db_config, 
+        header, method_variants = gnali.get_variants(['CCR5'], target_list, db_config, 
                                                      [Filter("homozygous-controls","controls_nhomalt>0")],
                                                      temp_dir.name)
         method_variants = [str(variant) for variant in method_variants]
@@ -265,7 +265,7 @@ class TestGNALIMethods:
         output_dir = "{}/output".format(temp_dir.name)
         pathlib.Path(output_dir).mkdir(parents=True, exist_ok=True)
         #logging.disable(logging.CRITICAL)
-        gnali.get_variants(target_list, db_config, 
+        gnali.get_variants(['GENE1'], target_list, db_config, 
                         [Filter("homozygous-controls","controls_nhomalt>0")],
                         output_dir)
         method_log_file = "{}/gnali_errors.log".format(output_dir)
