@@ -39,6 +39,7 @@ from gnali.variants import Variant
 from gnali.filter import Filter
 from gnali.dbconfig import Config, RuntimeConfig, DataFile
 from gnali import gnali_setup
+from gnali.logging import Logger
 
 TEST_PATH = pathlib.Path(__file__).parent.absolute()
 TEST_INPUT_CSV = "{}/data/test_genes.csv".format(str(TEST_PATH))
@@ -188,7 +189,7 @@ class TestGNALIMethods:
         db_config = Config(None, yaml.load(db_config_file.read(), Loader=yaml.FullLoader))
 
         human_genes = gnali.get_human_genes(db_config)
-        method_results = gnali.get_test_gene_descriptions(genes_list, db_config)
+        method_results = gnali.get_test_gene_descriptions(genes_list, db_config, None)
 
         human_genes.columns = ['hgnc_symbol', 'chromosome_name', 'start_position', 'end_position']
         expected_results = human_genes
@@ -239,9 +240,9 @@ class TestGNALIMethods:
         monkeypatch.setattr(gnali, "get_db_tbi", mock_get_db_tbi)
 
         temp_dir = tempfile.TemporaryDirectory()
-        header, method_variants = gnali.get_variants(target_list, db_config, 
+        header, method_variants = gnali.get_variants(['CCR5'], target_list, db_config, 
                                                      [Filter("homozygous-controls","controls_nhomalt>0")],
-                                                     temp_dir.name)
+                                                     temp_dir.name, None)
         method_variants = [str(variant) for variant in method_variants]
 
         assert expected_variants == method_variants
@@ -264,10 +265,11 @@ class TestGNALIMethods:
         temp_dir = tempfile.TemporaryDirectory()
         output_dir = "{}/output".format(temp_dir.name)
         pathlib.Path(output_dir).mkdir(parents=True, exist_ok=True)
-        #logging.disable(logging.CRITICAL)
-        gnali.get_variants(target_list, db_config, 
+
+        logger = Logger(output_dir)
+        gnali.get_variants(['GENE1'], target_list, db_config, 
                         [Filter("homozygous-controls","controls_nhomalt>0")],
-                        output_dir)
+                        output_dir, logger)
         method_log_file = "{}/gnali_errors.log".format(output_dir)
         assert filecmp.cmp(method_log_file, TEST_LOG_FILE)
     ########################################################
