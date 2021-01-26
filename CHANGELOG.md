@@ -3,6 +3,18 @@
 All notable changes to gNALI will be documented in this file.
 
 
+## 1.0.2 ##
+
+2021-01-25
+
+### Changed ### 
+
+- Fixed installation/verification of VEP cache
+
+### Added ###
+
+- Add error logging for genes not found in the Ensembl database
+
 ## 1.0.1 ##
 
 2021-01-11
