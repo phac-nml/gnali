@@ -56,7 +56,7 @@ setup(
                             'gnali_setup=gnali.gnali_setup:main'],
     },
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
         'License :: OSI Approved :: Apache Software License',
         'Environment :: Console',
         'Programming Language :: Python :: 3',
