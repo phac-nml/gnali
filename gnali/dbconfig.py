@@ -17,6 +17,7 @@ specific language governing permissions and limitations under the License.
 """
 
 from gnali.exceptions import InvalidConfigurationError, InvalidFilterError
+from gnali.cache import get_vep_version
 import urllib
 import pathlib
 import shutil
@@ -199,10 +200,14 @@ class RuntimeConfig:
                                            .format(GNALI_ROOT_DIR,
                                                    config.ref_files
                                                    .get('human-ancestor'))
+            vep_version = get_vep_version()
             self.ref_assembly_fasta_path = "{}/{}" \
                                            .format(GNALI_ROOT_DIR,
                                                    config.ref_files
                                                    .get('assembly-fasta'))
+            self.ref_assembly_fasta_path = self.ref_assembly_fasta_path \
+                .replace("<vep_version>",
+                         str(vep_version))
             self.ref_conservation_db_path = "{}/{}" \
                                             .format(GNALI_ROOT_DIR,
                                                     config.ref_files

@@ -32,7 +32,6 @@ import yaml
 from filelock import FileLock
 import subprocess
 import bgzip
-import logging
 from gnali.exceptions import EmptyFileError, TBIDownloadError, \
                              InvalidConfigurationError, InvalidFilterError, \
                              NoVariantsAvailableError
@@ -42,6 +41,7 @@ from gnali.dbconfig import Config, RuntimeConfig, create_template
 import gnali.outputs as outputs
 from gnali.vep import VEP
 from gnali.gnali_setup import download_file
+from gnali.logging import Logger
 import pkg_resources
 
 SCRIPT_NAME = 'gNALI'
@@ -97,7 +97,7 @@ def get_human_genes(db_info):
     return genes
 
 
-def get_test_gene_descriptions(genes_list, db_info):
+def get_test_gene_descriptions(genes_list, db_info, logger):
     """Filter Ensembl human genes for info related to test genes.
 
     Args:
@@ -110,6 +110,13 @@ def get_test_gene_descriptions(genes_list, db_info):
                                           .str.contains('PATCH')]
     gene_descriptions = gene_descriptions[(gene_descriptions['hgnc_symbol']
                                           .isin(genes_list))]
+    unavailable_genes = [gene for gene in genes_list if gene not in
+                         list(gene_descriptions['hgnc_symbol'])]
+    if len(unavailable_genes) > 0:
+        logger.write("Genes not available in Ensembl {} database (skipping):"
+                     .format(db_info.ref_genome_name))
+        for gene in unavailable_genes:
+            logger.write(gene)
     return gene_descriptions
 
 
@@ -296,7 +303,8 @@ def compress_vcf(path, data_path, file_name):
     return data_bgz
 
 
-def get_variants(target_list, db_info, filter_objs, output_dir):
+def get_variants(genes, target_list, db_info, filter_objs, output_dir,
+                 logger):
     """Query the gnomAD database for variants with Tabix,
         apply loss-of-function filters, user-specified predefined
         filters, and user-specified additional filters.
@@ -331,7 +339,7 @@ def get_variants(target_list, db_info, filter_objs, output_dir):
         if db_info.ref_genome_name == 'GRCh38':
             test_locations = ["chr{}".format(loc) for loc in test_locations]
         # get records in locations
-        for location in test_locations:
+        for index, location in enumerate(test_locations):
             try:
                 records = tbx.fetch(reference=location)
                 # update to convert to Variants before filter calls
@@ -343,15 +351,11 @@ def get_variants(target_list, db_info, filter_objs, output_dir):
             except ValueError as error:
                 # ValueError means that location used in TabixFile.fetch()
                 # does not exist in the database
-                logger = logging.getLogger('factory')
-                logger.setLevel(logging.DEBUG)
-                fh = logging.FileHandler('{}/gnali_errors.log'
-                                         .format(output_dir))
-                fh.setLevel(logging.DEBUG)
-                logger.addHandler(fh)
-                logger.error("{}, it is likely that the region "
-                             "does not exist in file '{}'"
-                             .format(error, data_file.name))
+                logger.write("Error for gene {}: {}, it is likely that the "
+                             "region does not exist in file '{}' "
+                             "in database {}"
+                             .format(genes[index], error, data_file.name,
+                                     db_info.name))
 
     if not db_info.has_lof_annots:
         header, variants = VEP.annotate_vep_loftee(header, variants,
@@ -618,7 +622,9 @@ def main():
         genes = open_test_file(args.input_file)
         db_config = RuntimeConfig(db_config)
 
-        genes_df = get_test_gene_descriptions(genes, db_config)
+        logger = Logger(results_dir)
+        Path(results_dir).mkdir(parents=True, exist_ok=args.force)
+        genes_df = get_test_gene_descriptions(genes, db_config, logger)
         target_list = find_test_locations(genes_df)
 
         validate_filters(db_config, args.predefined_filters,
@@ -626,9 +632,9 @@ def main():
 
         filters = transform_filters(db_config, args.predefined_filters,
                                     args.additional_filters)
-        Path(results_dir).mkdir(parents=True, exist_ok=args.force)
-        header, variants = get_variants(target_list, db_config,
-                                        filters, results_dir)
+
+        header, variants = get_variants(genes, target_list, db_config,
+                                        filters, results_dir, logger)
 
         results, results_basic, results_as_vcf = \
             extract_lof_annotations(variants, db_config, args.pop_freqs)

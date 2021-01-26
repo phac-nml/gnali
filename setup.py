@@ -32,7 +32,7 @@ def readme():
 
 setup(
     name='gNALI',
-    version = ("1.0.1{}".format(PATCH)),
+    version = ("1.0.2{}".format(PATCH)),
     url="https://github.com/phac-nml/gnali",
     license='Apache License, Version 2.0',
     author='Xia Liu',
@@ -56,7 +56,7 @@ setup(
                             'gnali_setup=gnali.gnali_setup:main'],
     },
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
         'License :: OSI Approved :: Apache Software License',
         'Environment :: Console',
         'Programming Language :: Python :: 3',
