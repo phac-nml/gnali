@@ -78,6 +78,6 @@ def get_vep_version():
 
 def verify_cache(assembly, cache_root_path):
     vep_version = get_vep_version()
-    remove_extra_caches(vep_version, cache_root_path)
     if not is_required_cache_present(vep_version, assembly, cache_root_path):
         install_cache(vep_version, assembly, cache_root_path)
+    remove_extra_caches(vep_version, cache_root_path)
