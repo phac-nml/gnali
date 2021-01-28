@@ -9,9 +9,9 @@ available in gnomADv3 and vice versa.
 
 ## Release ##
 
-**gNALI 1.0.2**
+**gNALI 1.0.3**
 
-This release fixes population frequency output column order.
+This release fixes verification of VEP cache.
 
 
 ## Resources ##
