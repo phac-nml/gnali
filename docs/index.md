@@ -9,7 +9,7 @@ available in gnomADv3 and vice versa.
 
 ## Release ##
 
-**gNALI 1.0.1**
+**gNALI 1.0.2**
 
 This release fixes population frequency output column order.
 
