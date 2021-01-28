@@ -1,0 +1,22 @@
+
+pre code {
+    overflow-x: auto;
+    white-space: pre;
+    display: flex;
+   }
+
+.bs-sidenav {
+    font-size: 16px;
+    }
+
+.navbar {
+    font-size: 16px;
+    }
+
+table {
+    font-size: 13px;
+    }
+
+body {
+    font-size: 14px;
+    }
