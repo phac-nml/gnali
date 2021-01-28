@@ -3,6 +3,15 @@
 All notable changes to gNALI will be documented in this file.
 
 
+## 1.0.3 ##
+
+2021-01-28
+
+### Changed ### 
+
+- Fixed verification of VEP cache
+
+
 ## 1.0.2 ##
 
 2021-01-25
