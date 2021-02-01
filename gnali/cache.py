@@ -41,8 +41,7 @@ def install_cache(vep_version, assembly, cache_path, homo_sapiens_path):
                                      .format(vep_version, assembly))
 
 
-def is_required_cache_present(vep_version, assembly, cache_root_path,
-                              homo_sapiens_path):
+def is_required_cache_present(vep_version, assembly, homo_sapiens_path):
     # Download required cache
     cache_path = "{}/{}_{}".format(homo_sapiens_path, vep_version, assembly)
     if os.path.exists(cache_path):
@@ -55,7 +54,7 @@ def is_required_cache_present(vep_version, assembly, cache_root_path,
         return False
 
 
-def remove_extra_caches(vep_version, cache_root_path, homo_sapiens_path):
+def remove_extra_caches(vep_version, homo_sapiens_path):
     # Remove extra caches that aren't required
     cache_path_exp = re.compile("((?=(?!{}))\\d+)_GRCh(\\d+)"
                                 .format(vep_version))
@@ -83,6 +82,5 @@ def verify_cache(assembly, cache_root_path):
     homo_sapiens_path = "{}/homo_sapiens".format(cache_root_path)
     if not is_required_cache_present(vep_version, assembly, cache_root_path,
                                      homo_sapiens_path):
-        install_cache(vep_version, assembly, cache_root_path,
-                      homo_sapiens_path)
-    remove_extra_caches(vep_version, cache_root_path, homo_sapiens_path)
+        install_cache(vep_version, assembly, homo_sapiens_path)
+    remove_extra_caches(vep_version, homo_sapiens_path)
