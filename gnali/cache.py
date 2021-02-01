@@ -62,11 +62,11 @@ def remove_extra_caches(vep_version, cache_root_path, homo_sapiens_path):
     if os.path.exists(homo_sapiens_path):
         for cache_path in os.listdir(homo_sapiens_path):
             if cache_path_exp.match(cache_path):
-                print("Found cache {} not matching VEP version {}. Removing..."
-                    .format(cache_path, vep_version))
+                print("Found cache {} not matching VEP version {}. "
+                      "Removing...".format(cache_path, vep_version))
                 shutil.rmtree("{}/{}".format(homo_sapiens_path, cache_path))
                 print("Removed {} cache for VEP version {}"
-                    .format(cache_path, vep_version))
+                      .format(cache_path, vep_version))
 
 
 def get_vep_version():
