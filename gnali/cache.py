@@ -80,7 +80,8 @@ def get_vep_version():
 def verify_cache(assembly, cache_root_path):
     vep_version = get_vep_version()
     homo_sapiens_path = "{}/homo_sapiens".format(cache_root_path)
-    if not is_required_cache_present(vep_version, assembly, cache_root_path,
+    if not is_required_cache_present(vep_version, assembly,
                                      homo_sapiens_path):
-        install_cache(vep_version, assembly, homo_sapiens_path)
+        install_cache(vep_version, assembly, cache_root_path,
+                      homo_sapiens_path)
     remove_extra_caches(vep_version, homo_sapiens_path)
