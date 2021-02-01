@@ -23,7 +23,7 @@ import shutil
 from gnali.exceptions import ReferenceDownloadError
 
 
-def install_cache(vep_version, assembly, cache_path):
+def install_cache(vep_version, assembly, cache_path, homo_sapiens_path):
     install_cache_cmd = "vep_install -a cf -s homo_sapiens " \
                         "-y {} -c {} --CONVERT" \
                         .format(assembly, cache_path)
@@ -34,14 +34,15 @@ def install_cache(vep_version, assembly, cache_path):
         print("Downloaded cache for VEP version {}, reference {}"
               .format(vep_version, assembly))
     else:
+        shutil.rmtree("{}/{}_{}".format(homo_sapiens_path, vep_version, 
+                      assembly))
         raise ReferenceDownloadError("Error downloading cache for VEP {}, "
                                      "reference {}. Please try again."
                                      .format(vep_version, assembly))
 
 
-def is_required_cache_present(vep_version, assembly, cache_root_path):
+def is_required_cache_present(vep_version, assembly, cache_root_path, homo_sapiens_path):
     # Download required cache
-    homo_sapiens_path = "{}/homo_sapiens".format(cache_root_path)
     cache_path = "{}/{}_{}".format(homo_sapiens_path, vep_version, assembly)
     if os.path.exists(cache_path):
         print("Found cache for VEP version {}, reference {}"
@@ -53,19 +54,17 @@ def is_required_cache_present(vep_version, assembly, cache_root_path):
         return False
 
 
-def remove_extra_caches(vep_version, cache_root_path):
+def remove_extra_caches(vep_version, cache_root_path, homo_sapiens_path):
     # Remove extra caches that aren't required
-    homo_sapiens_path = "{}/homo_sapiens".format(cache_root_path)
     cache_path_exp = re.compile("((?=(?!{}))\\d+)_GRCh(\\d+)"
                                 .format(vep_version))
-    if os.path.exists(homo_sapiens_path):
-        for cache_path in os.listdir(homo_sapiens_path):
-            if cache_path_exp.match(cache_path):
-                print("Found cache {} not matching VEP version {}. Removing..."
-                      .format(cache_path, vep_version))
-                shutil.rmtree("{}/{}".format(homo_sapiens_path, cache_path))
-                print("Removed {} cache for VEP version {}"
-                      .format(cache_path, vep_version))
+    for cache_path in os.listdir(homo_sapiens_path):
+        if cache_path_exp.match(cache_path):
+            print("Found cache {} not matching VEP version {}. Removing..."
+                  .format(cache_path, vep_version))
+            shutil.rmtree("{}/{}".format(homo_sapiens_path, cache_path))
+            print("Removed {} cache for VEP version {}"
+                  .format(cache_path, vep_version))
 
 
 def get_vep_version():
@@ -79,6 +78,9 @@ def get_vep_version():
 
 def verify_cache(assembly, cache_root_path):
     vep_version = get_vep_version()
-    if not is_required_cache_present(vep_version, assembly, cache_root_path):
-        install_cache(vep_version, assembly, cache_root_path)
-    remove_extra_caches(vep_version, cache_root_path)
+    homo_sapiens_path = "{}/homo_sapiens".format(cache_root_path)
+    remove_extra_caches(vep_version, cache_root_path, homo_sapiens_path)
+    if not is_required_cache_present(vep_version, assembly, cache_root_path,
+                                     homo_sapiens_path):
+        install_cache(vep_version, assembly, cache_root_path,
+                      homo_sapiens_path)
