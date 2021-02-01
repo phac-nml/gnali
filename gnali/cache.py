@@ -34,14 +34,15 @@ def install_cache(vep_version, assembly, cache_path, homo_sapiens_path):
         print("Downloaded cache for VEP version {}, reference {}"
               .format(vep_version, assembly))
     else:
-        shutil.rmtree("{}/{}_{}".format(homo_sapiens_path, vep_version, 
+        shutil.rmtree("{}/{}_{}".format(homo_sapiens_path, vep_version,
                       assembly))
         raise ReferenceDownloadError("Error downloading cache for VEP {}, "
                                      "reference {}. Please try again."
                                      .format(vep_version, assembly))
 
 
-def is_required_cache_present(vep_version, assembly, cache_root_path, homo_sapiens_path):
+def is_required_cache_present(vep_version, assembly, cache_root_path,
+                              homo_sapiens_path):
     # Download required cache
     cache_path = "{}/{}_{}".format(homo_sapiens_path, vep_version, assembly)
     if os.path.exists(cache_path):
