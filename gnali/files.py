@@ -43,7 +43,7 @@ def download_file(url, dest_path, max_time):
         else:
             with request.urlopen(url) as resp:
                 with open(dest_path, 'wb') as fh:
-                    shutil.copyfileobj(resp.raw, fh)
+                    shutil.copyfileobj(resp, fh)
 
     except Exception:
         if os.path.exists(dest_path):
