@@ -41,7 +41,7 @@ def download_file(url, dest_path, max_time):
                 with open(dest_path, 'wb') as fh:
                     shutil.copyfileobj(resp.raw, fh)
         else:
-            with request.get(url, stream=True) as resp:
+            with request.urlopen(url) as resp:
                 with open(dest_path, 'wb') as fh:
                     shutil.copyfileobj(resp.raw, fh)
 
