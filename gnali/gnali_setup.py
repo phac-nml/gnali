@@ -22,12 +22,12 @@ import sys
 import subprocess
 import yaml
 import hashlib
-import urllib.request
 import gzip
 import shutil
 from filelock import FileLock
 from gnali.exceptions import ReferenceDownloadError
 import gnali.cache as cache
+from gnali.files import download_file
 
 CURRENT_DEPS_VERSION = "1.0.0"
 GNALI_PATH = Path(__file__).parent.absolute()
@@ -41,26 +41,6 @@ DEPS_VERSION_FILE = "{}/dependency_version.txt".format(DATA_PATH)
 
 class Dependencies:
     version = CURRENT_DEPS_VERSION
-
-
-def download_file(url, dest_path, max_time):
-    """Download a file from a url.
-
-    Args:
-        url: url for a file
-        dest_path: where to save file
-        max_time: maximum time to wait for
-                  download. An exception is
-                  raised if download doesn't
-                  complete in this time.
-    """
-    with open(dest_path, 'wb') as file_obj:
-        try:
-            url_open = urllib.request.urlopen(url, timeout=max_time)
-            url_data = url_open.read()
-            file_obj.write(url_data)
-        except Exception:
-            raise ReferenceDownloadError("Error downloading {}".format(url))
 
 
 def install_loftee(assembly):
@@ -135,6 +115,15 @@ def download_references(assembly):
         dep_file_name = dep_file.split("/")[-1]
         dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
         file_decompressed = False
+
+        # TODO: add better verification for compressed files
+        if (os.path.isfile(dep_file_path)): 
+            if needs_decompress(dep_file_path.split("gnali/")[-1],
+                                hashes, refs):
+                decompress_file(dep_file_path)
+                dep_file_name = dep_file_name[0:-3]
+                dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
+                file_decompressed = True
         # Check that file exists
         if not (os.path.isfile(dep_file_path)):
             # Get url to install file
@@ -144,7 +133,10 @@ def download_references(assembly):
                           max_download_time)
             if needs_decompress(dep_file_path.split("gnali/")[-1],
                                 hashes, refs):
+                print("File {} needs decompressing. "
+                      "Decompressing...".format(dep_file_name))
                 decompress_file(dep_file_path)
+                print("Decompressed {}".format(dep_file_name))
                 dep_file_name = dep_file_name[0:-3]
                 dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
                 file_decompressed = True
@@ -168,6 +160,7 @@ def download_references(assembly):
                 dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
             # Check hash again, update hash if necessary
             # (in case file has changed)
+            print("Rechecking hash...")
             computed_hash = hashlib.md5(open(dep_file_path, 'rb')
                                         .read()).hexdigest()
             if not (computed_hash == expected_hash):

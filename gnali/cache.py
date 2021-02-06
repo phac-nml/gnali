@@ -20,7 +20,106 @@ import os
 import subprocess
 import re
 import shutil
+from pathlib import Path
 from gnali.exceptions import ReferenceDownloadError
+from gnali.files import download_file
+
+GNALI_PATH = Path(__file__).parent.absolute()
+DATA_PATH = "{}/data".format(str(GNALI_PATH))
+VEP_PATH = "{}/vep".format(str(GNALI_PATH))
+
+
+def install_cache_manual_lib(vep_version, assembly, cache_path,
+                             homo_sapiens_path):
+    print("Downloading cache for VEP version {}, reference {}..."
+          .format(vep_version, assembly))
+    dest_path = "{dest}/homo_sapiens_vep_{vep_ver}_{asm}.tar.gz" \
+                .format(dest=cache_path, vep_ver=vep_version, asm=assembly)
+    if assembly == 'GRCh37':
+        download_file("ftp://ftp.ensembl.org/pub/release-"
+                      "{vep_ver}/variation/indexed_vep_cache/"
+                      "homo_sapiens_vep_{vep_ver}_{asm}.tar.gz"
+                      .format(dest=cache_path, vep_ver=vep_version,
+                              asm=assembly),
+                      dest_path,
+                      1800)
+    else:
+        download_file("ftp://ftp.ensembl.org/pub/release-"
+                      "{vep_ver}/variation/indexed_vep_cache/"
+                      "homo_sapiens_vep_{vep_ver}_{asm}.tar.gz"
+                      .format(dest=cache_path, vep_ver=vep_version,
+                              asm=assembly),
+                      dest_path,
+                      1800)
+    print("Downloaded cache for VEP version {}, reference {}"
+          .format(vep_version, assembly))
+    unzip_cmd = "tar xzf {cache_lib_path} -C {cache_root_path}" \
+                .format(cache_lib_path=dest_path,
+                        cache_root_path=cache_path)
+    print("Unpacking cache for VEP version {}, reference {}..."
+          .format(vep_version, assembly))
+    results = subprocess.run(unzip_cmd.split())
+    if results.returncode == 0:
+        print("Unpacked cache for VEP version {}, reference {}"
+              .format(vep_version, assembly))
+    else:
+        shutil.rmtree("{}/{}_{}".format(homo_sapiens_path, vep_version,
+                      assembly))
+        raise ReferenceDownloadError("Error unpacking cache for VEP {}, "
+                                     "reference {}. Please try again."
+                                     .format(vep_version, assembly))
+
+
+def install_cache_manual_fasta(vep_version, assembly, cache_path,
+                               homo_sapiens_path, index_path):
+    dest_dir = "{}/{}_{}".format(homo_sapiens_path, vep_version, assembly)
+    if assembly == 'GRCh37':
+        print("Downloading VEP {} GRCh37 cache fasta...".format(vep_version))
+        download_file("ftp://ftp.ensembl.org/pub/release-75"
+                      "/fasta/homo_sapiens/dna/"
+                      "Homo_sapiens.GRCh37.75.dna.primary_assembly.fa.gz",
+                      "{}/Homo_sapiens.GRCh37.75.dna.primary_assembly.fa.gz"
+                      .format(dest_dir),
+                      1800)
+        print("Downloaded VEP {} GRCh37 cache fasta".format(vep_version))
+        get_fai_and_gzi = "samtools faidx {}/" \
+                          "Homo_sapiens.GRCh37.75.dna.primary_assembly.fa.gz" \
+                          .format(vep_version, dest_dir)
+
+    else:
+        print("Downloading VEP {} GRCh38 cache fasta...".format(vep_version))
+        print(os.listdir(homo_sapiens_path))
+        print(os.listdir(dest_dir))
+        download_file("ftp://ftp.ensembl.org/pub/release-{}"
+                      "/fasta/homo_sapiens/dna_index/"
+                      "Homo_sapiens.GRCh38.dna.toplevel.fa.gz"
+                      .format(vep_version),
+                      "{}/Homo_sapiens.GRCh38.dna.toplevel.fa.gz"
+                      .format(dest_dir),
+                      1800)
+        print("Downloaded VEP {} GRCh38 cache fasta".format(vep_version))
+        get_fai_and_gzi = "samtools faidx {}/" \
+                          "Homo_sapiens.GRCh38.dna.toplevel.fa.gz" \
+                          .format(vep_version, dest_dir)
+    print("Creating index for cache fasta...")
+    results = subprocess.run(get_fai_and_gzi.split())
+    if results.returncode == 0:
+        print("Created index for {} cache.".format(assembly))
+        open(index_path, 'w').close()
+    else:
+        raise ReferenceDownloadError("Error creating index. Please try again.")
+
+
+def install_cache_manual(vep_version, assembly, cache_path, homo_sapiens_path,
+                         index_path):
+    Path(cache_path).mkdir(parents=True, exist_ok=True)
+    if not os.path.exists("{}/{}_{}".format(homo_sapiens_path, vep_version,
+                                            assembly)):
+        install_cache_manual_lib(vep_version, assembly, cache_path,
+                                 homo_sapiens_path)
+    if not os.path.exists(index_path):
+        install_cache_manual_fasta(vep_version, assembly, cache_path,
+                                   homo_sapiens_path, index_path)
 
 
 def install_cache(vep_version, assembly, cache_path, homo_sapiens_path):
@@ -34,22 +133,26 @@ def install_cache(vep_version, assembly, cache_path, homo_sapiens_path):
         print("Downloaded cache for VEP version {}, reference {}"
               .format(vep_version, assembly))
     else:
+        print("Failed to download cache using Ensembl-VEP. "
+              "Attempting manual download...")
         shutil.rmtree("{}/{}_{}".format(homo_sapiens_path, vep_version,
                       assembly))
-        raise ReferenceDownloadError("Error downloading cache for VEP {}, "
-                                     "reference {}. Please try again."
-                                     .format(vep_version, assembly))
+        install_cache_manual(vep_version, assembly, cache_path,
+                             homo_sapiens_path)
+        print("Downloaded cache for VEP version {}, reference {}"
+              .format(vep_version, assembly))
 
 
-def is_required_cache_present(vep_version, assembly, homo_sapiens_path):
+def is_required_cache_present(vep_version, assembly, homo_sapiens_path,
+                              index_path):
     # Download required cache
     cache_path = "{}/{}_{}".format(homo_sapiens_path, vep_version, assembly)
-    if os.path.exists(cache_path):
+    if os.path.exists(cache_path) and os.path.exists(index_path):
         print("Found cache for VEP version {}, reference {}"
               .format(vep_version, assembly))
         return True
     else:
-        print("Missing cache for VEP version {}, reference {}"
+        print("Missing some or all of cache for VEP version {}, reference {}"
               .format(vep_version, assembly))
         return False
 
@@ -80,8 +183,9 @@ def get_vep_version():
 def verify_cache(assembly, cache_root_path):
     vep_version = get_vep_version()
     homo_sapiens_path = "{}/homo_sapiens".format(cache_root_path)
+    index_path = "{}/cache_index_{}.txt".format(VEP_PATH, assembly.lower())
     if not is_required_cache_present(vep_version, assembly,
-                                     homo_sapiens_path):
+                                     homo_sapiens_path, index_path):
         install_cache(vep_version, assembly, cache_root_path,
                       homo_sapiens_path)
     remove_extra_caches(vep_version, homo_sapiens_path)

@@ -6,6 +6,6 @@ f41ec630c75971cdb0d4b464ef7a3839  data/vep/GRCh38/human_ancestor.fa.gz.gzi
 d37141461f5c80632045fb2f2ac9fc6a  data/vep/GRCh37/phylocsf_gerp.sql
 f8c79d45c8fdffb52ef6926d540f2dd3  data/vep/GRCh37/human_ancestor.fa.gz
 205a31051be5f1a312c31abf8a298ed7  data/vep/GRCh37/human_ancestor.fa.gz.fai
-66c048f442ba165004fdb2dc3b867677  data/vep/GRCh37/human_ancestor.fa.gz.gzi
+121343b868d5da87cc04646d55e806c3  data/vep/GRCh37/human_ancestor.fa.gz.gzi
 e6d772b0c6a9dd5b5ddb812d70fc8cd2  data/vep/GRCh37/GERP_scores.final.sorted.txt.gz
 9ee293c46bc1daac5e6cc5edfd1351d3  data/vep/GRCh37/GERP_scores.final.sorted.txt.gz.tbi
