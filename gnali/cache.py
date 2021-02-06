@@ -39,16 +39,14 @@ def install_cache_manual_lib(vep_version, assembly, cache_path,
         download_file("ftp://ftp.ensembl.org/pub/release-"
                       "{vep_ver}/variation/indexed_vep_cache/"
                       "homo_sapiens_vep_{vep_ver}_{asm}.tar.gz"
-                      .format(dest=cache_path, vep_ver=vep_version,
-                              asm=assembly),
+                      .format(vep_ver=vep_version, asm=assembly),
                       dest_path,
                       1800)
     else:
         download_file("ftp://ftp.ensembl.org/pub/release-"
                       "{vep_ver}/variation/indexed_vep_cache/"
                       "homo_sapiens_vep_{vep_ver}_{asm}.tar.gz"
-                      .format(dest=cache_path, vep_ver=vep_version,
-                              asm=assembly),
+                      .format(vep_ver=vep_version, asm=assembly),
                       dest_path,
                       1800)
     print("Downloaded cache for VEP version {}, reference {}"
@@ -84,7 +82,7 @@ def install_cache_manual_fasta(vep_version, assembly, cache_path,
         print("Downloaded VEP {} GRCh37 cache fasta".format(vep_version))
         get_fai_and_gzi = "samtools faidx {}/" \
                           "Homo_sapiens.GRCh37.75.dna.primary_assembly.fa.gz" \
-                          .format(vep_version, dest_dir)
+                          .format(dest_dir)
 
     else:
         print("Downloading VEP {} GRCh38 cache fasta...".format(vep_version))
@@ -100,7 +98,7 @@ def install_cache_manual_fasta(vep_version, assembly, cache_path,
         print("Downloaded VEP {} GRCh38 cache fasta".format(vep_version))
         get_fai_and_gzi = "samtools faidx {}/" \
                           "Homo_sapiens.GRCh38.dna.toplevel.fa.gz" \
-                          .format(vep_version, dest_dir)
+                          .format(dest_dir)
     print("Creating index for cache fasta...")
     results = subprocess.run(get_fai_and_gzi.split())
     if results.returncode == 0:

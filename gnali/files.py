@@ -22,6 +22,7 @@ from contextlib import closing
 import urllib.request as request
 from gnali.exceptions import ReferenceDownloadError
 
+
 def download_file(url, dest_path, max_time):
     """Download a file from a url.
 
@@ -33,10 +34,17 @@ def download_file(url, dest_path, max_time):
                   raised if download doesn't
                   complete in this time.
     """
+    file_type = url.split(":")[0]
     try:
-        with closing(request.urlopen(url)) as r:
-            with open(dest_path, 'wb') as f:
-                shutil.copyfileobj(r.raw, f)
+        if file_type == 'ftp':
+            with closing(request.urlopen(url)) as resp:
+                with open(dest_path, 'wb') as fh:
+                    shutil.copyfileobj(resp.raw, fh)
+        else:
+            with request.get(url, stream=True) as resp:
+                with open(dest_path, 'wb') as fh:
+                    shutil.copyfileobj(resp.raw, fh)
+
     except Exception:
         if os.path.exists(dest_path):
             os.remove(dest_path)

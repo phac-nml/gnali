@@ -117,7 +117,7 @@ def download_references(assembly):
         file_decompressed = False
 
         # TODO: add better verification for compressed files
-        if (os.path.isfile(dep_file_path)): 
+        if (os.path.isfile(dep_file_path)):
             if needs_decompress(dep_file_path.split("gnali/")[-1],
                                 hashes, refs):
                 decompress_file(dep_file_path)
