@@ -120,7 +120,8 @@ def install_cache_manual(vep_version, assembly, cache_path, homo_sapiens_path,
                                    homo_sapiens_path, index_path)
 
 
-def install_cache(vep_version, assembly, cache_path, homo_sapiens_path):
+def install_cache(vep_version, assembly, cache_path, homo_sapiens_path,
+                  index_path):
     install_cache_cmd = "vep_install -a cf -s homo_sapiens " \
                         "-y {} -c {} --CONVERT" \
                         .format(assembly, cache_path)
@@ -136,7 +137,7 @@ def install_cache(vep_version, assembly, cache_path, homo_sapiens_path):
         shutil.rmtree("{}/{}_{}".format(homo_sapiens_path, vep_version,
                       assembly))
         install_cache_manual(vep_version, assembly, cache_path,
-                             homo_sapiens_path)
+                             homo_sapiens_path, index_path)
         print("Downloaded cache for VEP version {}, reference {}"
               .format(vep_version, assembly))
 
@@ -185,5 +186,5 @@ def verify_cache(assembly, cache_root_path):
     if not is_required_cache_present(vep_version, assembly,
                                      homo_sapiens_path, index_path):
         install_cache(vep_version, assembly, cache_root_path,
-                      homo_sapiens_path)
+                      homo_sapiens_path, index_path)
     remove_extra_caches(vep_version, homo_sapiens_path)
