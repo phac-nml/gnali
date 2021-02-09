@@ -26,7 +26,7 @@ from gnali.files import download_file
 
 GNALI_PATH = Path(__file__).parent.absolute()
 DATA_PATH = "{}/data".format(str(GNALI_PATH))
-VEP_PATH = "{}/vep".format(str(GNALI_PATH))
+VEP_PATH = "{}/vep".format(DATA_PATH)
 
 
 def install_cache_manual_lib(vep_version, assembly, cache_path,
