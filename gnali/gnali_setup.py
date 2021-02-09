@@ -116,14 +116,6 @@ def download_references(assembly):
         dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
         file_decompressed = False
 
-        # TODO: add better verification for compressed files
-        if (os.path.isfile(dep_file_path)):
-            if needs_decompress(dep_file_path.split("gnali/")[-1],
-                                hashes, refs):
-                decompress_file(dep_file_path)
-                dep_file_name = dep_file_name[0:-3]
-                dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
-                file_decompressed = True
         # Check that file exists
         if not (os.path.isfile(dep_file_path)):
             # Get url to install file
@@ -140,6 +132,7 @@ def download_references(assembly):
                 dep_file_name = dep_file_name[0:-3]
                 dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
                 file_decompressed = True
+
         # Check if hashes are as expected
         computed_hash = hashlib.md5(open(dep_file_path, 'rb')
                                     .read()).hexdigest()
@@ -165,7 +158,7 @@ def download_references(assembly):
                                         .read()).hexdigest()
             if not (computed_hash == expected_hash):
                 hashes_raw = [item.replace(expected_hash, computed_hash) if
-                              expected_hash in item else
+                              expected_hash == item else
                               item for item in hashes_raw]
                 try:
                     with lock.acquire(timeout=max_wait):
