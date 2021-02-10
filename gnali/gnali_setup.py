@@ -206,6 +206,7 @@ def verify_files_present(assemblies, cache_root_path):
             if not deps_version == CURRENT_DEPS_VERSION:
                 download_all_refs(assemblies)
             else:
+                print("Found all reference files.")
                 return
     else:
         download_all_refs(assemblies)
