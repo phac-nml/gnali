@@ -86,8 +86,6 @@ def install_cache_manual_fasta(vep_version, assembly, cache_path,
 
     else:
         print("Downloading VEP {} GRCh38 cache fasta...".format(vep_version))
-        print(os.listdir(homo_sapiens_path))
-        print(os.listdir(dest_dir))
         download_file("ftp://ftp.ensembl.org/pub/release-{}"
                       "/fasta/homo_sapiens/dna_index/"
                       "Homo_sapiens.GRCh38.dna.toplevel.fa.gz"
