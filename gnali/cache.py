@@ -100,8 +100,8 @@ def install_cache_manual_fasta(vep_version, assembly, cache_path,
     print("Creating index for cache fasta...")
     results = subprocess.run(get_fai_and_gzi.split())
     if results.returncode == 0:
-        print("Created index for {} cache.".format(assembly))
         open(index_path, 'w').close()
+        print("Created index for {} cache.".format(assembly))
     else:
         raise ReferenceDownloadError("Error creating index. Please try again.")
 
@@ -127,6 +127,7 @@ def install_cache(vep_version, assembly, cache_path, homo_sapiens_path,
           .format(vep_version, assembly))
     results = subprocess.run(install_cache_cmd.split())
     if results.returncode == 0:
+        open(index_path, 'w').close()
         print("Downloaded cache for VEP version {}, reference {}"
               .format(vep_version, assembly))
     else:
