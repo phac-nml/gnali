@@ -35,20 +35,12 @@ def install_cache_manual_lib(vep_version, assembly, cache_path,
           .format(vep_version, assembly))
     dest_path = "{dest}/homo_sapiens_vep_{vep_ver}_{asm}.tar.gz" \
                 .format(dest=cache_path, vep_ver=vep_version, asm=assembly)
-    if assembly == 'GRCh37':
-        download_file("ftp://ftp.ensembl.org/pub/release-"
-                      "{vep_ver}/variation/indexed_vep_cache/"
-                      "homo_sapiens_vep_{vep_ver}_{asm}.tar.gz"
-                      .format(vep_ver=vep_version, asm=assembly),
-                      dest_path,
-                      1800)
-    else:
-        download_file("ftp://ftp.ensembl.org/pub/release-"
-                      "{vep_ver}/variation/indexed_vep_cache/"
-                      "homo_sapiens_vep_{vep_ver}_{asm}.tar.gz"
-                      .format(vep_ver=vep_version, asm=assembly),
-                      dest_path,
-                      1800)
+    download_file("ftp://ftp.ensembl.org/pub/release-"
+                  "{vep_ver}/variation/indexed_vep_cache/"
+                  "homo_sapiens_vep_{vep_ver}_{asm}.tar.gz"
+                  .format(vep_ver=vep_version, asm=assembly),
+                  dest_path,
+                  1800)
     print("Downloaded cache for VEP version {}, reference {}"
           .format(vep_version, assembly))
     unzip_cmd = "tar xzf {cache_lib_path} -C {cache_root_path}" \
@@ -71,32 +63,21 @@ def install_cache_manual_lib(vep_version, assembly, cache_path,
 def install_cache_manual_fasta(vep_version, assembly, cache_path,
                                homo_sapiens_path, index_path):
     dest_dir = "{}/{}_{}".format(homo_sapiens_path, vep_version, assembly)
-    if assembly == 'GRCh37':
-        print("Downloading VEP {} GRCh37 cache fasta...".format(vep_version))
-        download_file("ftp://ftp.ensembl.org/pub/release-75"
-                      "/fasta/homo_sapiens/dna/"
-                      "Homo_sapiens.GRCh37.75.dna.primary_assembly.fa.gz",
-                      "{}/Homo_sapiens.GRCh37.75.dna.primary_assembly.fa.gz"
-                      .format(dest_dir),
-                      1800)
-        print("Downloaded VEP {} GRCh37 cache fasta".format(vep_version))
-        get_fai_and_gzi = "samtools faidx {}/" \
-                          "Homo_sapiens.GRCh37.75.dna.primary_assembly.fa.gz" \
-                          .format(dest_dir)
-
-    else:
-        print("Downloading VEP {} GRCh38 cache fasta...".format(vep_version))
-        download_file("ftp://ftp.ensembl.org/pub/release-{}"
-                      "/fasta/homo_sapiens/dna_index/"
-                      "Homo_sapiens.GRCh38.dna.toplevel.fa.gz"
-                      .format(vep_version),
-                      "{}/Homo_sapiens.GRCh38.dna.toplevel.fa.gz"
-                      .format(dest_dir),
-                      1800)
-        print("Downloaded VEP {} GRCh38 cache fasta".format(vep_version))
-        get_fai_and_gzi = "samtools faidx {}/" \
-                          "Homo_sapiens.GRCh38.dna.toplevel.fa.gz" \
-                          .format(dest_dir)
+    fasta_names = {"GRCh37": "Homo_sapiens.GRCh37.75.dna."
+                             "primary_assembly.fa.gz",
+                   "GRCh38": "Homo_sapiens.GRCh38.dna.toplevel.fa.gz"}
+    print("Downloading VEP {} GRCh38 cache fasta...".format(vep_version))
+    download_file("ftp://ftp.ensembl.org/pub/release-{vep_ver}"
+                  "/fasta/homo_sapiens/dna_index/"
+                  "{fasta_name}"
+                  .format(vep_ver=75 if assembly == 'GRCh37' else vep_version,
+                          fasta_name=fasta_names[assembly]),
+                  "{}/Homo_sapiens.GRCh38.dna.toplevel.fa.gz"
+                  .format(dest_dir),
+                  1800)
+    print("Downloaded VEP {} GRCh38 cache fasta".format(vep_version))
+    get_fai_and_gzi = "samtools faidx {dest} {fasta_name}" \
+                      .format(dest=dest_dir, fasta_name=fasta_names[assembly])
     print("Creating index for cache fasta...")
     results = subprocess.run(get_fai_and_gzi.split())
     if results.returncode == 0:
@@ -120,7 +101,7 @@ def install_cache_manual(vep_version, assembly, cache_path, homo_sapiens_path,
 
 def install_cache(vep_version, assembly, cache_path, homo_sapiens_path,
                   index_path):
-    install_cache_cmd = "vep_install -a cf -s homo_sapiens " \
+    install_cache_cmd = "vep_install -a cf -s homo_sapiens -n -q " \
                         "-y {} -c {} --CONVERT" \
                         .format(assembly, cache_path)
     print("Downloading cache for VEP version {}, reference {}..."
