@@ -164,7 +164,8 @@ def get_vep_version():
 def verify_cache(assembly, cache_root_path):
     vep_version = get_vep_version()
     homo_sapiens_path = "{}/homo_sapiens".format(cache_root_path)
-    index_path = "{}/cache_index_{}.txt".format(VEP_PATH, assembly.lower())
+    index_path = "{}/cache_index_{}.txt".format(cache_root_path,
+                                                assembly.lower())
     if not is_required_cache_present(vep_version, assembly,
                                      homo_sapiens_path, index_path):
         install_cache(vep_version, assembly, cache_root_path,
