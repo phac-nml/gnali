@@ -146,8 +146,6 @@ def remove_extra_caches(vep_version, homo_sapiens_path, index_path):
                 print("Found cache {} not matching VEP version {}. "
                       "Removing...".format(cache_path, vep_version))
                 shutil.rmtree("{}/{}".format(homo_sapiens_path, cache_path))
-                if os.path.exists(index_path):
-                    os.remove(index_path)
                 print("Removed {} cache for VEP version {}"
                       .format(cache_path, vep_version))
 
