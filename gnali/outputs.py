@@ -18,11 +18,11 @@ specific language governing permissions and limitations under the License.
 
 
 def write_to_tab(path, data):
-    data.to_csv(path, sep='\t', mode='a', index=False, header=True)
+    data.to_csv(path, sep='\t', mode='w', index=False, header=True)
 
 
 def write_to_vcf(path, headers, data):
-    with open(path, 'w+') as stream:
+    with open(path, 'w') as stream:
         for line in headers:
             line = str(line)
             stream.write(line)

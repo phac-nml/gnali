@@ -23,14 +23,22 @@ import os
 class Logger:
     def __init__(self, output_dir):
         self.output_dir = output_dir
+        self.log_path = "{}/gnali_errors.log".format(self.output_dir)
         self.logger = None
+        self.fh = None
 
     def write(self, error):
-        self.logger = logging.getLogger('factory')
-        self.logger.setLevel(logging.DEBUG)
-        if not os.path.exists("{}/gnali_errors.log".format(self.output_dir)):
+        if self.logger is None:
+            self.logger = logging.getLogger('factory')
+            self.logger.setLevel(logging.DEBUG)
+        if self.fh is None:
+            # If there is no file handler and the log file exists,
+            # --force has been used and we overwrite the old log file
+            if os.path.exists(self.log_path):
+                open(self.log_path, 'w').close()
             fh = logging.FileHandler('{}/gnali_errors.log'
                                      .format(self.output_dir))
             fh.setLevel(logging.DEBUG)
             self.logger.addHandler(fh)
+            self.fh = fh
         self.logger.error(error)
