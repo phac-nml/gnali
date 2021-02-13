@@ -20,7 +20,7 @@ available in gnomADv3 and vice versa.
 **Installation**
 
 We commend installing gNALI as a Conda package. gNALI may be installed on any 64-bit Linux system
-using Bioconda (further details are available in the documentation
+using Bioconda (further details are available in the
 [documentation](https://phac-nml.github.io/gnali/install/)):
 
  1. Install [Bioconda](https://bioconda.github.io/)
