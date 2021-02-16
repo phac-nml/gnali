@@ -444,7 +444,7 @@ def extract_lof_annotations(variants, db_info, get_pop_freqs):
     results_as_vcf = variant_records
     variant_tuple = [variant.as_tuple_vep(db_info.lof.get('id'))
                      for variant in variants]
-    results = np.asarray(variant_tuple, dtype=np.str)
+    results = np.asarray(variant_tuple, dtype=str)
     results = pd.DataFrame(data=results)
 
     if len(results.columns) == 1:
