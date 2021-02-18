@@ -19,7 +19,8 @@ import subprocess
 from setuptools import find_packages, setup
 
 dependencies = ['pybiomart', 'numpy', 'pandas',
-                'pysam', 'filelock', 'pyyaml', 'bgzip']
+                'pysam', 'filelock', 'pyyaml', 'bgzip',
+                'progress']
 
 if os.getenv('PATCH') is not None:
     PATCH = "rc0.dev{}".format(os.getenv('PATCH'))

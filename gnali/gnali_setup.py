@@ -28,6 +28,7 @@ from filelock import FileLock
 from gnali.exceptions import ReferenceDownloadError
 import gnali.cache as cache
 from gnali.files import download_file
+from gnali.progress import show_progress_spinner
 
 CURRENT_DEPS_VERSION = "1.0.0"
 GNALI_PATH = Path(__file__).parent.absolute()
@@ -54,11 +55,8 @@ def install_loftee(assembly):
                          .format(dest_path=loftee_path,
                                  branch="grch38" if asm == "grch38"
                                  else "master")
-    print("Installing LOFTEE for {}...".format(assembly))
     results = subprocess.run(loftee_install_cmd.split())
-    if results.returncode == 0:
-        print("Installed LOFTEE for {} to {}".format(assembly, DATA_PATH))
-    else:
+    if not results.returncode == 0:
         raise ReferenceDownloadError("Error while installing LOFTEE")
 
 
@@ -125,10 +123,7 @@ def download_references(assembly):
                           max_download_time)
             if needs_decompress(dep_file_path.split("gnali/")[-1],
                                 hashes, refs):
-                print("File {} needs decompressing. "
-                      "Decompressing...".format(dep_file_name))
                 decompress_file(dep_file_path)
-                print("Decompressed {}".format(dep_file_name))
                 dep_file_name = dep_file_name[0:-3]
                 dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
                 file_decompressed = True
@@ -153,7 +148,6 @@ def download_references(assembly):
                 dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
             # Check hash again, update hash if necessary
             # (in case file has changed)
-            print("Rechecking hash...")
             computed_hash = hashlib.md5(open(dep_file_path, 'rb')
                                         .read()).hexdigest()
             if not (computed_hash == expected_hash):
@@ -188,13 +182,12 @@ def decompress_file(file_path):
 
 def download_all_refs(assemblies):
     for assembly in assemblies:
-        install_loftee(assembly)
-        print("Downloading references for {} (this may take a while)..."
-              .format(assembly))
-        download_references(assembly)
-        print("Finished downloading references for {}.".format(assembly))
-        print("Finished downloading files required for {}.".format(assembly))
-    print("Finished downloading all required files.")
+        show_progress_spinner(install_loftee, "Installing LOFTEE for {}..."
+                              .format(assembly),
+                              (assembly,))
+        show_progress_spinner(download_references, "Installing references for "
+                              "{} (this may take a while)..."
+                              .format(assembly), (assembly,))
 
 
 def verify_files_present(assemblies, cache_root_path):
@@ -206,7 +199,6 @@ def verify_files_present(assemblies, cache_root_path):
             if not deps_version == CURRENT_DEPS_VERSION:
                 download_all_refs(assemblies)
             else:
-                print("Found all reference files.")
                 return
     else:
         download_all_refs(assemblies)
