@@ -107,12 +107,8 @@ def is_required_cache_present(vep_version, assembly, homo_sapiens_path,
     # Download required cache
     cache_path = "{}/{}_{}".format(homo_sapiens_path, vep_version, assembly)
     if os.path.exists(cache_path) and os.path.exists(index_path):
-        print("Found cache for VEP version {}, reference {}"
-              .format(vep_version, assembly))
         return True
     else:
-        print("Missing some or all of cache for VEP version {}, reference {}"
-              .format(vep_version, assembly))
         return False
 
 
