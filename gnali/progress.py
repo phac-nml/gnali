@@ -16,6 +16,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
+from sys import stdout
 import time
 
 from progress.spinner import Spinner
@@ -23,7 +24,8 @@ from multiprocessing import Pool
 
 
 def show_progress_spinner(function, display_msg, fargs=()):
-    spinner = Spinner(display_msg)
+    spinner = Spinner(display_msg, check_tty=False,
+                      hide_cursor=False, file=stdout)
     pool = Pool(processes=1)
     async_result = pool.apply_async(function, fargs)
     while not async_result.ready() or not async_result.successful():
