@@ -63,8 +63,8 @@ def install_cache_manual_fasta(vep_version, assembly, cache_path,
                   "{fasta_name}"
                   .format(vep_ver=75 if assembly == 'GRCh37' else vep_version,
                           fasta_name=fasta_names[assembly]),
-                  "{}/Homo_sapiens.GRCh38.dna.toplevel.fa.gz"
-                  .format(dest_dir),
+                  "{}/{fasta_name}"
+                  .format(dest_dir, fasta_name=fasta_names[assembly]),
                   1800)
     get_fai_and_gzi = "samtools faidx {dest} {fasta_name}" \
                       .format(dest=dest_dir, fasta_name=fasta_names[assembly])
