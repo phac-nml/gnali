@@ -92,7 +92,9 @@ def install_cache(vep_version, assembly, cache_path, homo_sapiens_path,
     install_cache_cmd = "vep_install -a cf -s homo_sapiens -n -q " \
                         "-y {} -c {} --CONVERT" \
                         .format(assembly, cache_path)
-    results = subprocess.run(install_cache_cmd.split())
+    results = subprocess.run(install_cache_cmd.split(),
+                             stdout=subprocess.DEVNULL,
+                             stderr=subprocess.DEVNULL)
     if results.returncode == 0:
         open(index_path, 'w').close()
     else:
