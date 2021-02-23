@@ -101,6 +101,7 @@ def install_cache(vep_version, assembly, cache_root_path, homo_sapiens_path,
                              stderr=subprocess.DEVNULL)
     if results.returncode == 0:
         open(index_path, 'w').close()
+        open(lib_path, 'w').close()
     else:
         shutil.rmtree("{}/{}_{}".format(homo_sapiens_path, vep_version,
                       assembly))
