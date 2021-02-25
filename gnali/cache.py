@@ -118,10 +118,7 @@ def install_cache(vep_version, assembly, cache_root_path, homo_sapiens_path,
 
 def is_required_cache_present(index_path, lib_path):
     # Download required cache
-    return os.path.exists(lib_path) and os.path.exists(index_path):
-        return True
-    else:
-        return False
+    return os.path.exists(lib_path) and os.path.exists(index_path)
 
 
 def remove_extra_caches(vep_version, homo_sapiens_path, index_path):
