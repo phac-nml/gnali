@@ -55,6 +55,7 @@ def install_loftee(assembly):
                          .format(dest_path=loftee_path,
                                  branch="grch38" if asm == "grch38"
                                  else "master")
+
     results = subprocess.run(loftee_install_cmd.split())
     if not results.returncode == 0:
         raise ReferenceDownloadError("Error while installing LOFTEE")

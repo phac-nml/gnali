@@ -85,6 +85,7 @@ def install_cache_manual_fasta(vep_version, assembly, cache_path,
 def install_cache_manual(vep_version, assembly, cache_path, homo_sapiens_path,
                          index_path, lib_path):
     Path(cache_path).mkdir(parents=True, exist_ok=True)
+
     if not os.path.exists(lib_path):
         install_cache_manual_lib(vep_version, assembly, cache_path,
                                  homo_sapiens_path, lib_path)
@@ -117,7 +118,6 @@ def install_cache(vep_version, assembly, cache_root_path, homo_sapiens_path,
 
 
 def is_required_cache_present(index_path, lib_path):
-    # Download required cache
     return os.path.exists(lib_path) and os.path.exists(index_path)
 
 
@@ -134,6 +134,7 @@ def remove_extra_caches(vep_version, homo_sapiens_path, index_path):
 def get_vep_version():
     command = "vep --help"
     results = subprocess.run(command.split(), stdout=subprocess.PIPE)
+
     vep_version = [line for line in str(results.stdout).split("\\n")
                    if "ensembl-vep" in line][0]
     vep_version = int(float(vep_version.split(":")[1].strip()))
