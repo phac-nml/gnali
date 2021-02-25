@@ -33,5 +33,5 @@ def show_progress_spinner(function, display_msg, fargs=()):
         spinner.next()
         time.sleep(0.2)
 
-    print("\nDone")
+    print("\nDone (took {})".format(spinner.elapsed_td))
     return async_result.get()
