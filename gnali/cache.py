@@ -64,7 +64,7 @@ def install_cache_manual_fasta(vep_version, assembly, cache_path,
                    "GRCh38": "Homo_sapiens.GRCh38.dna.toplevel.fa.gz"}
 
     download_file("ftp://ftp.ensembl.org/pub/release-{vep_ver}"
-                  "/fasta/homo_sapiens/dna_index/"
+                  "/fasta/homo_sapiens/dna/"
                   "{fasta_name}"
                   .format(vep_ver=75 if assembly == 'GRCh37' else vep_version,
                           fasta_name=fasta_names[assembly]),
