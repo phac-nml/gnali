@@ -37,6 +37,7 @@ class Config:
         self.is_full = False
         self.configs = []
         self.default = None
+
         if db == '':
             self.name = 'help'
             self.default = config.get('default')
@@ -50,12 +51,15 @@ class Config:
         else:
             self.name = db
             info = config.get('databases').get(db)
+
         self.files = info.get('files')
         self.ref_genome = info.get('ref-genome')
         self.gerp_formats = config.get('gerp-formats')
         self.ref_files = info.get('ref-files')
+
         if info.get('cache') is not None:
             self.cache_path = info.get('cache').get('path')
+
         self.lof = info.get('lof')
         self.predefined_filters = info.get('predefined-filters')
         self.population_frequencies = info.get('population-frequencies')
@@ -189,6 +193,7 @@ class RuntimeConfig:
         self.ref_genome_name = config.ref_genome.get('name')
         self.ref_genome_path = config.ref_genome.get('path')
         self.has_lof_annots = (config.lof is not None)
+
         if self.has_lof_annots:
             self.lof = config.lof
         else:
@@ -217,9 +222,11 @@ class RuntimeConfig:
                                                 config.ref_files
                                                 .get('gerp-scores'))
             self.cache_path = "{}/{}".format(GNALI_ROOT_DIR, config.cache_path)
+
         self.predefined_filters = config.predefined_filters
         self.population_frequencies = config.population_frequencies
         self.files = []
+
         for file_name, file_info in config.files.items():
             self.files.append(DataFile(file_name, file_info))
 

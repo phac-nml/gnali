@@ -67,15 +67,19 @@ def download_test_refs():
                          Loader=yaml.FullLoader)
     required_files_grch37 = refs['GRCh37']
     required_files_grch38 = refs['GRCh38']
+
     data_path_grch37 = "{}/GRCh37".format(VEP_PATH)
     data_path_grch38 = "{}/GRCh38".format(VEP_PATH)
+
     Path(data_path_grch37).mkdir(parents=True, exist_ok=True)
     Path(data_path_grch38).mkdir(parents=True, exist_ok=True)
+
     for file_url in required_files_grch37:
         file_name = file_url.split('/')[-1]
         download_file(file_url, "{}/{}".format(data_path_grch37, file_name),
                       1800)
         print("Downloaded ref file {}".format(file_name))
+
     for file_url in required_files_grch38:
         file_name = file_url.split('/')[-1]
         file_path = "{}/{}".format(data_path_grch38, file_name)
@@ -83,6 +87,7 @@ def download_test_refs():
         print("Downloaded ref file {} (requires unzip)".format(file_name))
         decompress_file(file_path)
         print("Unzipped {}".format(file_name))
+
     print("Finished downloading test reference files.")
 
 
@@ -93,22 +98,28 @@ def download_references(assembly):
         refs = yaml.load(config_stream.read(),
                          Loader=yaml.FullLoader)
     refs = refs[assembly]
+
     data_path_asm = "{}/{}".format(VEP_PATH, assembly)
     if not os.path.exists(data_path_asm):
         Path(data_path_asm).mkdir(parents=True, exist_ok=True)
+
     deps_sums_lock_path = "{}.lock".format(DEPS_SUMS_FILE)
     lock = FileLock(deps_sums_lock_path)
     max_wait = 180
     hashes_raw = None
+
     try:
         with lock.acquire(timeout=max_wait):
             fh_in = open(DEPS_SUMS_FILE, 'r')
             hashes_raw = fh_in.readlines()
             fh_in.close()
+
     except TimeoutError:
         raise TimeoutError("Could not gain access to reference "
                            "file hashes in time. Please try again")
+
     hashes = dict(tuple(item.split())[::-1] for item in hashes_raw)
+
     for dep_file in refs:
         dep_file_name = dep_file.split("/")[-1]
         dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
@@ -121,6 +132,7 @@ def download_references(assembly):
                    dep_file_name in url][0]
             download_file(url, dep_file_path,
                           max_download_time)
+
             if needs_decompress(dep_file_path.split("gnali/")[-1],
                                 hashes, refs):
                 decompress_file(dep_file_path)
@@ -132,6 +144,7 @@ def download_references(assembly):
         computed_hash = hashlib.md5(open(dep_file_path, 'rb')
                                     .read()).hexdigest()
         expected_hash = hashes.get(dep_file_path.split("gnali/", 1)[-1])
+
         if not (computed_hash == expected_hash):
             url = [url for url in refs if
                    dep_file_name in url][0]
@@ -141,11 +154,13 @@ def download_references(assembly):
                 dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
             download_file(url, dep_file_path,
                           max_download_time)
+
             if needs_decompress(dep_file_path.split("gnali/")[-1],
                                 hashes, refs):
                 decompress_file(dep_file_path)
                 dep_file_name = dep_file_name[0:-3]
                 dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
+
             # Check hash again, update hash if necessary
             # (in case file has changed)
             computed_hash = hashlib.md5(open(dep_file_path, 'rb')
@@ -154,11 +169,13 @@ def download_references(assembly):
                 hashes_raw = [item.replace(expected_hash, computed_hash) if
                               expected_hash == item else
                               item for item in hashes_raw]
+
                 try:
                     with lock.acquire(timeout=max_wait):
                         fh_out = open(DEPS_SUMS_FILE, 'w')
                         fh_out.writelines(hashes_raw)
                         fh_out.close()
+
                 except TimeoutError:
                     raise TimeoutError("Could not gain access to reference "
                                        "file hashes in time. Please try "
@@ -193,6 +210,7 @@ def download_all_refs(assemblies):
 def verify_files_present(assemblies, cache_root_path):
     for assembly in assemblies:
         cache.verify_cache(assembly, cache_root_path)
+
     if os.path.exists(DEPS_VERSION_FILE):
         with open(DEPS_VERSION_FILE, 'r') as fh:
             deps_version = fh.read()
@@ -202,6 +220,7 @@ def verify_files_present(assemblies, cache_root_path):
                 return
     else:
         download_all_refs(assemblies)
+
     with open(DEPS_VERSION_FILE, 'w') as fh:
         fh.write(CURRENT_DEPS_VERSION)
 

@@ -34,6 +34,7 @@ def install_cache_manual_lib(vep_version, assembly, cache_path,
                              homo_sapiens_path, lib_path):
     dest_path = "{dest}/homo_sapiens_vep_{vep_ver}_{asm}.tar.gz" \
                 .format(dest=cache_path, vep_ver=vep_version, asm=assembly)
+
     download_file("ftp://ftp.ensembl.org/pub/release-"
                   "{vep_ver}/variation/indexed_vep_cache/"
                   "homo_sapiens_vep_{vep_ver}_{asm}.tar.gz"
@@ -43,6 +44,7 @@ def install_cache_manual_lib(vep_version, assembly, cache_path,
     unzip_cmd = "tar xzf {cache_lib_path} -C {cache_root_path}" \
                 .format(cache_lib_path=dest_path,
                         cache_root_path=cache_path)
+
     results = subprocess.run(unzip_cmd.split())
     if results.returncode == 0:
         open(lib_path, 'w').close()
@@ -60,6 +62,7 @@ def install_cache_manual_fasta(vep_version, assembly, cache_path,
     fasta_names = {"GRCh37": "Homo_sapiens.GRCh37.75.dna."
                              "primary_assembly.fa.gz",
                    "GRCh38": "Homo_sapiens.GRCh38.dna.toplevel.fa.gz"}
+
     download_file("ftp://ftp.ensembl.org/pub/release-{vep_ver}"
                   "/fasta/homo_sapiens/dna_index/"
                   "{fasta_name}"
@@ -68,8 +71,10 @@ def install_cache_manual_fasta(vep_version, assembly, cache_path,
                   "{}/{fasta_name}"
                   .format(dest_dir, fasta_name=fasta_names[assembly]),
                   1800)
+
     get_fai_and_gzi = "samtools faidx {dest}/{fasta_name}" \
                       .format(dest=dest_dir, fasta_name=fasta_names[assembly])
+
     results = subprocess.run(get_fai_and_gzi.split())
     if results.returncode == 0:
         open(index_path, 'w').close()
@@ -93,12 +98,14 @@ def install_cache(vep_version, assembly, cache_root_path, homo_sapiens_path,
     cache_path = "{}/{}_{}".format(homo_sapiens_path, vep_version, assembly)
     if os.path.exists(cache_path):
         shutil.rmtree(cache_path)
+
     install_cache_cmd = "vep_install -a cf -s homo_sapiens -n -q " \
                         "-y {} -c {} --CONVERT" \
                         .format(assembly, cache_root_path)
     results = subprocess.run(install_cache_cmd.split(),
                              stdout=subprocess.DEVNULL,
                              stderr=subprocess.DEVNULL)
+
     if results.returncode == 0:
         open(index_path, 'w').close()
         open(lib_path, 'w').close()
@@ -111,7 +118,7 @@ def install_cache(vep_version, assembly, cache_root_path, homo_sapiens_path,
 
 def is_required_cache_present(index_path, lib_path):
     # Download required cache
-    if os.path.exists(lib_path) and os.path.exists(index_path):
+    return os.path.exists(lib_path) and os.path.exists(index_path):
         return True
     else:
         return False
@@ -143,9 +150,11 @@ def verify_cache(assembly, cache_root_path):
                                                 assembly.lower())
     lib_path = "{}/cache_lib_{}.txt".format(cache_root_path,
                                             assembly.lower())
+
     if not is_required_cache_present(index_path, lib_path):
         show_progress_spinner(install_cache, "Installing VEP {} cache, "
                               "this may take a while...".format(assembly),
                               (vep_version, assembly, cache_root_path,
                                homo_sapiens_path, index_path, lib_path))
+
     remove_extra_caches(vep_version, homo_sapiens_path, index_path)

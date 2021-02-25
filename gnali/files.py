@@ -35,6 +35,7 @@ def download_file(url, dest_path, max_time):
                   complete in this time.
     """
     file_type = url.split(":")[0]
+
     try:
         if file_type == 'ftp':
             with closing(request.urlopen(url)) as resp:

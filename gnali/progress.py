@@ -27,9 +27,11 @@ def show_progress_spinner(function, display_msg, fargs=()):
     spinner = Spinner(display_msg, check_tty=False,
                       hide_cursor=False, file=stdout)
     pool = Pool(processes=1)
+
     async_result = pool.apply_async(function, fargs)
     while not async_result.ready() or not async_result.successful():
         spinner.next()
         time.sleep(0.2)
+
     print("\nDone")
     return async_result.get()

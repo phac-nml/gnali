@@ -31,6 +31,7 @@ class Logger:
         if self.logger is None:
             self.logger = logging.getLogger('factory')
             self.logger.setLevel(logging.DEBUG)
+
         if self.fh is None:
             # If there is no file handler and the log file exists,
             # --force has been used and we overwrite the old log file
@@ -39,6 +40,8 @@ class Logger:
             fh = logging.FileHandler('{}/gnali_errors.log'
                                      .format(self.output_dir))
             fh.setLevel(logging.DEBUG)
+
             self.logger.addHandler(fh)
             self.fh = fh
+
         self.logger.error(error)
