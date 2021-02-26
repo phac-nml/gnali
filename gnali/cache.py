@@ -20,6 +20,9 @@ import os
 import subprocess
 import re
 import shutil
+import magic
+import gzip
+import bgzip
 from pathlib import Path
 from gnali.exceptions import ReferenceDownloadError
 from gnali.files import download_file
@@ -62,15 +65,29 @@ def install_cache_manual_fasta(vep_version, assembly, cache_path,
     fasta_names = {"GRCh37": "Homo_sapiens.GRCh37.75.dna."
                              "primary_assembly.fa.gz",
                    "GRCh38": "Homo_sapiens.GRCh38.dna.toplevel.fa.gz"}
+    fasta_name = fasta_names[assembly]
 
     download_file("ftp://ftp.ensembl.org/pub/release-{vep_ver}"
                   "/fasta/homo_sapiens/dna/"
                   "{fasta_name}"
                   .format(vep_ver=75 if assembly == 'GRCh37' else vep_version,
-                          fasta_name=fasta_names[assembly]),
+                          fasta_name=fasta_name),
                   "{}/{fasta_name}"
-                  .format(dest_dir, fasta_name=fasta_names[assembly]),
+                  .format(dest_dir, fasta_name=fasta_name),
                   1800)
+
+    fasta_path = "{}/{}".format(dest_dir, fasta_name)
+    file_info = magic.from_file(fasta_path)
+
+    # convert gzip to bgzip if necessary for indexing
+    # bgzipped files are described as "gzip file with extra field"
+    if "extra field" not in file_info:
+        contents = None
+        with gzip.open(fasta_path, 'r') as gzip_stream:
+            contents = gzip_stream.readlines()
+        with open(fasta_path, 'wb') as bgzip_stream:
+            with bgzip.BGZipWriter(bgzip_stream) as fh:
+                fh.writelines(contents)
 
     get_fai_and_gzi = "samtools faidx {dest}/{fasta_name}" \
                       .format(dest=dest_dir, fasta_name=fasta_names[assembly])
@@ -150,7 +167,7 @@ def verify_cache(assembly, cache_root_path):
                                             assembly.lower())
 
     if not is_required_cache_present(index_path, lib_path):
-        show_progress_spinner(install_cache, "Installing VEP {} cache, "
+        show_progress_spinner(install_cache_manual, "Installing VEP {} cache, "
                               "this may take a while...".format(assembly),
                               (vep_version, assembly, cache_root_path,
                                homo_sapiens_path, index_path, lib_path))
