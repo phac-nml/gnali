@@ -49,6 +49,7 @@ def install_cache_manual_lib(vep_version, assembly, cache_path,
                         cache_root_path=cache_path)
 
     results = subprocess.run(unzip_cmd.split())
+    os.remove(dest_path)
     if results.returncode == 0:
         open(lib_path, 'w').close()
     else:
@@ -67,14 +68,13 @@ def install_cache_manual_fasta(vep_version, assembly, cache_path,
                    "GRCh38": "Homo_sapiens.GRCh38.dna.toplevel.fa.gz"}
     fasta_name = fasta_names[assembly]
 
-    bgzip_available = {"GRCh37": False, "GRCh38": True}
+    fasta_type = {"GRCh37": "dna", "GRCh38": "dna_index"}
 
     download_file("ftp://ftp.ensembl.org/pub/release-{vep_ver}"
                   "/fasta/homo_sapiens/{type}/"
                   "{fasta_name}"
                   .format(vep_ver=75 if assembly == 'GRCh37' else vep_version,
-                          type='dna_index' if bgzip_available[assembly]
-                          else 'dna',
+                          type=fasta_type[assembly],
                           fasta_name=fasta_name),
                   "{}/{fasta_name}"
                   .format(dest_dir, fasta_name=fasta_name),
@@ -85,7 +85,7 @@ def install_cache_manual_fasta(vep_version, assembly, cache_path,
 
     # convert gzip to bgzip if necessary for indexing
     # bgzipped files are described as "gzip file with extra field"
-    if "extra field" not in file_info:
+    if "extra field" in file_info:
         contents = None
         with gzip.open(fasta_path, 'r') as gzip_stream:
             contents = gzip_stream.readlines()

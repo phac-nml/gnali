@@ -258,11 +258,13 @@ def get_db_tbi(file_info, data_path, max_time):
         file_info.set_compressed_path(data_bgz)
         subprocess.run(['tabix', data_bgz])
         tbi_path = "{}/{}.bgz.tbi".format(data_path, file_name)
+
     elif file_info.is_local and file_info.is_compressed:
         subprocess.run(['cp', file_info.path, data_path])
         file_copy = "{}/{}".format(data_path, file_name)
         subprocess.run(['tabix', file_copy])
         tbi_path = "{}/{}".format(data_path, file_name)
+
     elif file_info.is_http and file_info.is_compressed:
         tbi_url = "{}.tbi".format(file_path)
         tbi_path = "{}/{}.tbi".format(data_path, file_name)
@@ -282,6 +284,7 @@ def get_db_tbi(file_info, data_path, max_time):
             download_file(tbi_url, tbi_path, max_time)
         except Exception as error:
             raise Exception(error)
+
     elif file_info.is_http and not file_info.is_compressed:
         local_path = "{}/{}".format(data_path, file_name)
         download_file(file_path, local_path, max_time)
