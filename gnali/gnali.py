@@ -1,5 +1,5 @@
 """
-Copyright Government of Canada 2020
+Copyright Government of Canada 2020-2021
 
 Written by: Xia Liu, National Microbiology Laboratory,
             Public Health Agency of Canada
@@ -258,11 +258,13 @@ def get_db_tbi(file_info, data_path, max_time):
         file_info.set_compressed_path(data_bgz)
         subprocess.run(['tabix', data_bgz])
         tbi_path = "{}/{}.bgz.tbi".format(data_path, file_name)
+
     elif file_info.is_local and file_info.is_compressed:
         subprocess.run(['cp', file_info.path, data_path])
         file_copy = "{}/{}".format(data_path, file_name)
         subprocess.run(['tabix', file_copy])
         tbi_path = "{}/{}".format(data_path, file_name)
+
     elif file_info.is_http and file_info.is_compressed:
         tbi_url = "{}.tbi".format(file_path)
         tbi_path = "{}/{}.tbi".format(data_path, file_name)
@@ -282,6 +284,7 @@ def get_db_tbi(file_info, data_path, max_time):
             download_file(tbi_url, tbi_path, max_time)
         except Exception as error:
             raise Exception(error)
+
     elif file_info.is_http and not file_info.is_compressed:
         local_path = "{}/{}".format(data_path, file_name)
         download_file(file_path, local_path, max_time)
@@ -444,7 +447,7 @@ def extract_lof_annotations(variants, db_info, get_pop_freqs):
     results_as_vcf = variant_records
     variant_tuple = [variant.as_tuple_vep(db_info.lof.get('id'))
                      for variant in variants]
-    results = np.asarray(variant_tuple, dtype=np.str)
+    results = np.asarray(variant_tuple, dtype=str)
     results = pd.DataFrame(data=results)
 
     if len(results.columns) == 1:

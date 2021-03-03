@@ -16,20 +16,22 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
+from sys import stdout
+import time
 
-def write_to_tab(path, data):
-    data.to_csv(path, sep='\t', mode='w', index=False, header=True)
+from progress.spinner import Spinner
+from multiprocessing import Pool
 
 
-def write_to_vcf(path, headers, data):
-    with open(path, 'w') as stream:
-        for line in headers:
-            line = str(line)
-            stream.write(line)
-            if line[-1] != '\n':
-                stream.write('\n')
-        for line in data:
-            line = str(line)
-            stream.write(line)
-            if line[-1] != '\n':
-                stream.write('\n')
+def show_progress_spinner(function, display_msg, fargs=()):
+    spinner = Spinner(display_msg, check_tty=False,
+                      hide_cursor=False, file=stdout)
+    pool = Pool(processes=1)
+
+    async_result = pool.apply_async(function, fargs)
+    while not async_result.ready() or not async_result.successful():
+        spinner.next()
+        time.sleep(0.2)
+
+    print("\nDone (took {})".format(spinner.elapsed_td))
+    return async_result.get()
