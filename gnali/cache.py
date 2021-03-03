@@ -49,13 +49,12 @@ def install_cache_manual_lib(vep_version, assembly, cache_path,
                         cache_root_path=cache_path)
 
     results = subprocess.run(unzip_cmd.split())
+    os.remove(dest_path)
     if results.returncode == 0:
-        os.remove(dest_path)
         open(lib_path, 'w').close()
     else:
         shutil.rmtree("{}/{}_{}".format(homo_sapiens_path, vep_version,
                       assembly))
-        os.remove(dest_path)
         raise ReferenceDownloadError("Error unpacking cache for VEP {}, "
                                      "reference {}. Please try again."
                                      .format(vep_version, assembly))
@@ -86,7 +85,7 @@ def install_cache_manual_fasta(vep_version, assembly, cache_path,
 
     # convert gzip to bgzip if necessary for indexing
     # bgzipped files are described as "gzip file with extra field"
-    if "extra field" in file_info:
+    if "extra field" not in file_info:
         contents = None
         with gzip.open(fasta_path, 'r') as gzip_stream:
             contents = gzip_stream.readlines()
