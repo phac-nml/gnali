@@ -49,12 +49,13 @@ def install_cache_manual_lib(vep_version, assembly, cache_path,
                         cache_root_path=cache_path)
 
     results = subprocess.run(unzip_cmd.split())
-    os.remove(dest_path)
     if results.returncode == 0:
+        os.remove(dest_path)
         open(lib_path, 'w').close()
     else:
         shutil.rmtree("{}/{}_{}".format(homo_sapiens_path, vep_version,
                       assembly))
+        os.remove(dest_path)
         raise ReferenceDownloadError("Error unpacking cache for VEP {}, "
                                      "reference {}. Please try again."
                                      .format(vep_version, assembly))
