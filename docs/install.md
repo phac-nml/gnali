@@ -121,15 +121,19 @@ And the following dependencies using `sudo apt install <package>` (requires admi
 
 ### gNALI ###
 
-To install gNALI and its reference data and tools for adding loss-of-function annotations, get the tarball for the latest [release](https://github.com/phac-nml/gnali/releases) and use:
+To install gNALI, get the tarball for the latest [release](https://github.com/phac-nml/gnali/releases) and use:
 
 ```bash
 pip install <link-to-latest-release.tar.gz>
-gnali_setup
 ```
 
 Or, download the latest release and use:
 ```bash
 pip install /path/to/gnali
-gnali_setup
 ```
+
+After installing, optionally run the command `gnali_setup` to download reference files required to add loss-of-function annotations.
+* For use with gnomADv2, you do not have to run `gnali_setup`
+* For use with gnomADv3, run `gnali_setup grch38`
+* For use with custom databases WITH loss-of-function annotations, you do not have to run `gnali_setup`
+* For use with custom databases WITHOUT loss-of-function annotations, run `gnali_setup grch37` or `gnali_setup grch38` depending on the reference genome used
