@@ -218,6 +218,7 @@ def verify_files_present(assembly, cache_root_path):
 
     deps_version_file = Dependencies.files[assembly]
     deps_version = Dependencies.versions[assembly]
+
     if os.path.exists(deps_version_file):
         with open(deps_version_file, 'r') as fh:
             deps_version = fh.read()
