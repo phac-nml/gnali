@@ -47,7 +47,6 @@ GNALI_ROOT_PATH = Path(TEST_PATH).parent.absolute()
 GNALI_PATH = "{}/gnali".format(str(GNALI_ROOT_PATH))
 TEST_REFS_PATH = "{}/dependencies-dev.yaml".format(str(GNALI_ROOT_PATH))
 DEPS_SUMS_FILE = "{}/dependency_sums.txt".format(TEST_DATA_PATH)
-DEPS_VERSION_FILE = "{}/data/dependency_version.txt".format(GNALI_PATH)
 VEP_PATH = "{}/vep".format(TEST_DATA_PATH)
 
 
@@ -77,10 +76,12 @@ class TestGNALIIntegration:
     
     def test_gnali_gnomadv2_no_lof_annots(self):
         deps_exist_prior = True
-        if not os.path.exists(DEPS_VERSION_FILE):
+        deps_version = Dependencies.versions['GRCh37']
+        deps_version_file = Dependencies.files['GRCh37']
+        if not os.path.exists(deps_version_file):
             deps_exist_prior = False
-            with open(DEPS_VERSION_FILE, 'w') as fh:
-                fh.write(Dependencies.version)
+            with open(deps_version_file, 'w') as fh:
+                fh.write(deps_version)
         temp_dir = tempfile.TemporaryDirectory()
         temp_path = temp_dir.name
         gnali_results = "{}/ccr5_results".format(temp_path)
@@ -94,16 +95,18 @@ class TestGNALIIntegration:
                               out_ccr5=gnali_results)
         results = subprocess.run(command_str.split())
         if not deps_exist_prior:
-            os.remove(DEPS_VERSION_FILE)
+            os.remove(deps_version_file)
         assert filecmp.dircmp(EXOMES_CCR5_RESULTS, gnali_results).diff_files == []
         assert results.returncode == 0
     
     def test_gnali_gnomadv3_no_lof_annots(self):
         deps_exist_prior = True
-        if not os.path.exists(DEPS_VERSION_FILE):
+        deps_version = Dependencies.versions['GRCh38']
+        deps_version_file = Dependencies.files['GRCh38']
+        if not os.path.exists(deps_version_file):
             deps_exist_prior = False
-            with open(DEPS_VERSION_FILE, 'w') as fh:
-                fh.write(Dependencies.version)
+            with open(deps_version_file, 'w') as fh:
+                fh.write(deps_version)
         temp_dir = tempfile.TemporaryDirectory()
         temp_path = temp_dir.name
         gnali_results = "{}/gnomadv3_full_results".format(temp_path)
@@ -117,7 +120,7 @@ class TestGNALIIntegration:
                               out_gnomadv3=gnali_results)
         results = subprocess.run(command_str.split())
         if not deps_exist_prior:
-            os.remove(DEPS_VERSION_FILE)
+            os.remove(deps_version_file)
         assert filecmp.dircmp(GNOMADV3_RESULTS, gnali_results).diff_files == []
         assert results.returncode == 0
 
