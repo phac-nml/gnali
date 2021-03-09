@@ -203,14 +203,13 @@ def decompress_file(file_path):
             shutil.copyfileobj(fh_in, fh_out)
 
 
-def download_all_refs(assemblies):
-    for assembly in assemblies:
-        show_progress_spinner(install_loftee, "Installing LOFTEE for {}..."
-                              .format(assembly),
-                              (assembly,))
-        show_progress_spinner(download_references, "Installing references for "
-                              "{} (this may take a while)..."
-                              .format(assembly), (assembly,))
+def download_all_refs(assembly):
+    show_progress_spinner(install_loftee, "Installing LOFTEE for {}..."
+                            .format(assembly),
+                            (assembly,))
+    show_progress_spinner(download_references, "Installing references for "
+                            "{} (this may take a while)..."
+                            .format(assembly), (assembly,))
 
 
 def verify_files_present(assembly, cache_root_path):
