@@ -201,6 +201,7 @@ def decompress_file(file_path):
     with gzip.open(file_path, 'rb') as fh_in:
         with open(file_path[:-3], 'wb') as fh_out:
             shutil.copyfileobj(fh_in, fh_out)
+    os.remove(file_path)
 
 
 def download_all_refs(assembly):
