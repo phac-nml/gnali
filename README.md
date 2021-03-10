@@ -29,11 +29,13 @@ using Bioconda (further details are available in the
 gNALI may also be installed directly and instructions are available in the
 [documentation](https://phac-nml.github.io/gnali/install/).
 
-After installing, optionally run the command `gnali_setup` to download reference files required to add loss-of-function annotations.
+After installing, optionally run the command `gnali_setup <reference genome>` to download reference files required to add loss-of-function annotations.
 * For use with gnomADv2, you do not have to run `gnali_setup`
 * For use with gnomADv3, run `gnali_setup grch38`
 * For use with custom databases WITH loss-of-function annotations, you do not have to run `gnali_setup`
 * For use with custom databases WITHOUT loss-of-function annotations, run `gnali_setup grch37` or `gnali_setup grch38` depending on the reference genome used
+
+The files downloaded by `gnali_setup` for each reference genome require abut 35GB of disk space and took 1.5 hours on our systems with 16GB of RAM and a 3.20GHz processor.
 
 
 # Usage #
