@@ -26,6 +26,7 @@ from multiprocessing import Pool
 def show_progress_spinner(function, display_msg, fargs=()):
     """Show a progress spinner for the exeuction of a function,
         and display the elapsed time when complete.
+        Return that function's return value.
 
     Args:
         function: name of function to be executed
