@@ -40,7 +40,8 @@ from gnali.variants import Variant
 from gnali.dbconfig import Config, RuntimeConfig, create_template
 import gnali.outputs as outputs
 from gnali.vep import VEP
-from gnali.gnali_setup import download_file
+from gnali.gnali_setup import verify_files_present
+from gnali.files import download_file
 from gnali.logging import Logger
 import pkg_resources
 
@@ -624,6 +625,9 @@ def main():
 
         genes = open_test_file(args.input_file)
         db_config = RuntimeConfig(db_config)
+        if not db_config.has_lof_annots:
+            verify_files_present(db_config.ref_genome_name,
+                                 db_config.cache_path)
 
         logger = Logger(results_dir)
         Path(results_dir).mkdir(parents=True, exist_ok=args.force)

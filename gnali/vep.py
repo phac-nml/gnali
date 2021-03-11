@@ -22,7 +22,6 @@ import tempfile
 from pathlib import Path
 from gnali.variants import Variant
 from gnali.exceptions import VEPRuntimeError
-import gnali.gnali_setup as gnali_setup
 import gnali.outputs as outputs
 
 
@@ -64,7 +63,6 @@ class VEP:
         gerp_scores = db_config.ref_gerp_scores_path
         cache_path = db_config.cache_path
 
-        gnali_setup.verify_files_present(assembly, cache_path)
         run_vep_str = "vep " \
                       "-i {in_file} " \
                       "--format vcf " \
