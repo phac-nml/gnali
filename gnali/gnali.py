@@ -624,7 +624,9 @@ def main():
             db_config.validate_pop_freqs_present()
 
         genes = open_test_file(args.input_file)
+
         db_config = RuntimeConfig(db_config)
+        # check that VEP dependencies are present if necessary
         if not db_config.has_lof_annots:
             verify_files_present(db_config.ref_genome_name,
                                  db_config.cache_path)

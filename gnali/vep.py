@@ -57,6 +57,8 @@ class VEP:
         os.environ["PERL5LIB"] = loftee_path
 
         gerp_format = db_config.gerp_format
+
+        # get dependency file paths
         human_ancestor_fa = db_config.ref_human_ancestor_path
         ref_fasta = db_config.ref_assembly_fasta_path
         conservation_db = db_config.ref_conservation_db_path

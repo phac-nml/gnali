@@ -24,6 +24,15 @@ from multiprocessing import Pool
 
 
 def show_progress_spinner(function, display_msg, fargs=()):
+    """Show a progress spinner for the exeuction of a function,
+        and display the elapsed time when complete.
+
+    Args:
+        function: name of function to be executed
+        display_msg: message to display next to spinner
+        fargs: arguments to function to be executed
+    """
+    # set check_tty=False to work with cluster environments
     spinner = Spinner(display_msg, check_tty=False,
                       hide_cursor=False, file=stdout)
     pool = Pool(processes=1)

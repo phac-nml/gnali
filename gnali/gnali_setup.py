@@ -189,6 +189,9 @@ def download_references(assembly):
 
 
 def needs_decompress(file_path, file_hashes, ref_urls):
+    # a file will need to be decompressed if its uncompressed name
+    # is present in the file hashes and its compressed name
+    # is present in the file urls
     file_name = file_path.split("/")[-1]
     if file_path[:-3] in file_hashes.keys() and \
        file_name in str(ref_urls) and \
@@ -198,6 +201,7 @@ def needs_decompress(file_path, file_hashes, ref_urls):
 
 
 def decompress_file(file_path):
+    # decompress a gzipped file and delete the original
     with gzip.open(file_path, 'rb') as fh_in:
         with open(file_path[:-3], 'wb') as fh_out:
             shutil.copyfileobj(fh_in, fh_out)
@@ -214,11 +218,14 @@ def download_all_refs(assembly):
 
 
 def verify_files_present(assembly, cache_root_path):
+    # check if cache is present
     cache.verify_cache(assembly, cache_root_path)
 
     deps_version_file = Dependencies.files[assembly]
     deps_version = Dependencies.versions[assembly]
 
+    # if deps version file exists and contains the current version
+    # then all dependencies are installed
     if os.path.exists(deps_version_file):
         with open(deps_version_file, 'r') as fh:
             deps_version = fh.read()
