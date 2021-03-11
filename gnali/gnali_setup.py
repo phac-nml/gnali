@@ -30,18 +30,23 @@ import gnali.cache as cache
 from gnali.files import download_file
 from gnali.progress import show_progress_spinner
 
-CURRENT_DEPS_VERSION = "1.0.0"
+CURRENT_DEPS_VERSION_GRCH37 = "1.0.0"
+CURRENT_DEPS_VERSION_GRCH38 = "1.0.0"
 GNALI_PATH = Path(__file__).parent.absolute()
 DATA_PATH = "{}/data".format(str(GNALI_PATH))
 VEP_PATH = "{}/vep".format(DATA_PATH)
 DEPS_SUMS_FILE = "{}/dependency_sums.txt".format(DATA_PATH)
-REFS_PATH = "{}/dependencies.yaml".format(DATA_PATH)
-TEST_REFS_PATH = "{}/dependencies-dev.yaml".format(DATA_PATH)
-DEPS_VERSION_FILE = "{}/dependency_version.txt".format(DATA_PATH)
+REFS_PATH = "{}/vep-dependencies.yaml".format(DATA_PATH)
+TEST_REFS_PATH = "{}/vep-dependencies-dev.yaml".format(DATA_PATH)
+DEPS_VERSION_FILE_GRCH37 = "{}/dependency_version_grch37.txt".format(DATA_PATH)
+DEPS_VERSION_FILE_GRCH38 = "{}/dependency_version_grch38.txt".format(DATA_PATH)
 
 
 class Dependencies:
-    version = CURRENT_DEPS_VERSION
+    versions = {'GRCh37': CURRENT_DEPS_VERSION_GRCH37,
+                'GRCh38': CURRENT_DEPS_VERSION_GRCH38}
+    files = {'GRCh37': DEPS_VERSION_FILE_GRCH37,
+             'GRCh38': DEPS_VERSION_FILE_GRCH38}
 
 
 def install_loftee(assembly):
@@ -184,6 +189,9 @@ def download_references(assembly):
 
 
 def needs_decompress(file_path, file_hashes, ref_urls):
+    # a file will need to be decompressed if its uncompressed name
+    # is present in the file hashes and its compressed name
+    # is present in the file urls
     file_name = file_path.split("/")[-1]
     if file_path[:-3] in file_hashes.keys() and \
        file_name in str(ref_urls) and \
@@ -193,47 +201,63 @@ def needs_decompress(file_path, file_hashes, ref_urls):
 
 
 def decompress_file(file_path):
+    # decompress a gzipped file and delete the original
     with gzip.open(file_path, 'rb') as fh_in:
         with open(file_path[:-3], 'wb') as fh_out:
             shutil.copyfileobj(fh_in, fh_out)
+    os.remove(file_path)
 
 
-def download_all_refs(assemblies):
-    for assembly in assemblies:
-        show_progress_spinner(install_loftee, "Installing LOFTEE for {}..."
-                              .format(assembly),
-                              (assembly,))
-        show_progress_spinner(download_references, "Installing references for "
-                              "{} (this may take a while)..."
-                              .format(assembly), (assembly,))
+def download_all_refs(assembly):
+    show_progress_spinner(install_loftee, "Installing LOFTEE for {}..."
+                          .format(assembly),
+                          (assembly,))
+    show_progress_spinner(download_references, "Installing references for "
+                          "{} (this may take a while)..."
+                          .format(assembly), (assembly,))
 
 
-def verify_files_present(assemblies, cache_root_path):
-    for assembly in assemblies:
-        cache.verify_cache(assembly, cache_root_path)
+def verify_files_present(assembly, cache_root_path):
+    # check if cache is present
+    cache.verify_cache(assembly, cache_root_path)
 
-    if os.path.exists(DEPS_VERSION_FILE):
-        with open(DEPS_VERSION_FILE, 'r') as fh:
+    deps_version_file = Dependencies.files[assembly]
+    deps_version = Dependencies.versions[assembly]
+
+    # if deps version file exists and contains the current version
+    # then all dependencies are installed
+    if os.path.exists(deps_version_file):
+        with open(deps_version_file, 'r') as fh:
             deps_version = fh.read()
-            if not deps_version == CURRENT_DEPS_VERSION:
-                download_all_refs(assemblies)
+            if not deps_version == deps_version:
+                download_all_refs(assembly)
             else:
                 return
     else:
-        download_all_refs(assemblies)
+        download_all_refs(assembly)
 
-    with open(DEPS_VERSION_FILE, 'w') as fh:
-        fh.write(CURRENT_DEPS_VERSION)
+    with open(deps_version_file, 'w') as fh:
+        fh.write(deps_version)
 
 
 def main():
-    assemblies = ['GRCh37', 'GRCh38']
     if len(sys.argv) == 1:
-        verify_files_present(assemblies, VEP_PATH)
-    elif sys.argv[1] == 'test':
+        print("Select a setup option: grch37, grch38, test")
+        return
+
+    option = sys.argv[1]
+
+    if option == 'test':
+        assemblies = ['GRCh37', 'GRCh38']
         for assembly in assemblies:
             install_loftee(assembly)
         download_test_refs()
+    elif option == 'grch37':
+        verify_files_present('GRCh37', VEP_PATH)
+    elif option == 'grch38':
+        verify_files_present('GRCh38', VEP_PATH)
+    else:
+        print("Select a setup option: grch37, grch38, test")
 
 
 if __name__ == '__main__':

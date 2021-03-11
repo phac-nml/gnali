@@ -105,6 +105,8 @@ def install_cache_manual_fasta(vep_version, assembly, cache_path,
 
 def install_cache_manual(vep_version, assembly, cache_path, homo_sapiens_path,
                          index_path, lib_path):
+    # installs VEP cache consisting of a library and
+    # fasta with indices
     Path(cache_path).mkdir(parents=True, exist_ok=True)
 
     if not os.path.exists(lib_path):
@@ -148,8 +150,8 @@ def verify_cache(assembly, cache_root_path):
                                             assembly.lower())
 
     if not is_required_cache_present(index_path, lib_path):
-        show_progress_spinner(install_cache_manual, "Installing VEP {} cache, "
-                              "this may take a while...".format(assembly),
+        show_progress_spinner(install_cache_manual, "Installing VEP {} cache "
+                              "(this may take a while)...".format(assembly),
                               (vep_version, assembly, cache_root_path,
                                homo_sapiens_path, index_path, lib_path))
 

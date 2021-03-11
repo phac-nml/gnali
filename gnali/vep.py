@@ -22,7 +22,6 @@ import tempfile
 from pathlib import Path
 from gnali.variants import Variant
 from gnali.exceptions import VEPRuntimeError
-import gnali.gnali_setup as gnali_setup
 import gnali.outputs as outputs
 
 
@@ -58,13 +57,14 @@ class VEP:
         os.environ["PERL5LIB"] = loftee_path
 
         gerp_format = db_config.gerp_format
+
+        # get dependency file paths
         human_ancestor_fa = db_config.ref_human_ancestor_path
         ref_fasta = db_config.ref_assembly_fasta_path
         conservation_db = db_config.ref_conservation_db_path
         gerp_scores = db_config.ref_gerp_scores_path
         cache_path = db_config.cache_path
 
-        gnali_setup.verify_files_present([assembly], cache_path)
         run_vep_str = "vep " \
                       "-i {in_file} " \
                       "--format vcf " \
