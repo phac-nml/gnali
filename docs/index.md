@@ -11,7 +11,7 @@ available in gnomADv3 and vice versa.
 
 **gNALI 1.0.3**
 
-This release fixes verification of VEP cache.
+This release fixes verification of VEP cache, adds customization to the `gnali_setup` command, and fixes issues with the `--force` flag.
 
 
 ## Resources ##
