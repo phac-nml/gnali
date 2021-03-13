@@ -5,11 +5,13 @@ All notable changes to gNALI will be documented in this file.
 
 ## 1.0.3 ##
 
-2021-01-28
+2021-03-12
 
 ### Changed ### 
 
-- Fixed verification of VEP cache
+- Improved verification of VEP cache
+- Changed gnali_setup command to be able to select assembly to download reference files for
+- Fixed issues with `--force` flag
 
 
 ## 1.0.2 ##
