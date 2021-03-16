@@ -11,7 +11,7 @@ available in gnomADv3 and vice versa.
 
 **gNALI 1.0.3**
 
-This release fixes verification of VEP cache, adds customization to the `gnali_setup` command, fixes issues with the `--force` flag, and updates the testing environment to resolve issues with Bioconda pysam 0.16.
+This release fixes verification of VEP cache, adds customization to the `gnali_setup` command, fixes issues with the `--force` flag, and updates the pysam dependency version to resolve issues when reading from remote databases.
 
 
 ## Resources ##
