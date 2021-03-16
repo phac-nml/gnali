@@ -6,7 +6,7 @@ channels:
   - defaults
 dependencies:
   - python=3.6
-  - pysam=0.16
+  - pysam<0.16
   - libcurl
   - ensembl-vep=101
   - perl-bio-bigfile

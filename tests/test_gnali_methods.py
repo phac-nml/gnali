@@ -285,7 +285,7 @@ class TestGNALIMethods:
         method_results, method_results_basic, results_as_vcf = gnali.extract_lof_annotations(test_variants, config, False)
 
         test_variants = [variant.as_tuple_vep(config.lof.get('id')) for variant in test_variants]
-        results = np.asarray(test_variants, dtype=np.str)
+        results = np.asarray(test_variants, dtype=str)
         results = pd.DataFrame(data=results)
 
         results.columns = ["Chromosome", "Position_Start", "RSID", "Reference_Allele", "Alternate_Allele", "Score", "Quality", "Codes"]

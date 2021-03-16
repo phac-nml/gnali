@@ -19,7 +19,8 @@ import subprocess
 from setuptools import find_packages, setup
 
 dependencies = ['pybiomart', 'numpy', 'pandas',
-                'pysam', 'filelock', 'pyyaml', 'bgzip']
+                'pysam<0.16', 'filelock', 'pyyaml', 'bgzip',
+                'progress', 'python-magic']
 
 if os.getenv('PATCH') is not None:
     PATCH = "rc0.dev{}".format(os.getenv('PATCH'))
@@ -32,7 +33,7 @@ def readme():
 
 setup(
     name='gNALI',
-    version = ("1.0.2{}".format(PATCH)),
+    version = ("1.0.3{}".format(PATCH)),
     url="https://github.com/phac-nml/gnali",
     license='Apache License, Version 2.0',
     author='Xia Liu',
@@ -46,9 +47,8 @@ setup(
                        'db-config-template-grch37.yaml',
                        'db-config-template-grch38.yaml',
                        'dependency_sums.txt',
-                       'dependency_version.txt',
-                       'dependencies.yaml',
-                       'dependencies-dev.yaml'],
+                       'vep-dependencies.yaml',
+                       'vep-dependencies-dev.yaml'],
     },
     install_requires=dependencies,
     entry_points = {
