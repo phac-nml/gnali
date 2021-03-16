@@ -44,10 +44,12 @@ class TestOtherMethods:
 
     def test_vep_annotate(self):
         deps_exist = True
-        if not os.path.exists(DEPS_VERSION_FILE):
+        deps_version = Dependencies.versions['GRCh37']
+        deps_version_file = Dependencies.files['GRCh37']
+        if not os.path.exists(deps_version_file):
             deps_exist = False
-            with open(DEPS_VERSION_FILE, 'w') as fh:
-                fh.write(Dependencies.version)
+            with open(deps_version_file, 'w') as fh:
+                fh.write(deps_version)
 
         input_headers = []
         input_recs = []
@@ -64,7 +66,7 @@ class TestOtherMethods:
         method_recs = [str(rec) for rec in method_recs]
 
         if not deps_exist:
-            os.remove(DEPS_VERSION_FILE)
+            os.remove(deps_version_file)
 
         expected_headers = []
         expected_recs = []

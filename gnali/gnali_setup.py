@@ -1,5 +1,5 @@
 """
-Copyright Government of Canada 2020
+Copyright Government of Canada 2020-2021
 
 Written by: Xia Liu, National Microbiology Laboratory,
             Public Health Agency of Canada
@@ -22,45 +22,31 @@ import sys
 import subprocess
 import yaml
 import hashlib
-import urllib.request
 import gzip
 import shutil
 from filelock import FileLock
 from gnali.exceptions import ReferenceDownloadError
 import gnali.cache as cache
+from gnali.files import download_file
+from gnali.progress import show_progress_spinner
 
-CURRENT_DEPS_VERSION = "1.0.0"
+CURRENT_DEPS_VERSION_GRCH37 = "1.0.0"
+CURRENT_DEPS_VERSION_GRCH38 = "1.0.0"
 GNALI_PATH = Path(__file__).parent.absolute()
 DATA_PATH = "{}/data".format(str(GNALI_PATH))
 VEP_PATH = "{}/vep".format(DATA_PATH)
 DEPS_SUMS_FILE = "{}/dependency_sums.txt".format(DATA_PATH)
-REFS_PATH = "{}/dependencies.yaml".format(DATA_PATH)
-TEST_REFS_PATH = "{}/dependencies-dev.yaml".format(DATA_PATH)
-DEPS_VERSION_FILE = "{}/dependency_version.txt".format(DATA_PATH)
+REFS_PATH = "{}/vep-dependencies.yaml".format(DATA_PATH)
+TEST_REFS_PATH = "{}/vep-dependencies-dev.yaml".format(DATA_PATH)
+DEPS_VERSION_FILE_GRCH37 = "{}/dependency_version_grch37.txt".format(DATA_PATH)
+DEPS_VERSION_FILE_GRCH38 = "{}/dependency_version_grch38.txt".format(DATA_PATH)
 
 
 class Dependencies:
-    version = CURRENT_DEPS_VERSION
-
-
-def download_file(url, dest_path, max_time):
-    """Download a file from a url.
-
-    Args:
-        url: url for a file
-        dest_path: where to save file
-        max_time: maximum time to wait for
-                  download. An exception is
-                  raised if download doesn't
-                  complete in this time.
-    """
-    with open(dest_path, 'wb') as file_obj:
-        try:
-            url_open = urllib.request.urlopen(url, timeout=max_time)
-            url_data = url_open.read()
-            file_obj.write(url_data)
-        except Exception:
-            raise ReferenceDownloadError("Error downloading {}".format(url))
+    versions = {'GRCh37': CURRENT_DEPS_VERSION_GRCH37,
+                'GRCh38': CURRENT_DEPS_VERSION_GRCH38}
+    files = {'GRCh37': DEPS_VERSION_FILE_GRCH37,
+             'GRCh38': DEPS_VERSION_FILE_GRCH38}
 
 
 def install_loftee(assembly):
@@ -69,16 +55,14 @@ def install_loftee(assembly):
     if os.path.exists(loftee_path):
         shutil.rmtree(loftee_path)
     loftee_install_cmd = "git clone --depth 1 -b {branch} --single-branch " \
-                         "https://github.com/konradjk/loftee.git " \
+                         "--quiet https://github.com/konradjk/loftee.git " \
                          "{dest_path}" \
                          .format(dest_path=loftee_path,
                                  branch="grch38" if asm == "grch38"
                                  else "master")
-    print("Installing LOFTEE for {}...".format(assembly))
+
     results = subprocess.run(loftee_install_cmd.split())
-    if results.returncode == 0:
-        print("Installed LOFTEE for {} to {}".format(assembly, DATA_PATH))
-    else:
+    if not results.returncode == 0:
         raise ReferenceDownloadError("Error while installing LOFTEE")
 
 
@@ -89,15 +73,19 @@ def download_test_refs():
                          Loader=yaml.FullLoader)
     required_files_grch37 = refs['GRCh37']
     required_files_grch38 = refs['GRCh38']
+
     data_path_grch37 = "{}/GRCh37".format(VEP_PATH)
     data_path_grch38 = "{}/GRCh38".format(VEP_PATH)
+
     Path(data_path_grch37).mkdir(parents=True, exist_ok=True)
     Path(data_path_grch38).mkdir(parents=True, exist_ok=True)
+
     for file_url in required_files_grch37:
         file_name = file_url.split('/')[-1]
         download_file(file_url, "{}/{}".format(data_path_grch37, file_name),
                       1800)
         print("Downloaded ref file {}".format(file_name))
+
     for file_url in required_files_grch38:
         file_name = file_url.split('/')[-1]
         file_path = "{}/{}".format(data_path_grch38, file_name)
@@ -105,6 +93,7 @@ def download_test_refs():
         print("Downloaded ref file {} (requires unzip)".format(file_name))
         decompress_file(file_path)
         print("Unzipped {}".format(file_name))
+
     print("Finished downloading test reference files.")
 
 
@@ -115,26 +104,33 @@ def download_references(assembly):
         refs = yaml.load(config_stream.read(),
                          Loader=yaml.FullLoader)
     refs = refs[assembly]
+
     data_path_asm = "{}/{}".format(VEP_PATH, assembly)
     if not os.path.exists(data_path_asm):
         Path(data_path_asm).mkdir(parents=True, exist_ok=True)
+
     deps_sums_lock_path = "{}.lock".format(DEPS_SUMS_FILE)
     lock = FileLock(deps_sums_lock_path)
     max_wait = 180
     hashes_raw = None
+
     try:
         with lock.acquire(timeout=max_wait):
             fh_in = open(DEPS_SUMS_FILE, 'r')
             hashes_raw = fh_in.readlines()
             fh_in.close()
+
     except TimeoutError:
         raise TimeoutError("Could not gain access to reference "
                            "file hashes in time. Please try again")
+
     hashes = dict(tuple(item.split())[::-1] for item in hashes_raw)
+
     for dep_file in refs:
         dep_file_name = dep_file.split("/")[-1]
         dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
         file_decompressed = False
+
         # Check that file exists
         if not (os.path.isfile(dep_file_path)):
             # Get url to install file
@@ -142,16 +138,19 @@ def download_references(assembly):
                    dep_file_name in url][0]
             download_file(url, dep_file_path,
                           max_download_time)
+
             if needs_decompress(dep_file_path.split("gnali/")[-1],
                                 hashes, refs):
                 decompress_file(dep_file_path)
                 dep_file_name = dep_file_name[0:-3]
                 dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
                 file_decompressed = True
+
         # Check if hashes are as expected
         computed_hash = hashlib.md5(open(dep_file_path, 'rb')
                                     .read()).hexdigest()
         expected_hash = hashes.get(dep_file_path.split("gnali/", 1)[-1])
+
         if not (computed_hash == expected_hash):
             url = [url for url in refs if
                    dep_file_name in url][0]
@@ -161,24 +160,28 @@ def download_references(assembly):
                 dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
             download_file(url, dep_file_path,
                           max_download_time)
+
             if needs_decompress(dep_file_path.split("gnali/")[-1],
                                 hashes, refs):
                 decompress_file(dep_file_path)
                 dep_file_name = dep_file_name[0:-3]
                 dep_file_path = "{}/{}".format(data_path_asm, dep_file_name)
+
             # Check hash again, update hash if necessary
             # (in case file has changed)
             computed_hash = hashlib.md5(open(dep_file_path, 'rb')
                                         .read()).hexdigest()
             if not (computed_hash == expected_hash):
                 hashes_raw = [item.replace(expected_hash, computed_hash) if
-                              expected_hash in item else
+                              expected_hash == item else
                               item for item in hashes_raw]
+
                 try:
                     with lock.acquire(timeout=max_wait):
                         fh_out = open(DEPS_SUMS_FILE, 'w')
                         fh_out.writelines(hashes_raw)
                         fh_out.close()
+
                 except TimeoutError:
                     raise TimeoutError("Could not gain access to reference "
                                        "file hashes in time. Please try "
@@ -186,6 +189,9 @@ def download_references(assembly):
 
 
 def needs_decompress(file_path, file_hashes, ref_urls):
+    # a file will need to be decompressed if its uncompressed name
+    # is present in the file hashes and its compressed name
+    # is present in the file urls
     file_name = file_path.split("/")[-1]
     if file_path[:-3] in file_hashes.keys() and \
        file_name in str(ref_urls) and \
@@ -195,46 +201,63 @@ def needs_decompress(file_path, file_hashes, ref_urls):
 
 
 def decompress_file(file_path):
+    # decompress a gzipped file and delete the original
     with gzip.open(file_path, 'rb') as fh_in:
         with open(file_path[:-3], 'wb') as fh_out:
             shutil.copyfileobj(fh_in, fh_out)
+    os.remove(file_path)
 
 
-def download_all_refs(assemblies):
-    for assembly in assemblies:
-        install_loftee(assembly)
-        print("Downloading references for {} (this may take a while)..."
-              .format(assembly))
-        download_references(assembly)
-        print("Finished downloading references for {}.".format(assembly))
-        print("Finished downloading files required for {}.".format(assembly))
-    print("Finished downloading all required files.")
+def download_all_refs(assembly):
+    show_progress_spinner(install_loftee, "Installing LOFTEE for {}..."
+                          .format(assembly),
+                          (assembly,))
+    show_progress_spinner(download_references, "Installing references for "
+                          "{} (this may take a while)..."
+                          .format(assembly), (assembly,))
 
 
-def verify_files_present(assemblies, cache_root_path):
-    for assembly in assemblies:
-        cache.verify_cache(assembly, cache_root_path)
-    if os.path.exists(DEPS_VERSION_FILE):
-        with open(DEPS_VERSION_FILE, 'r') as fh:
+def verify_files_present(assembly, cache_root_path):
+    # check if cache is present
+    cache.verify_cache(assembly, cache_root_path)
+
+    deps_version_file = Dependencies.files[assembly]
+    deps_version = Dependencies.versions[assembly]
+
+    # if deps version file exists and contains the current version
+    # then all dependencies are installed
+    if os.path.exists(deps_version_file):
+        with open(deps_version_file, 'r') as fh:
             deps_version = fh.read()
-            if not deps_version == CURRENT_DEPS_VERSION:
-                download_all_refs(assemblies)
+            if not deps_version == deps_version:
+                download_all_refs(assembly)
             else:
                 return
     else:
-        download_all_refs(assemblies)
-    with open(DEPS_VERSION_FILE, 'w') as fh:
-        fh.write(CURRENT_DEPS_VERSION)
+        download_all_refs(assembly)
+
+    with open(deps_version_file, 'w') as fh:
+        fh.write(deps_version)
 
 
 def main():
-    assemblies = ['GRCh37', 'GRCh38']
     if len(sys.argv) == 1:
-        verify_files_present(assemblies, VEP_PATH)
-    elif sys.argv[1] == 'test':
+        print("Select a setup option: grch37, grch38, test")
+        return
+
+    option = sys.argv[1]
+
+    if option == 'test':
+        assemblies = ['GRCh37', 'GRCh38']
         for assembly in assemblies:
             install_loftee(assembly)
         download_test_refs()
+    elif option == 'grch37':
+        verify_files_present('GRCh37', VEP_PATH)
+    elif option == 'grch38':
+        verify_files_present('GRCh38', VEP_PATH)
+    else:
+        print("Select a setup option: grch37, grch38, test")
 
 
 if __name__ == '__main__':
