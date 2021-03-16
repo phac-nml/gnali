@@ -12,8 +12,8 @@ All notable changes to gNALI will be documented in this file.
 - Improved verification of VEP cache
 - Changed gnali_setup command to be able to select assembly to download reference files for
 - Fixed issues with `--force` flag
-- Updated testing environment to resolve issues with pysam>=0.16 when installed from Bioconda
-    - Bioconda version of pysam>=0.16 will segfault when reading gnomAD's remote databases
+- Updated pysam dependency to ensure that version < 0.16 is installed as pysam>=0.16 causes issues when installed from Bioconda
+    - Bioconda version of pysam>=0.16 will segfault when initializing a TabixFile object with a remote database
 
 
 ## 1.0.2 ##
