@@ -19,7 +19,7 @@ import subprocess
 from setuptools import find_packages, setup
 
 dependencies = ['pybiomart', 'numpy', 'pandas',
-                'pysam', 'filelock', 'pyyaml', 'bgzip',
+                'pysam<0.16', 'filelock', 'pyyaml', 'bgzip',
                 'progress', 'python-magic']
 
 if os.getenv('PATCH') is not None:
@@ -33,7 +33,7 @@ def readme():
 
 setup(
     name='gNALI',
-    version = ("1.0.2{}".format(PATCH)),
+    version = ("1.0.3{}".format(PATCH)),
     url="https://github.com/phac-nml/gnali",
     license='Apache License, Version 2.0',
     author='Xia Liu',
