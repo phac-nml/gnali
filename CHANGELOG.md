@@ -12,6 +12,7 @@ All notable changes to gNALI will be documented in this file.
 - Improved verification of VEP cache
 - Changed gnali_setup command to be able to select assembly to download reference files for
 - Fixed issues with `--force` flag
+- Updated testing environment to resolve issues with Bioconda pysam v0.16 
 
 
 ## 1.0.2 ##
