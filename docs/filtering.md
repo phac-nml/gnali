@@ -22,7 +22,7 @@ gNALI defines a few filters natively. We can view them using the help command.
 We can see we have three predefined filters (and the filter expressions they use) for gnomADv2.1.1 available:
 
 * `homozygous-controls` will filter for variants with a non-zero number of homozygous samples in the control group
-* `heterozygous-samples` will filter for variants with a non-zero number of heterozygous samples in the control group 
+* `heterozygous-controls` will filter for variants with a non-zero number of heterozygous samples in the control group 
 * `homozygous` will filter for variants with a non-zero number of homozygous samples
 
 ### gnomADv3 Filters ###
@@ -59,7 +59,7 @@ For example, if we were using gnomADv2.1.1 and wanted to filter for variants wit
 ```bash
 gnali
     --input my_gnali_stuff/data/genes.txt
-    --additional_filters "AC>3" "AC>10"
+    --additional_filters "AC>3" "AN>10"
     --output my_results/
 ```
 
