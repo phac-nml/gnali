@@ -1,10 +1,10 @@
 # News #
 
-## 1.0.3 ##
+## 1.0.4 ##
 
-2021-03-12
+2021-04-29
 
-This release fixes verification of VEP cache, adds customization to the `gnali_setup` command, fixes issues with the `--force` flag, and updates the pysam dependency version to resolve issues when reading from remote databases.
+This release fixes an error in handling missing population frequency data.
 
 
 * **GitHub**: [https://github.com/phac-nml/gnali](https://github.com/phac-nml/gnali)
