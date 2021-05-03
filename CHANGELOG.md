@@ -3,6 +3,15 @@
 All notable changes to gNALI will be documented in this file.
 
 
+## 1.0.4 ##
+
+2021-04-29
+
+### Changed ###
+
+- Fixed an error in handling missing population frequency data
+
+
 ## 1.0.3 ##
 
 2021-03-12
