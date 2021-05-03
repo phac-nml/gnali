@@ -502,7 +502,7 @@ def extract_pop_freqs(variants, config):
                     val = '{:.10e}'.format(float(val))
                 pop_freqs.loc[row, col] = str(val)
             else:
-                pop_freqs[row][col] = '-'
+                pop_freqs.loc[row, col] = '-'
 
     pop_freqs.columns = list(pop_groups.keys())
     return pop_freqs

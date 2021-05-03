@@ -9,9 +9,9 @@ available in gnomADv3 and vice versa.
 
 ## Release ##
 
-**gNALI 1.0.3**
+**gNALI 1.0.4**
 
-This release fixes verification of VEP cache, adds customization to the `gnali_setup` command, fixes issues with the `--force` flag, and updates the pysam dependency version to resolve issues when reading from remote databases.
+This release fixes an error in handling missing population frequency data.
 
 
 ## Resources ##
