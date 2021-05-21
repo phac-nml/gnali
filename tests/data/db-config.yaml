@@ -54,17 +54,38 @@ databases:
   gnomadv3:
     files:
       genomes:
-        path: http://storage.googleapis.com/gnomad-public/release/3.0/vcf/genomes/gnomad.genomes.r3.0.sites.vcf.bgz
+        chr1: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr1.vcf.bgz
+        chr2: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr2.vcf.bgz 
+        chr3: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr3.vcf.bgz
+        chr4: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr4.vcf.bgz
+        chr5: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr5.vcf.bgz
+        chr6: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr6.vcf.bgz
+        chr7: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr7.vcf.bgz
+        chr8: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr8.vcf.bgz
+        chr9: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr9.vcf.bgz
+        chr10: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr10.vcf.bgz
+        chr11: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr11.vcf.bgz
+        chr12: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr12.vcf.bgz
+        chr13: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr13.vcf.bgz
+        chr14: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr14.vcf.bgz
+        chr15: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr15.vcf.bgz
+        chr16: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr16.vcf.bgz
+        chr17: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr17.vcf.bgz
+        chr18: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr18.vcf.bgz
+        chr19: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr19.vcf.bgz
+        chr20: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr20.vcf.bgz
+        chr21: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr21.vcf.bgz
+        chr22: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr22.vcf.bgz
+        chrx: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chrX.vcf.bgz
+        chry: https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chrY.vcf.bgz
     ref-genome:
       name: GRCh38
       path: http://ensembl.org
-    ref-files:
-      human-ancestor: tests/data/vep/GRCh38/human_ancestor_col6a5.fa.gz
-      assembly-fasta: tests/data/vep/homo_sapiens/<vep_version>_GRCh38/col6a5.fa.gz
-      conservation-db: gnali/data/vep/GRCh38/loftee.sql
-      gerp-scores: tests/data/vep/GRCh38/col6a5_gerp_scores.bigwig
-    cache:
-      path: tests/data/vep
+    lof:
+      id: vep
+      annot: LoF
+      filters:
+        confidence: HC
     predefined-filters:
       homozygous: nhomalt>0
     population-frequencies:
@@ -90,11 +111,11 @@ databases:
       east-asian-AN: AN_eas
       east-asian-AF: AF_eas
       other-AC: AC_oth
-      other-AF: AF_oth
       other-AN: AN_oth
+      other-AF: AF_oth
       male-AC: AC_male
-      male-AF: AF_male
       male-AN: AN_male
+      male-AF: AF_male
       female-AC: AC_female
       female-AN: AN_female
       female-AF: AF_female
