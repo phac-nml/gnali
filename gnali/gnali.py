@@ -542,7 +542,7 @@ def write_results(results, results_basic, genes_not_found, header,
     outputs.write_to_tab(results_path, results)
 
     results_basic = pd.DataFrame(results_basic)
-    results_basic['Missing_Genes'] = pd.Series(genes_not_found)
+    results_basic['Missing_Genes'] = pd.Series(genes_not_found, dtype='str')
     outputs.write_to_tab(results_basic_path, results_basic)
 
     if(keep_vcf):

@@ -99,14 +99,7 @@ class TestGNALIIntegration:
         assert filecmp.dircmp(EXOMES_CCR5_RESULTS, gnali_results).diff_files == []
         assert results.returncode == 0
     
-    def test_gnali_gnomadv3_no_lof_annots(self):
-        deps_exist_prior = True
-        deps_version = Dependencies.versions['GRCh38']
-        deps_version_file = Dependencies.files['GRCh38']
-        if not os.path.exists(deps_version_file):
-            deps_exist_prior = False
-            with open(deps_version_file, 'w') as fh:
-                fh.write(deps_version)
+    def test_gnali_gnomadv3(self):
         temp_dir = tempfile.TemporaryDirectory()
         temp_path = temp_dir.name
         gnali_results = "{}/gnomadv3_full_results".format(temp_path)
@@ -119,8 +112,6 @@ class TestGNALIIntegration:
                               config=DB_CONFIG_FILE,
                               out_gnomadv3=gnali_results)
         results = subprocess.run(command_str.split())
-        if not deps_exist_prior:
-            os.remove(deps_version_file)
         assert filecmp.dircmp(GNOMADV3_RESULTS, gnali_results).diff_files == []
         assert results.returncode == 0
 
