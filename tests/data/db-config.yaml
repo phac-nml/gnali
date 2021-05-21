@@ -136,12 +136,12 @@ databases:
       other-AC: AC_oth
       other-AN: AN_oth
       other-AF: AF_oth
-      male-AC: AC_male
-      male-AN: AN_male
-      male-AF: AF_male
-      female-AC: AC_female
-      female-AN: AN_female
-      female-AF: AF_female
+      XY-AC: AC_XY
+      XY-AN: AN_XY
+      XY-AF: AF_XY
+      XX-AC: AC_XX
+      XX-AN: AN_XX
+      XX-AF: AF_XX
   gnomadv2.1.1nolof:
     files:
       ccr5:
