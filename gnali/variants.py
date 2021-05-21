@@ -36,9 +36,8 @@ class Variant:
             self.alt, self.qual, self.filter, \
             self.info_str = record.split("\t")
         self.info = dict([info_item.split("=", 1) for
-                        info_item in self.info_str.split(";")
-                        if len(info_item.split("=", 1)) > 1])
-
+                         info_item in self.info_str.split(";")
+                         if len(info_item.split("=", 1)) > 1])
 
     def __str__(self):
         if self.info_str[-1] == '\n':

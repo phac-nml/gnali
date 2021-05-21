@@ -138,9 +138,9 @@ def find_test_locations(gene_descriptions):
                 + str(gene_descriptions.loc[gene_descriptions.index[i],
                       'end_position'])
         target_list.append(target)
-    genes_and_locations_df = pd.DataFrame({'Genes': gene_descriptions['hgnc_symbol'],
-                                           'Locations': target_list})
-    return genes_and_locations_df
+    test_locations = pd.DataFrame({'Genes': gene_descriptions['hgnc_symbol'],
+                                   'Locations': target_list})
+    return test_locations
 
 
 def get_db_config(config_file, db):
@@ -328,9 +328,12 @@ def get_variants(target_list, db_info, filter_objs, output_dir,
     temp_dir = tempfile.TemporaryDirectory()
     temp_name = "{}/".format(temp_dir.name)
 
-    coverage = {gene:False for gene in test_locations['Genes']}
+    coverage = {gene: False for gene in test_locations['Genes']}
+
     if db_info.ref_genome_name == 'GRCh38':
-            test_locations['Locations'] = ["chr{}".format(loc) for loc in test_locations['Locations']]
+        test_locations['Locations'] = ["chr{}".format(loc) for loc in
+                                       test_locations['Locations']]
+
     for data_file in db_info.files:
         tbi = None
         tbx = None
@@ -513,8 +516,8 @@ def extract_pop_freqs(variants, config):
     return pop_freqs
 
 
-def write_results(results, results_basic, genes_not_found, header, results_as_vcf,
-                  results_dir, keep_vcf):
+def write_results(results, results_basic, genes_not_found, header,
+                  results_as_vcf, results_dir, keep_vcf):
     """ Write output files:
         - A detailed report outlining the gene variants
         - A basic report listing only the genes with
@@ -524,7 +527,7 @@ def write_results(results, results_basic, genes_not_found, header, results_as_vc
 
     Args:
         results: detailed results from extract_lof_variants()
-        results_basic: basic reuslts from extract_lof_variants
+        results_basic: basic results from extract_lof_variants
         header: database vcf header
         results_dir: directory containing all gNALI results
         keep_vcf: whether or not we create an additional vcf output
@@ -538,9 +541,9 @@ def write_results(results, results_basic, genes_not_found, header, results_as_vc
 
     outputs.write_to_tab(results_path, results)
 
-    results_basic_with_missing_genes = pd.DataFrame(results_basic)
-    results_basic_with_missing_genes['Missing_Genes'] = pd.Series(genes_not_found)
-    outputs.write_to_tab(results_basic_path, pd.DataFrame(results_basic))
+    results_basic = pd.DataFrame(results_basic)
+    results_basic['Missing_Genes'] = pd.Series(genes_not_found)
+    outputs.write_to_tab(results_basic_path, results_basic)
 
     if(keep_vcf):
         results_vcf_file = "Nonessential_Gene_Variants.vcf"
@@ -650,14 +653,15 @@ def main():
         filters = transform_filters(db_config, args.predefined_filters,
                                     args.additional_filters)
 
-        header, variants, genes_not_found = get_variants(target_list, db_config,
-                                        filters, results_dir, logger)
+        header, variants, genes_not_found = get_variants(target_list,
+                                                         db_config, filters,
+                                                         results_dir, logger)
 
         results, results_basic, results_as_vcf = \
             extract_lof_annotations(variants, db_config, args.pop_freqs)
 
-        write_results(results, results_basic, genes_not_found, header, results_as_vcf,
-                      results_dir, args.vcf)
+        write_results(results, results_basic, genes_not_found, header,
+                      results_as_vcf, results_dir, args.vcf)
 
         print("Finished. Output in {}".format(results_dir))
     except FileExistsError:
