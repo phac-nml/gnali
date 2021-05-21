@@ -138,7 +138,9 @@ def find_test_locations(gene_descriptions):
                 + str(gene_descriptions.loc[gene_descriptions.index[i],
                       'end_position'])
         target_list.append(target)
-    return target_list
+    genes_and_locations_df = pd.DataFrame({'Genes': gene_descriptions['hgnc_symbol'],
+                                           'Locations': target_list})
+    return genes_and_locations_df
 
 
 def get_db_config(config_file, db):
@@ -307,7 +309,7 @@ def compress_vcf(path, data_path, file_name):
     return data_bgz
 
 
-def get_variants(genes, target_list, db_info, filter_objs, output_dir,
+def get_variants(target_list, db_info, filter_objs, output_dir,
                  logger):
     """Query the gnomAD database for variants with Tabix,
         apply loss-of-function filters, user-specified predefined
@@ -322,10 +324,13 @@ def get_variants(genes, target_list, db_info, filter_objs, output_dir,
     variants = np.array([])
     max_time = 180
     header = None
+    test_locations = target_list
     temp_dir = tempfile.TemporaryDirectory()
     temp_name = "{}/".format(temp_dir.name)
-    test_locations = target_list
 
+    coverage = {gene:False for gene in test_locations['Genes']}
+    if db_info.ref_genome_name == 'GRCh38':
+            test_locations['Locations'] = ["chr{}".format(loc) for loc in test_locations['Locations']]
     for data_file in db_info.files:
         tbi = None
         tbx = None
@@ -340,12 +345,11 @@ def get_variants(genes, target_list, db_info, filter_objs, output_dir,
             tbx = pysam.TabixFile(data_file.path, index=tbi)
         header = tbx.header
 
-        if db_info.ref_genome_name == 'GRCh38':
-            test_locations = ["chr{}".format(loc) for loc in test_locations]
         # get records in locations
-        for index, location in enumerate(test_locations):
+        for index, row in test_locations.iterrows():
             try:
-                records = tbx.fetch(reference=location)
+                records = tbx.fetch(reference=row['Locations'])
+                coverage[row['Genes']] = True
                 # update to convert to Variants before filter calls
                 records = [Variant(record) for record in records]
                 # apply non-LoF filters immediately, otherwise the list of
@@ -358,7 +362,7 @@ def get_variants(genes, target_list, db_info, filter_objs, output_dir,
                 logger.write("Error for gene {}: {}, it is likely that the "
                              "region does not exist in file '{}' "
                              "in database {}"
-                             .format(genes[index], error, data_file.name,
+                             .format(row['Genes'], error, data_file.name,
                                      db_info.name))
 
     if not db_info.has_lof_annots:
@@ -373,8 +377,9 @@ def get_variants(genes, target_list, db_info, filter_objs, output_dir,
     lof_index = str(annot_header).split("|") \
         .index(db_info.lof['annot'])
 
+    genes_not_found = [gene for gene in coverage.keys() if not coverage[gene]]
     variants = filter_plof(variants, db_info, lof_index)
-    return header, variants
+    return header, variants, genes_not_found
 
 
 def apply_filters(records, db_info, filters):
@@ -508,7 +513,7 @@ def extract_pop_freqs(variants, config):
     return pop_freqs
 
 
-def write_results(results, results_basic, header, results_as_vcf,
+def write_results(results, results_basic, genes_not_found, header, results_as_vcf,
                   results_dir, keep_vcf):
     """ Write output files:
         - A detailed report outlining the gene variants
@@ -532,7 +537,10 @@ def write_results(results, results_basic, header, results_as_vcf,
                                         results_basic_file)
 
     outputs.write_to_tab(results_path, results)
-    outputs.write_to_tab(results_basic_path, results_basic)
+
+    results_basic_with_missing_genes = pd.DataFrame(results_basic)
+    results_basic_with_missing_genes['Missing_Genes'] = pd.Series(genes_not_found)
+    outputs.write_to_tab(results_basic_path, pd.DataFrame(results_basic))
 
     if(keep_vcf):
         results_vcf_file = "Nonessential_Gene_Variants.vcf"
@@ -642,13 +650,13 @@ def main():
         filters = transform_filters(db_config, args.predefined_filters,
                                     args.additional_filters)
 
-        header, variants = get_variants(genes, target_list, db_config,
+        header, variants, genes_not_found = get_variants(target_list, db_config,
                                         filters, results_dir, logger)
 
         results, results_basic, results_as_vcf = \
             extract_lof_annotations(variants, db_config, args.pop_freqs)
 
-        write_results(results, results_basic, header, results_as_vcf,
+        write_results(results, results_basic, genes_not_found, header, results_as_vcf,
                       results_dir, args.vcf)
 
         print("Finished. Output in {}".format(results_dir))
