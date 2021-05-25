@@ -251,7 +251,7 @@ class TestGNALIMethods:
 
 
     def test_get_variants_tabix_error(self, monkeypatch, capfd):
-        target_list = pd.DataFrame(data={'Genes': ['GENE'], 'Locations': ["Y:2000000000-2000000001"]})
+        target_list = pd.DataFrame(data={'Genes': ['GENE1'], 'Locations': ["Y:2000000000-2000000001"]})
 
         db_config_file = open(DB_CONFIG_FILE, 'r')
         db_config = Config('gnomadv2.1.1', yaml.load(db_config_file.read(), Loader=yaml.FullLoader))
