@@ -24,7 +24,7 @@ from gnali.vep import VEP
 import gnali.outputs as outputs
 from gnali.dbconfig import Config, RuntimeConfig
 import yaml
-from gnali.gnali_setup import Dependencies
+from gnali.gnali_get_data import Dependencies
 
 TEST_PATH = str(Path(__file__).parent.absolute())
 TEST_DATA_PATH = "{}/data".format(TEST_PATH)

@@ -28,7 +28,7 @@ import re
 from pathlib import Path
 from filelock import FileLock
 from gnali.gnali import download_file, get_db_config
-from gnali.gnali_setup import Dependencies
+from gnali.gnali_get_data import Dependencies
 
 
 TEST_PATH = str(Path(__file__).parent.absolute())

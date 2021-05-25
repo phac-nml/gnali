@@ -38,7 +38,7 @@ from gnali.exceptions import EmptyFileError, TBIDownloadError, InvalidConfigurat
 from gnali.variants import Variant
 from gnali.filter import Filter
 from gnali.dbconfig import Config, RuntimeConfig, DataFile
-from gnali import gnali_setup
+from gnali import gnali_get_data
 from gnali.logging import Logger
 
 TEST_PATH = pathlib.Path(__file__).parent.absolute()
@@ -127,7 +127,7 @@ class TestGNALIMethods:
         url = "http://badurl.com"
         with tempfile.TemporaryDirectory() as temp:
             with pytest.raises(Exception):
-                assert gnali_setup.download_file(url, "{}/{}".format(temp, "/bad_url"), MAX_TIME)
+                assert gnali_get_data.download_file(url, "{}/{}".format(temp, "/bad_url"), MAX_TIME)
 
 
     ### Tests for get_db_tbi() ##############################
