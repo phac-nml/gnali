@@ -206,7 +206,7 @@ class TestGNALIMethods:
                     'start_position': [46411633, 105085753], \
                     'end_position': [46417697, 46417697]}
         gene_descs = pd.DataFrame(gene_descs, columns = ['', 'hgnc_symbol', 'chromosome_name', 'start_position', 'end_position'])
-        target_list= []
+        target_list = []
         method_gene_descs = gene_descs
 
         for i in range(gene_descs.shape[0]):
@@ -214,14 +214,16 @@ class TestGNALIMethods:
                     + str(gene_descs.loc[gene_descs.index[i],'start_position']) + "-"  \
                     + str(gene_descs.loc[gene_descs.index[i],'end_position'])
             target_list.append(target)
+        target_list = pd.DataFrame({'Genes': gene_descs['hgnc_symbol'],
+                                    'Locations': target_list})
         
         method_test_locations = gnali.find_test_locations(method_gene_descs)
 
-        assert method_test_locations == target_list
+        assert method_test_locations.equals(target_list)
 
     ### Tests for get_plof_variants() ######################
     def test_get_variants_happy(self, monkeypatch):
-        target_list = ["3:46411633-46417697"]
+        target_list = pd.DataFrame(data={'Genes': ['CCR5'], 'Locations': ["3:46411633-46417697"]})
         
         expected_variants = []
         with open(EXPECTED_PLOF_VARIANTS, 'r') as test_file:
@@ -240,7 +242,7 @@ class TestGNALIMethods:
         monkeypatch.setattr(gnali, "get_db_tbi", mock_get_db_tbi)
 
         temp_dir = tempfile.TemporaryDirectory()
-        header, method_variants = gnali.get_variants(['CCR5'], target_list, db_config, 
+        header, method_variants, genes_not_found = gnali.get_variants(target_list, db_config, 
                                                      [Filter("homozygous-controls","controls_nhomalt>0")],
                                                      temp_dir.name, None)
         method_variants = [str(variant) for variant in method_variants]
@@ -249,7 +251,7 @@ class TestGNALIMethods:
 
 
     def test_get_variants_tabix_error(self, monkeypatch, capfd):
-        target_list = ["Y:2000000000-2000000001"]
+        target_list = pd.DataFrame(data={'Genes': ['GENE'], 'Locations': ["Y:2000000000-2000000001"]})
 
         db_config_file = open(DB_CONFIG_FILE, 'r')
         db_config = Config('gnomadv2.1.1', yaml.load(db_config_file.read(), Loader=yaml.FullLoader))
@@ -267,7 +269,7 @@ class TestGNALIMethods:
         pathlib.Path(output_dir).mkdir(parents=True, exist_ok=True)
 
         logger = Logger(output_dir)
-        gnali.get_variants(['GENE1'], target_list, db_config, 
+        gnali.get_variants(target_list, db_config, 
                         [Filter("homozygous-controls","controls_nhomalt>0")],
                         output_dir, logger)
         method_log_file = "{}/gnali_errors.log".format(output_dir)
@@ -318,5 +320,5 @@ class TestGNALIMethods:
         test_results.to_csv("{}/{}".format(expected_results_dir, expected_results_file), sep='\t', mode='a', index=False)
         test_results_basic.to_csv("{}/{}".format(expected_results_dir, expected_results_basic_file), sep='\t', mode='a', index=False)
 
-        gnali.write_results(test_results, test_results_basic, None, None, method_results_dir, False)
+        gnali.write_results(test_results, test_results_basic, [], None, None, method_results_dir, False)
         assert filecmp.dircmp(expected_results_dir, method_results_dir)
