@@ -310,7 +310,7 @@ def compress_vcf(path, data_path, file_name):
 
 
 def get_variants(target_list, db_info, filter_objs, output_dir,
-                 logger):
+                 logger, verbose_on):
     """Query the gnomAD database for variants with Tabix,
         apply loss-of-function filters, user-specified predefined
         filters, and user-specified additional filters.
@@ -362,11 +362,12 @@ def get_variants(target_list, db_info, filter_objs, output_dir,
             except ValueError as error:
                 # ValueError means that location used in TabixFile.fetch()
                 # does not exist in the database
-                logger.write("Error for gene {}: {}, it is likely that the "
-                             "region does not exist in file '{}' "
-                             "in database {}"
-                             .format(row['Genes'], error, data_file.name,
-                                     db_info.name))
+                if verbose_on:
+                    logger.write("Error for gene {}: {}, it is likely that "
+                                 "the region does not exist in file '{}' "
+                                "in database {}"
+                                .format(row['Genes'], error, data_file.name,
+                                        db_info.name))
 
     if not db_info.has_lof_annots:
         header, variants = VEP.annotate_vep_loftee(header, variants,
@@ -572,8 +573,11 @@ def init_parser(id):
                         help='Database to query. Default: {}\nOptions: {}'
                         .format(config.default,
                                 [db.name for db in config.configs]))
-    parser.add_argument('-v', '--vcf',
+    parser.add_argument('--vcf',
                         help='Generate vcf file for filtered variants',
+                        action='store_true')
+    parser.add_argument('-v', '--verbose',
+                        help='increase verbosity',
                         action='store_true')
     parser.add_argument('-p', '--predefined_filters',
                         nargs='*',
@@ -655,7 +659,8 @@ def main():
 
         header, variants, genes_not_found = get_variants(target_list,
                                                          db_config, filters,
-                                                         results_dir, logger)
+                                                         results_dir, logger,
+                                                         parser.verbose)
 
         results, results_basic, results_as_vcf = \
             extract_lof_annotations(variants, db_config, args.pop_freqs)
