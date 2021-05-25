@@ -1,2 +1,2 @@
-HGNC_Symbol
-CCR5
+HGNC_Symbol	Missing_Genes
+CCR5	
