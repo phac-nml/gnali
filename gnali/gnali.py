@@ -40,7 +40,7 @@ from gnali.variants import Variant
 from gnali.dbconfig import Config, RuntimeConfig, create_template
 import gnali.outputs as outputs
 from gnali.vep import VEP
-from gnali.gnali_setup import verify_files_present
+from gnali.gnali_get_data import verify_files_present
 from gnali.files import download_file
 from gnali.logging import Logger
 import pkg_resources
