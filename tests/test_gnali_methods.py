@@ -244,7 +244,7 @@ class TestGNALIMethods:
         temp_dir = tempfile.TemporaryDirectory()
         header, method_variants, genes_not_found = gnali.get_variants(target_list, db_config, 
                                                      [Filter("homozygous-controls","controls_nhomalt>0")],
-                                                     temp_dir.name, None)
+                                                     temp_dir.name, None, False)
         method_variants = [str(variant) for variant in method_variants]
 
         assert expected_variants == method_variants
@@ -271,7 +271,7 @@ class TestGNALIMethods:
         logger = Logger(output_dir)
         gnali.get_variants(target_list, db_config, 
                         [Filter("homozygous-controls","controls_nhomalt>0")],
-                        output_dir, logger)
+                        output_dir, logger, True)
         method_log_file = "{}/gnali_errors.log".format(output_dir)
         assert filecmp.cmp(method_log_file, TEST_LOG_FILE)
     ########################################################
