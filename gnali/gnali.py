@@ -365,9 +365,9 @@ def get_variants(target_list, db_info, filter_objs, output_dir,
                 if verbose_on:
                     logger.write("Error for gene {}: {}, it is likely that "
                                  "the region does not exist in file '{}' "
-                                "in database {}"
-                                .format(row['Genes'], error, data_file.name,
-                                        db_info.name))
+                                 "in database {}"
+                                 .format(row['Genes'], error, data_file.name,
+                                         db_info.name))
 
     if not db_info.has_lof_annots:
         header, variants = VEP.annotate_vep_loftee(header, variants,
@@ -660,7 +660,7 @@ def main():
         header, variants, genes_not_found = get_variants(target_list,
                                                          db_config, filters,
                                                          results_dir, logger,
-                                                         parser.verbose)
+                                                         args.verbose)
 
         results, results_basic, results_as_vcf = \
             extract_lof_annotations(variants, db_config, args.pop_freqs)
