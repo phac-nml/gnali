@@ -47,13 +47,14 @@ Output files for this example can be found [here](https://github.com/phac-nml/gn
 
 ### Basic Output ###
 
-The basic output file contains a subset of the input genes, the ones that have high-confidence loss-of-function variants that pass filtering.
+The basic output file contains a subset of the input genes, the ones that have high-confidence loss-of-function variants that pass filtering. It
+also contains a list of genes that could not be found in the specified database, if any.
 
 The file shown below can also be found [here](https://github.com/phac-nml/gnali/blob/docs/examples/outputs/output-simple/Nonessential_Host_Genes_(Basic).txt).
 
 ```bash
 > cat output-simple/Nonessential_Host_Genes_\(Basic\).txt
-HGNC_Symbol
+HGNC_Symbol Missing_Genes
 CCR5
 ALCAM
 ```
