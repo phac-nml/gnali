@@ -98,7 +98,7 @@ def get_human_genes(db_info):
     return genes
 
 
-def get_test_gene_descriptions(genes_list, db_info, logger):
+def get_test_gene_descriptions(genes_list, db_info, logger, verbose_on):
     """Filter Ensembl human genes for info related to test genes.
 
     Args:
@@ -113,7 +113,7 @@ def get_test_gene_descriptions(genes_list, db_info, logger):
                                           .isin(genes_list))]
     unavailable_genes = [gene for gene in genes_list if gene not in
                          list(gene_descriptions['hgnc_symbol'])]
-    if len(unavailable_genes) > 0:
+    if len(unavailable_genes) > 0 and verbose_on:
         logger.write("Genes not available in Ensembl {} database (skipping):"
                      .format(db_info.ref_genome_name))
         for gene in unavailable_genes:
@@ -648,7 +648,8 @@ def main():
 
         logger = Logger(results_dir)
         Path(results_dir).mkdir(parents=True, exist_ok=args.force)
-        genes_df = get_test_gene_descriptions(genes, db_config, logger)
+        genes_df = get_test_gene_descriptions(genes, db_config, logger,
+                                              args.verbose)
         target_list = find_test_locations(genes_df)
 
         validate_filters(db_config, args.predefined_filters,
