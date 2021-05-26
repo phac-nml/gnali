@@ -189,7 +189,7 @@ class TestGNALIMethods:
         db_config = Config(None, yaml.load(db_config_file.read(), Loader=yaml.FullLoader))
 
         human_genes = gnali.get_human_genes(db_config)
-        method_results = gnali.get_test_gene_descriptions(genes_list, db_config, None)
+        method_results = gnali.get_test_gene_descriptions(genes_list, db_config, None, False)
 
         human_genes.columns = ['hgnc_symbol', 'chromosome_name', 'start_position', 'end_position']
         expected_results = human_genes
