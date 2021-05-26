@@ -82,6 +82,9 @@ def open_test_file(input_file):
 def get_human_genes(db_info):
     """Connect to the Ensembl database and get the human gene dataset.
         Keep only required fields.
+
+    Args:
+        db_info: RuntimeConfig object with database info
     """
     reference = db_info.ref_genome_path
     server = Server(host=reference)
@@ -103,6 +106,9 @@ def get_test_gene_descriptions(genes_list, db_info, logger, verbose_on):
 
     Args:
         genes_list: list of genes we want to test from open_test_file()
+        db_info: RuntimeConfig object with database info
+        logger: Logger object
+        verbose_on: boolean for verbose mode
     """
     gene_descriptions = get_human_genes(db_info)
     gene_descriptions.columns = ['hgnc_symbol', 'chromosome_name',
@@ -320,6 +326,9 @@ def get_variants(target_list, db_info, filter_objs, output_dir,
         db_info: configuration of database
         filter_objs: list of all (predefined and additional)
                         filters as Filter objects
+        output_dir: directory to write output to
+        logger: Logger object to log errors to
+        verbose_on: boolean for verbose mode
     """
     variants = np.array([])
     max_time = 180
@@ -529,6 +538,7 @@ def write_results(results, results_basic, genes_not_found, header,
     Args:
         results: detailed results from extract_lof_variants()
         results_basic: basic results from extract_lof_variants
+        genes_not_found: list of genes missing coverage
         header: database vcf header
         results_dir: directory containing all gNALI results
         keep_vcf: whether or not we create an additional vcf output
