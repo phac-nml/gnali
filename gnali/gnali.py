@@ -347,6 +347,7 @@ def get_variants(genes, db_info, filter_objs, output_dir,
     temp_dir = tempfile.TemporaryDirectory()
     temp_name = "{}/".format(temp_dir.name)
 
+    # Tracks if gene was found in any database file
     coverage = {gene.name: False for gene in genes}
 
     for data_file in db_info.files:
@@ -385,6 +386,7 @@ def get_variants(genes, db_info, filter_objs, output_dir,
             except Exception:
                 raise
 
+    # Set error status for gene if it wasn't found in any database file
     for gene in genes:
         if not coverage[gene.name] and gene.status is None:
             gene.set_status("No variants in database")
@@ -400,6 +402,7 @@ def get_variants(genes, db_info, filter_objs, output_dir,
                     in line]
     lof_index = str(annot_header).split("|") \
         .index(db_info.lof['annot'])
+
     variants, genes = filter_plof(genes, variants, db_info, lof_index)
     variants, genes = apply_filters(genes, variants, db_info, filter_objs)
     return header, variants, genes
