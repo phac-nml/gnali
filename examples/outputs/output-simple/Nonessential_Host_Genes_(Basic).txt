@@ -1,3 +1,3 @@
-HGNC_Symbol Missing_Genes
-CCR5
-ALCAM
+HGNC_Symbol Status
+CCR5	HC LoF found
+ALCAM	HC LoF found
