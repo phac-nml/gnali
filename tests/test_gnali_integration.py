@@ -104,7 +104,7 @@ class TestGNALIIntegration:
         temp_path = temp_dir.name
         gnali_results = "{}/gnomadv3_full_results".format(temp_path)
         command_str = "gnali -i {in_col6a5} " \
-                      "-d gnomadv3 " \
+                      "-d gnomadv3.1.1 " \
                       "-p homozygous " \
                       "-c {config} " \
                       "-o {out_gnomadv3}" \
