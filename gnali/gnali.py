@@ -141,8 +141,10 @@ def find_test_locations(genes, gene_descs, db_info):
     """Using results from the Ensembl database, build a list of target genes.
 
     Args:
+        genes: list of Gene objects
         gene_descriptions: results from Ensembl database
-                            from get_test_gene_descriptions()
+                           from get_test_gene_descriptions()
+        db_info: RuntimeConfig object
     """
     # Format targets for Tabix
     prefix = "chr" if db_info.ref_genome_name == "GRCh38" else ""
@@ -549,9 +551,9 @@ def write_results_all(results, genes, header,
 
     Args:
         results: detailed results from extract_lof_variants()
-        results_basic: basic results from extract_lof_variants
-        genes_not_found: list of genes missing coverage
+        genes: list of Gene objects
         header: database vcf header
+        results_as_vcf: records as VCF from get_variants()
         results_dir: directory containing all gNALI results
         keep_vcf: whether or not we create an additional vcf output
     """
