@@ -36,7 +36,7 @@ from gnali.exceptions import EmptyFileError, TBIDownloadError, \
                              InvalidConfigurationError, InvalidFilterError, \
                              NoVariantsAvailableError
 from gnali.filter import Filter
-from gnali.variants import Variant
+from gnali.variants import Variant, Gene
 from gnali.dbconfig import Config, RuntimeConfig, create_template
 import gnali.outputs as outputs
 from gnali.vep import VEP
@@ -101,11 +101,11 @@ def get_human_genes(db_info):
     return genes
 
 
-def get_test_gene_descriptions(genes_list, db_info, logger, verbose_on):
+def get_test_gene_descriptions(genes, db_info, logger, verbose_on):
     """Filter Ensembl human genes for info related to test genes.
 
     Args:
-        genes_list: list of genes we want to test from open_test_file()
+        genes: list of Gene objects
         db_info: RuntimeConfig object with database info
         logger: Logger object
         verbose_on: boolean for verbose mode
@@ -115,38 +115,47 @@ def get_test_gene_descriptions(genes_list, db_info, logger, verbose_on):
                                  'start_position', 'end_position']
     gene_descriptions = gene_descriptions[~gene_descriptions['chromosome_name']
                                           .str.contains('PATCH')]
+    gene_descriptions.reset_index(drop=True, inplace=True)
+    
+    target_gene_names = [gene.name for gene in genes]
     gene_descriptions = gene_descriptions[(gene_descriptions['hgnc_symbol']
-                                          .isin(genes_list))]
-    unavailable_genes = [gene for gene in genes_list if gene not in
+                                          .isin(target_gene_names))]
+    unavailable_genes = [gene for gene in target_gene_names if gene not in
                          list(gene_descriptions['hgnc_symbol'])]
-    if len(unavailable_genes) > 0 and verbose_on:
+
+    for gene in genes:
+        if gene.name in unavailable_genes:
+            gene.set_status("Unknown gene")
+            continue
+
+    if len(unavailable_genes) > 0  and verbose_on:
         logger.write("Genes not available in Ensembl {} database (skipping):"
-                     .format(db_info.ref_genome_name))
+                    .format(db_info.ref_genome_name))
         for gene in unavailable_genes:
             logger.write(gene)
-    return gene_descriptions
 
+    return genes, gene_descriptions
 
-def find_test_locations(gene_descriptions):
+def find_test_locations(genes, gene_descs, db_info):
     """Using results from the Ensembl database, build a list of target genes.
 
     Args:
         gene_descriptions: results from Ensembl database
                             from get_test_gene_descriptions()
     """
-    target_list = []
     # Format targets for Tabix
-    for i in range(gene_descriptions.shape[0]):
-        target = str(gene_descriptions.loc[gene_descriptions.index[i],
-                     'chromosome_name']) + ":" \
-                + str(gene_descriptions.loc[gene_descriptions.index[i],
-                      'start_position']) + "-"  \
-                + str(gene_descriptions.loc[gene_descriptions.index[i],
-                      'end_position'])
-        target_list.append(target)
-    test_locations = pd.DataFrame({'Genes': gene_descriptions['hgnc_symbol'],
-                                   'Locations': target_list})
-    return test_locations
+    prefix = "chr" if db_info.ref_genome_name == "GRCh38" else ""
+    for index, gene in enumerate(genes):
+        if gene.status is None:
+            chrom = gene_descs.loc[gene_descs.index[index], 'chromosome_name']
+            start = gene_descs.loc[gene_descs.index[index], 'start_position']
+            end = gene_descs.loc[gene_descs.index[index], 'end_position']
+
+            gene.set_location(location="{prefix}{}:{}-{}"
+                                    .format(chrom, start, end,
+                                            prefix=prefix))
+    return genes
+
 
 
 def get_db_config(config_file, db):
@@ -315,7 +324,7 @@ def compress_vcf(path, data_path, file_name):
     return data_bgz
 
 
-def get_variants(target_list, db_info, filter_objs, output_dir,
+def get_variants(genes, db_info, filter_objs, output_dir,
                  logger, verbose_on):
     """Query the gnomAD database for variants with Tabix,
         apply loss-of-function filters, user-specified predefined
@@ -333,15 +342,10 @@ def get_variants(target_list, db_info, filter_objs, output_dir,
     variants = np.array([])
     max_time = 180
     header = None
-    test_locations = target_list
     temp_dir = tempfile.TemporaryDirectory()
     temp_name = "{}/".format(temp_dir.name)
 
-    coverage = {gene: False for gene in test_locations['Genes']}
-
-    if db_info.ref_genome_name == 'GRCh38':
-        test_locations['Locations'] = ["chr{}".format(loc) for loc in
-                                       test_locations['Locations']]
+    coverage = {gene.name: False for gene in genes}
 
     for data_file in db_info.files:
         tbi = None
@@ -358,15 +362,14 @@ def get_variants(target_list, db_info, filter_objs, output_dir,
         header = tbx.header
 
         # get records in locations
-        for index, row in test_locations.iterrows():
+        for gene in genes:
+            if gene.status is not None:
+                continue
             try:
-                records = tbx.fetch(reference=row['Locations'])
-                coverage[row['Genes']] = True
+                records = tbx.fetch(reference=gene.location)
+                coverage[gene.name] = True
                 # update to convert to Variants before filter calls
-                records = [Variant(record) for record in records]
-                # apply non-LoF filters immediately, otherwise the list of
-                # all available variants will be very large
-                records = apply_filters(records, db_info, filter_objs)
+                records = [Variant(gene.name, record) for record in records]
                 variants = np.concatenate((variants, np.array(records)))
             except ValueError as error:
                 # ValueError means that location used in TabixFile.fetch()
@@ -375,8 +378,14 @@ def get_variants(target_list, db_info, filter_objs, output_dir,
                     logger.write("Error for gene {}: {}, it is likely that "
                                  "the region does not exist in file '{}' "
                                  "in database {}"
-                                 .format(row['Genes'], error, data_file.name,
+                                 .format(gene.name, error, data_file.name,
                                          db_info.name))
+            except Exception:
+                raise
+
+    for gene in genes:
+        if not coverage[gene.name]:
+            gene.set_status("No variants in database")
 
     if not db_info.has_lof_annots:
         header, variants = VEP.annotate_vep_loftee(header, variants,
@@ -389,13 +398,12 @@ def get_variants(target_list, db_info, filter_objs, output_dir,
                     in line]
     lof_index = str(annot_header).split("|") \
         .index(db_info.lof['annot'])
+    variants, genes = filter_plof(genes, variants, db_info, lof_index)
+    variants, genes = apply_filters(genes, variants, db_info, filter_objs)
+    return header, variants, genes
 
-    genes_not_found = [gene for gene in coverage.keys() if not coverage[gene]]
-    variants = filter_plof(variants, db_info, lof_index)
-    return header, variants, genes_not_found
 
-
-def apply_filters(records, db_info, filters):
+def apply_filters(genes, records, db_info, filters):
     """Apply predefined and additional filters.
 
     Args:
@@ -420,13 +428,16 @@ def apply_filters(records, db_info, filters):
             if not filters_passed:
                 continue
             passed.append(record)
+            for gene in genes:
+                if gene.name == record.gene_name:
+                    gene.set_status("HC LoF found")
     except Exception as error:
         print(error)
         raise
-    return passed
+    return passed, genes
 
 
-def filter_plof(records, db_info, lof_index):
+def filter_plof(genes, records, db_info, lof_index):
     """Apply loss-of-function filters.
 
     Args:
@@ -444,10 +455,13 @@ def filter_plof(records, db_info, lof_index):
                 lof = vep_str.split("|")[lof_index]
                 if lof == conf_filter:
                     passed.append(record)
+                    for gene in genes:
+                        if gene.name == record.gene_name:
+                            gene.set_status("HC LoF found, failed filtering")
     except Exception as error:
         print(error)
         raise
-    return passed
+    return passed, genes
 
 
 def extract_lof_annotations(variants, db_info, get_pop_freqs):
@@ -488,14 +502,12 @@ def extract_lof_annotations(variants, db_info, get_pop_freqs):
     results.drop('VEP', axis=1, inplace=True)
     results = pd.concat([results, results_codes], axis=1)
     results = results.drop_duplicates(keep='first', inplace=False)
-    results_basic = results["HGNC_Symbol"].drop_duplicates(keep='first',
-                                                           inplace=False)
 
     if get_pop_freqs:
         pop_freqs = extract_pop_freqs(variants, db_info)
         results = results.merge(pop_freqs, left_index=True, right_index=True)
 
-    return results, results_basic, results_as_vcf
+    return results, results_as_vcf
 
 
 def extract_pop_freqs(variants, config):
@@ -526,7 +538,7 @@ def extract_pop_freqs(variants, config):
     return pop_freqs
 
 
-def write_results(results, results_basic, genes_not_found, header,
+def write_results(results, genes, header,
                   results_as_vcf, results_dir, keep_vcf):
     """ Write output files:
         - A detailed report outlining the gene variants
@@ -552,8 +564,8 @@ def write_results(results, results_basic, genes_not_found, header,
 
     outputs.write_to_tab(results_path, results)
 
-    results_basic = pd.DataFrame(results_basic)
-    results_basic['Missing_Genes'] = pd.Series(genes_not_found, dtype='str')
+    data = [[gene.name, gene.status] for gene in genes]
+    results_basic = pd.DataFrame(data, columns=['HGNC_Symbol', 'Status'])
     outputs.write_to_tab(results_basic_path, results_basic)
 
     if(keep_vcf):
@@ -649,6 +661,7 @@ def main():
             db_config.validate_pop_freqs_present()
 
         genes = open_test_file(args.input_file)
+        genes_data = [Gene(gene) for gene in genes]
 
         db_config = RuntimeConfig(db_config)
         # check that VEP dependencies are present if necessary
@@ -658,9 +671,9 @@ def main():
 
         logger = Logger(results_dir)
         Path(results_dir).mkdir(parents=True, exist_ok=args.force)
-        genes_df = get_test_gene_descriptions(genes, db_config, logger,
+        genes, gene_descs = get_test_gene_descriptions(genes_data, db_config, logger,
                                               args.verbose)
-        target_list = find_test_locations(genes_df)
+        genes = find_test_locations(genes, gene_descs, db_config)
 
         validate_filters(db_config, args.predefined_filters,
                          args.additional_filters)
@@ -668,15 +681,15 @@ def main():
         filters = transform_filters(db_config, args.predefined_filters,
                                     args.additional_filters)
 
-        header, variants, genes_not_found = get_variants(target_list,
-                                                         db_config, filters,
-                                                         results_dir, logger,
-                                                         args.verbose)
+        header, variants, genes = get_variants(genes,
+                                                db_config, filters,
+                                                results_dir, logger,
+                                                args.verbose)
 
-        results, results_basic, results_as_vcf = \
+        results, results_as_vcf = \
             extract_lof_annotations(variants, db_config, args.pop_freqs)
 
-        write_results(results, results_basic, genes_not_found, header,
+        write_results(results, genes, header,
                       results_as_vcf, results_dir, args.vcf)
 
         print("Finished. Output in {}".format(results_dir))
