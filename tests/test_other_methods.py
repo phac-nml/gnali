@@ -25,6 +25,7 @@ import gnali.outputs as outputs
 from gnali.dbconfig import Config, RuntimeConfig
 import yaml
 from gnali.gnali_get_data import Dependencies
+from gnali.variants import Variant
 
 TEST_PATH = str(Path(__file__).parent.absolute())
 TEST_DATA_PATH = "{}/data".format(TEST_PATH)
@@ -62,7 +63,8 @@ class TestOtherMethods:
             db_config = Config('gnomadv2.1.1nolof', yaml.load(config_stream.read(),
                                Loader=yaml.FullLoader))
         db_config = RuntimeConfig(db_config)
-        method_headers, method_recs = VEP.annotate_vep_loftee(input_headers, input_recs, db_config)
+        recs_as_vars = [Variant("CCR5", rec) for rec in input_recs]
+        method_headers, method_recs = VEP.annotate_vep_loftee(input_headers, recs_as_vars, db_config)
         method_recs = [str(rec) for rec in method_recs]
 
         if not deps_exist:
