@@ -341,7 +341,7 @@ def get_variants(genes, db_info, filter_objs, output_dir,
         logger: Logger object to log errors to
         verbose_on: boolean for verbose mode
     """
-    variants = np.array([])
+    variants = []
     max_time = 180
     header = None
     temp_dir = tempfile.TemporaryDirectory()
@@ -374,7 +374,7 @@ def get_variants(genes, db_info, filter_objs, output_dir,
 
                 # update to convert to Variants before filter calls
                 records = [Variant(gene.name, record) for record in records]
-                variants = np.concatenate((variants, np.array(records)))
+                variants.extend(records)
             except ValueError as error:
                 # ValueError means that location used in TabixFile.fetch()
                 # does not exist in the database
