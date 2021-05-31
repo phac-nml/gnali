@@ -35,7 +35,7 @@ import logging
 import subprocess
 from gnali import gnali
 from gnali.exceptions import EmptyFileError, TBIDownloadError, InvalidConfigurationError
-from gnali.variants import Variant
+from gnali.variants import Variant, Gene
 from gnali.filter import Filter
 from gnali.dbconfig import Config, RuntimeConfig, DataFile
 from gnali import gnali_get_data
@@ -187,19 +187,42 @@ class TestGNALIMethods:
 
         db_config_file = open(DB_CONFIG_FILE, 'r')
         db_config = Config(None, yaml.load(db_config_file.read(), Loader=yaml.FullLoader))
+        db_config = RuntimeConfig(db_config)
 
         human_genes = gnali.get_human_genes(db_config)
-        method_results = gnali.get_test_gene_descriptions(genes_list, db_config, None, False)
-
         human_genes.columns = ['hgnc_symbol', 'chromosome_name', 'start_position', 'end_position']
-        expected_results = human_genes
-        expected_results = expected_results[~expected_results['chromosome_name'].str.contains('PATCH')]
-        expected_results = expected_results[(expected_results['hgnc_symbol'].isin(genes_list))]
 
-        assert expected_results.equals(method_results)
+        gene_descriptions = human_genes
+        gene_descriptions.columns = ['hgnc_symbol', 'chromosome_name',
+                                 'start_position', 'end_position']
+        gene_descriptions = gene_descriptions[~gene_descriptions['chromosome_name']
+                                            .str.contains('PATCH')]
+        gene_descriptions.reset_index(drop=True, inplace=True)
+        
+        genes_data = [Gene(gene) for gene in genes_list]
+
+        target_gene_names = [gene.name for gene in genes_data]
+        expected_gene_descs = gene_descriptions[(gene_descriptions['hgnc_symbol']
+                                            .isin(target_gene_names))]
+        unavailable_genes = [gene for gene in target_gene_names if gene not in
+                            list(gene_descriptions['hgnc_symbol'])]
+
+        method_genes, method_gene_descs = gnali.get_test_gene_descriptions(genes_data, db_config, None, False)
+
+        for gene in genes_data:
+            if gene.name in unavailable_genes:
+                gene.set_status("Unknown gene")
+                continue
+        expected_genes = genes_data
+    
+        assert method_genes == expected_genes
+        assert expected_gene_descs.equals(method_gene_descs)
 
 
     def test_find_test_locations(self):
+        db_config_file = open(DB_CONFIG_FILE, 'r')
+        db_config = Config(None, yaml.load(db_config_file.read(), Loader=yaml.FullLoader))
+        db_config = RuntimeConfig(db_config)
         gene_descs = {'': [46843, 58454], \
                     'hgnc_symbol': ['CCR5', 'ALCAM'], \
                     'chromosome_name':  [3, 3], \
@@ -209,21 +232,26 @@ class TestGNALIMethods:
         target_list = []
         method_gene_descs = gene_descs
 
-        for i in range(gene_descs.shape[0]):
-            target = str(gene_descs.loc[gene_descs.index[i],'chromosome_name']) + ":" \
-                    + str(gene_descs.loc[gene_descs.index[i],'start_position']) + "-"  \
-                    + str(gene_descs.loc[gene_descs.index[i],'end_position'])
-            target_list.append(target)
-        target_list = pd.DataFrame({'Genes': gene_descs['hgnc_symbol'],
-                                    'Locations': target_list})
+        genes = [Gene(gene) for gene in ['CCR5', 'ALCAM']]
         
-        method_test_locations = gnali.find_test_locations(method_gene_descs)
+        method_test_locations = gnali.find_test_locations(genes, method_gene_descs, db_config)
 
-        assert method_test_locations.equals(target_list)
+        prefix = "chr" if db_config.ref_genome_name == "GRCh38" else ""
+        for index, gene in enumerate(genes):
+            if gene.status is None:
+                chrom = gene_descs.loc[gene_descs.index[index], 'chromosome_name']
+                start = gene_descs.loc[gene_descs.index[index], 'start_position']
+                end = gene_descs.loc[gene_descs.index[index], 'end_position']
+
+                gene.set_location(location="{prefix}{}:{}-{}"
+                                        .format(chrom, start, end,
+                                                prefix=prefix))
+    
+        assert method_test_locations == genes
 
     ### Tests for get_plof_variants() ######################
     def test_get_variants_happy(self, monkeypatch):
-        target_list = pd.DataFrame(data={'Genes': ['CCR5'], 'Locations': ["3:46411633-46417697"]})
+        target_list = [Gene('CCR5', location="3:46411633-46417697")]
         
         expected_variants = []
         with open(EXPECTED_PLOF_VARIANTS, 'r') as test_file:
@@ -251,7 +279,7 @@ class TestGNALIMethods:
 
 
     def test_get_variants_tabix_error(self, monkeypatch, capfd):
-        target_list = pd.DataFrame(data={'Genes': ['GENE1'], 'Locations': ["Y:2000000000-2000000001"]})
+        target_list = [Gene('GENE1', location="Y:2000000000-2000000001")]
 
         db_config_file = open(DB_CONFIG_FILE, 'r')
         db_config = Config('gnomadv2.1.1', yaml.load(db_config_file.read(), Loader=yaml.FullLoader))
@@ -280,11 +308,11 @@ class TestGNALIMethods:
         test_variants = []
         with open(EXPECTED_PLOF_VARIANTS, 'r') as test_file:
             for row in test_file:
-                row = Variant(str(row))
+                row = Variant(None, str(row))
                 test_variants.append(row)
 
         config = self.get_db_config(DB_CONFIG_FILE, 'gnomadv2.1.1')
-        method_results, method_results_basic, results_as_vcf = gnali.extract_lof_annotations(test_variants, config, False)
+        method_results, results_as_vcf = gnali.extract_lof_annotations(test_variants, config, False)
 
         test_variants = [variant.as_tuple_vep(config.lof.get('id')) for variant in test_variants]
         results = np.asarray(test_variants, dtype=str)
@@ -301,7 +329,6 @@ class TestGNALIMethods:
         expected_results_basic = results["HGNC_Symbol"].drop_duplicates(keep='first', inplace=False)
 
         assert expected_results.equals(method_results)
-        assert expected_results_basic.equals(method_results_basic)
 
     
     def test_write_results(self):
@@ -320,5 +347,5 @@ class TestGNALIMethods:
         test_results.to_csv("{}/{}".format(expected_results_dir, expected_results_file), sep='\t', mode='a', index=False)
         test_results_basic.to_csv("{}/{}".format(expected_results_dir, expected_results_basic_file), sep='\t', mode='a', index=False)
 
-        gnali.write_results(test_results, test_results_basic, [], None, None, method_results_dir, False)
+        gnali.write_results_all(test_results, [], None, None, method_results_dir, False)
         assert filecmp.dircmp(expected_results_dir, method_results_dir)
