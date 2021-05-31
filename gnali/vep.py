@@ -108,5 +108,5 @@ class VEP:
                 if line[0] == "#":
                     header.append(line)
                 else:
-                    lof_array.append(Variant(line))
+                    lof_array.append(Variant(None, line))
         return header, lof_array

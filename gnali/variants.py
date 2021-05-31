@@ -31,18 +31,14 @@ class Variant:
     record_str = ''
 
     def __init__(self, gene, record):
-        try:
-            self.gene_name = gene
-            self.record_str = record
-            self.chrom, self.pos, self.id, self.ref, \
-                self.alt, self.qual, self.filter, \
-                self.info_str = record.split("\t")
-            self.info = dict([info_item.split("=", 1) for
-                            info_item in self.info_str.split(";")
-                            if len(info_item.split("=", 1)) > 1])
-        except Exception as error:
-            print(error)
-            raise
+        self.gene_name = gene
+        self.record_str = record
+        self.chrom, self.pos, self.id, self.ref, \
+            self.alt, self.qual, self.filter, \
+            self.info_str = record.split("\t")
+        self.info = dict([info_item.split("=", 1) for
+                        info_item in self.info_str.split(";")
+                        if len(info_item.split("=", 1)) > 1])
 
     def __str__(self):
         if self.info_str[-1] == '\n':
