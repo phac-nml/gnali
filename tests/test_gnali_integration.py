@@ -128,6 +128,8 @@ class TestGNALIIntegration:
                               out_ccr5=gnali_results)
         results = subprocess.run(command_str.split())
         # Make sure there is no output dir
-        assert not os.path.exists(gnali_results)
+        assert os.path.exists("{}/gnali_errors.log".format(gnali_results))
+        assert os.path.exists("{}/Nonessential_Host_Genes_(Basic)".format(gnali_results))
+        assert not os.path.exists("{}/Nonessential_Host_Genes_(Detailed)".format(gnali_results))
         assert results.returncode == 0
 

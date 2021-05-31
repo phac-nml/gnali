@@ -371,6 +371,7 @@ def get_variants(genes, db_info, filter_objs, output_dir,
             try:
                 records = tbx.fetch(reference=gene.location)
                 coverage[gene.name] = True
+
                 # update to convert to Variants before filter calls
                 records = [Variant(gene.name, record) for record in records]
                 variants = np.concatenate((variants, np.array(records)))
