@@ -58,8 +58,9 @@ The file shown below can also be found [here](https://github.com/phac-nml/gnali/
 
 ```txt
 > cat output-advanced/Nonessential_Host_Genes_\(Basic\).txt
-HGNC_Symbol Missing_Genes
-CCR5
+HGNC_Symbol Status
+CCR5        HC LoF found
+ALCAM       HC LoF found, failed filtering
 ```
 
 

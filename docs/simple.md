@@ -54,9 +54,9 @@ The file shown below can also be found [here](https://github.com/phac-nml/gnali/
 
 ```bash
 > cat output-simple/Nonessential_Host_Genes_\(Basic\).txt
-HGNC_Symbol Missing_Genes
-CCR5
-ALCAM
+HGNC_Symbol Status
+CCR5        HC LoF found
+ALCAM       HC LoF found
 ```
 
 
