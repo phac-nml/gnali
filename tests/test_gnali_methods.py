@@ -326,11 +326,9 @@ class TestGNALIMethods:
         results.drop('Codes', axis=1, inplace=True)
         results = pd.concat([results, results_codes], axis=1)
         expected_results = results.drop_duplicates(keep='first', inplace=False)
-        expected_results_basic = results["HGNC_Symbol"].drop_duplicates(keep='first', inplace=False)
 
         assert expected_results.equals(method_results)
 
-    
     def test_write_results(self):
         results_dir = tempfile.TemporaryDirectory().name
         expected_results_dir = "{}/expected_results".format(results_dir)
