@@ -72,7 +72,7 @@ class Gene:
 
     def __init__(self, name, **kwargs):
         self.name = name
-        for key, val in kwargs:
+        for key, val in kwargs.items():
             if key == "location":
                 self.location = val
             elif key == "status":
