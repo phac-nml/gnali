@@ -75,7 +75,7 @@ databases:
       female-AC: AC_female
       female-AN: AN_female
       female-AF: AF_female
-  gnomadv3:
+  gnomadv3.1.1:
     files:
       chr1: 
         path: http://storage.googleapis.com/gcp-public-data--gnomad/release/3.1.1/vcf/genomes/gnomad.genomes.v3.1.1.sites.chr1.vcf.bgz
