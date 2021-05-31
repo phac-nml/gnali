@@ -363,7 +363,7 @@ def get_variants(genes, db_info, filter_objs, output_dir,
 
         # get records in locations
         for gene in genes:
-            if gene.status is not None:
+            if gene.location is None:
                 continue
             try:
                 records = tbx.fetch(reference=gene.location)
@@ -384,7 +384,7 @@ def get_variants(genes, db_info, filter_objs, output_dir,
                 raise
 
     for gene in genes:
-        if not coverage[gene.name]:
+        if not coverage[gene.name] and gene.status is None:
             gene.set_status("No variants in database")
 
     if not db_info.has_lof_annots:
@@ -538,7 +538,7 @@ def extract_pop_freqs(variants, config):
     return pop_freqs
 
 
-def write_results(results, genes, header,
+def write_results_all(results, genes, header,
                   results_as_vcf, results_dir, keep_vcf):
     """ Write output files:
         - A detailed report outlining the gene variants
@@ -555,20 +555,28 @@ def write_results(results, genes, header,
         results_dir: directory containing all gNALI results
         keep_vcf: whether or not we create an additional vcf output
     """
-    results_file = "Nonessential_Host_Genes_(Detailed).txt"
-    results_basic_file = "Nonessential_Host_Genes_(Basic).txt"
+    write_results_basic(genes, results_dir)
+    write_results_detailed(results, results_dir)
+    if keep_vcf:
+        write_results_vcf(header, results_as_vcf, results_dir)
 
-    results_path = "{}/{}".format(results_dir, results_file)
+
+def write_results_basic(genes, results_dir):
+    results_basic_file = "Nonessential_Host_Genes_(Basic).txt"
     results_basic_path = "{}/{}".format(results_dir,
                                         results_basic_file)
-
-    outputs.write_to_tab(results_path, results)
-
     data = [[gene.name, gene.status] for gene in genes]
     results_basic = pd.DataFrame(data, columns=['HGNC_Symbol', 'Status'])
     outputs.write_to_tab(results_basic_path, results_basic)
 
-    if(keep_vcf):
+
+def write_results_detailed(results, results_dir):
+    results_file = "Nonessential_Host_Genes_(Detailed).txt"
+    results_path = "{}/{}".format(results_dir, results_file)
+    outputs.write_to_tab(results_path, results)
+
+
+def write_results_vcf(header, results_as_vcf, results_dir):
         results_vcf_file = "Nonessential_Gene_Variants.vcf"
         results_vcf_path = "{}/{}".format(results_dir,
                                           results_vcf_file)
@@ -689,7 +697,7 @@ def main():
         results, results_as_vcf = \
             extract_lof_annotations(variants, db_config, args.pop_freqs)
 
-        write_results(results, genes, header,
+        write_results_all(results, genes, header,
                       results_as_vcf, results_dir, args.vcf)
 
         print("Finished. Output in {}".format(results_dir))
@@ -700,9 +708,9 @@ def main():
     except NoVariantsAvailableError:
         # Delete results directory if it's empty.
         # If there is a log file, leave it
-        if len(os.listdir(results_dir)) == 0:
-            os.rmdir(results_dir)
+        write_results_basic(genes, results_dir)
         print("No variants passed filtering")
+        print("Finished. Output in {}".format(results_dir))
         return
     except Exception:
         raise
