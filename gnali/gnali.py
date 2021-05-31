@@ -116,7 +116,7 @@ def get_test_gene_descriptions(genes, db_info, logger, verbose_on):
     gene_descriptions = gene_descriptions[~gene_descriptions['chromosome_name']
                                           .str.contains('PATCH')]
     gene_descriptions.reset_index(drop=True, inplace=True)
-    
+
     target_gene_names = [gene.name for gene in genes]
     gene_descriptions = gene_descriptions[(gene_descriptions['hgnc_symbol']
                                           .isin(target_gene_names))]
@@ -128,13 +128,14 @@ def get_test_gene_descriptions(genes, db_info, logger, verbose_on):
             gene.set_status("Unknown gene")
             continue
 
-    if len(unavailable_genes) > 0  and verbose_on:
+    if len(unavailable_genes) > 0 and verbose_on:
         logger.write("Genes not available in Ensembl {} database (skipping):"
-                    .format(db_info.ref_genome_name))
+                     .format(db_info.ref_genome_name))
         for gene in unavailable_genes:
             logger.write(gene)
 
     return genes, gene_descriptions
+
 
 def find_test_locations(genes, gene_descs, db_info):
     """Using results from the Ensembl database, build a list of target genes.
@@ -152,10 +153,9 @@ def find_test_locations(genes, gene_descs, db_info):
             end = gene_descs.loc[gene_descs.index[index], 'end_position']
 
             gene.set_location(location="{prefix}{}:{}-{}"
-                                    .format(chrom, start, end,
-                                            prefix=prefix))
+                                       .format(chrom, start, end,
+                                               prefix=prefix))
     return genes
-
 
 
 def get_db_config(config_file, db):
@@ -539,7 +539,7 @@ def extract_pop_freqs(variants, config):
 
 
 def write_results_all(results, genes, header,
-                  results_as_vcf, results_dir, keep_vcf):
+                      results_as_vcf, results_dir, keep_vcf):
     """ Write output files:
         - A detailed report outlining the gene variants
         - A basic report listing only the genes with
@@ -577,10 +577,10 @@ def write_results_detailed(results, results_dir):
 
 
 def write_results_vcf(header, results_as_vcf, results_dir):
-        results_vcf_file = "Nonessential_Gene_Variants.vcf"
-        results_vcf_path = "{}/{}".format(results_dir,
-                                          results_vcf_file)
-        outputs.write_to_vcf(results_vcf_path, header, results_as_vcf)
+    results_vcf_file = "Nonessential_Gene_Variants.vcf"
+    results_vcf_path = "{}/{}".format(results_dir,
+                                      results_vcf_file)
+    outputs.write_to_vcf(results_vcf_path, header, results_as_vcf)
 
 
 def init_parser(id):
@@ -679,8 +679,8 @@ def main():
 
         logger = Logger(results_dir)
         Path(results_dir).mkdir(parents=True, exist_ok=args.force)
-        genes, gene_descs = get_test_gene_descriptions(genes_data, db_config, logger,
-                                              args.verbose)
+        genes, gene_descs = get_test_gene_descriptions(genes_data, db_config,
+                                                       logger, args.verbose)
         genes = find_test_locations(genes, gene_descs, db_config)
 
         validate_filters(db_config, args.predefined_filters,
@@ -690,15 +690,15 @@ def main():
                                     args.additional_filters)
 
         header, variants, genes = get_variants(genes,
-                                                db_config, filters,
-                                                results_dir, logger,
-                                                args.verbose)
+                                               db_config, filters,
+                                               results_dir, logger,
+                                               args.verbose)
 
         results, results_as_vcf = \
             extract_lof_annotations(variants, db_config, args.pop_freqs)
 
         write_results_all(results, genes, header,
-                      results_as_vcf, results_dir, args.vcf)
+                          results_as_vcf, results_dir, args.vcf)
 
         print("Finished. Output in {}".format(results_dir))
     except FileExistsError:
