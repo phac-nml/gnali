@@ -452,6 +452,7 @@ def filter_plof(genes, records, db_info, lof_index):
         lof_index: index of loss-of-function indicator in header
     """
     passed = []
+    passed_genes = []
     try:
         for record in records:
             if lof_index is not None:
@@ -461,12 +462,16 @@ def filter_plof(genes, records, db_info, lof_index):
                 lof = vep_str.split("|")[lof_index]
                 if lof == conf_filter:
                     passed.append(record)
-                    for gene in genes:
-                        if gene.name == record.gene_name:
-                            gene.set_status("HC LoF found, failed filtering")
+                    passed_genes.append(record.gene_name)
     except Exception as error:
         print(error)
         raise
+
+    for gene in genes:
+        if gene.name in passed_genes:
+            gene.set_status("HC LoF found, failed filtering")
+        else:
+            gene.set_status("No HC LoF found")
     return passed, genes
 
 
