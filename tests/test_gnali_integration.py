@@ -41,7 +41,9 @@ TEST_INPUT_COL6A5 = "{}/col6a5.txt".format(TEST_DATA_PATH)
 EXOMES_CCR5_NO_LOF = "{}/exomes_ccr5_no_lof.vcf".format(TEST_DATA_PATH)
 EXOMES_CCR5_RESULTS = "{}/ccr5_results/".format(TEST_DATA_PATH)
 GNOMADV3_RESULTS = "{}/gnomadv3_results/".format(TEST_DATA_PATH)
+
 NO_VARIANTS_INPUT = "{}/alcam_no_variants.txt".format(TEST_DATA_PATH)
+NO_VARIANTS_OUTPUT = "{}/no_vars_results".format(TEST_DATA_PATH)
 
 GNALI_ROOT_PATH = Path(TEST_PATH).parent.absolute()
 GNALI_PATH = "{}/gnali".format(str(GNALI_ROOT_PATH))
@@ -122,14 +124,13 @@ class TestGNALIIntegration:
         command_str = "gnali -i {in_alcam} " \
                       "-p homozygous-controls " \
                       "-c {config} " \
-                      "-o {out_ccr5}" \
+                      "-o {out_ccr5} " \
+                      "--verbose" \
                       .format(in_alcam=NO_VARIANTS_INPUT,
                               config=DB_CONFIG_FILE,
                               out_ccr5=gnali_results)
         results = subprocess.run(command_str.split())
         # Make sure there is no output dir
-        assert os.path.exists("{}/gnali_errors.log".format(gnali_results))
-        assert os.path.exists("{}/Nonessential_Host_Genes_(Basic)".format(gnali_results))
-        assert not os.path.exists("{}/Nonessential_Host_Genes_(Detailed)".format(gnali_results))
+        assert filecmp.dircmp(NO_VARIANTS_OUTPUT, gnali_results).diff_files == []
         assert results.returncode == 0
 
