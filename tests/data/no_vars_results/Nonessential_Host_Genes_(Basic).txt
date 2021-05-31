@@ -1,0 +1,2 @@
+HGNC_Symbol	Status
+ALCAM	HC LoF found, failed filtering
