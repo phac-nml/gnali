@@ -41,7 +41,7 @@ gnali
 
 ## Output ##
 
-By default, gNALI will have two output files in `output-simple/`: a basic output file, and a detailed output file. When using the `-v`/`--vcf` flag, a third additional output file will be generated. An example of such output can be found in the [advanced walkthrough](advanced.md#vcf-output).
+By default, gNALI will have two output files in `output-simple/`: a basic output file, and a detailed output file. When using the `-v`/`--vcf` flag, a third additional output file will be generated. An example of such output can be found in the [advanced walkthrough](advanced.md#vcf-output). More information on outputs can be found [here](outputs.md).
 
 Output files for this example can be found [here](https://github.com/phac-nml/gnali/tree/docs/examples/outputs/output-simple).
 
