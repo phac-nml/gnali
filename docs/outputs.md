@@ -12,7 +12,7 @@ gNALI's output directory contains the following items:
 
 ## Basic output ##
 
-All input genes and their statuses will be flagged with one of the following:
+All input genes will be flagged with one of the following:
 
 * `HC LoF found`: gene has high-confidence loss-of-function variants that also pass any [custom filtering](filtering.md) specified
 * `HC LoF found, failed filtering`: gene has high-confidence loss-of-function variants but no variants pass [custom filtering](filtering.md) specified
