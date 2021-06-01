@@ -3,16 +3,6 @@
 All notable changes to gNALI will be documented in this file.
 
 
-## 1.0.5 ##
-
-2021-05-25
-
-### Changed ###
-
-- Updated to work with gnomADv3.1.1
-- Added verbose mode for error logging
-
-
 ## 1.0.4 ##
 
 2021-04-29

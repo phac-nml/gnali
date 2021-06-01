@@ -1,10 +1,10 @@
 # News #
 
-## 1.0.5 ##
+## 1.0.4 ##
 
-2021-05-25
+2021-04-29
 
-This release updates to work with gnomADv3.1.1 and adds a verbose logging option.
+This release fixes an error in handling missing population frequency data.
 
 
 * **GitHub**: [https://github.com/phac-nml/gnali](https://github.com/phac-nml/gnali)
