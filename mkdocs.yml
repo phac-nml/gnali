@@ -12,6 +12,7 @@ nav:
     - Install:
         - gNALI: install.md
     - Parameters: parameters.md
+    - Outputs: outputs.md
     - Examples:
         - Walkthrough (Simple): simple.md
         - Walkthrough (Advanced): advanced.md

@@ -41,21 +41,22 @@ gnali
 
 ## Output ##
 
-By default, gNALI will have two output files in `output-simple/`: a basic output file, and a detailed output file. When using the `-v`/`--vcf` flag, a third additional output file will be generated. An example of such output can be found in the [advanced walkthrough](advanced.md#vcf-output).
+By default, gNALI will have two output files in `output-simple/`: a basic output file, and a detailed output file. When using the `-v`/`--vcf` flag, a third additional output file will be generated. An example of such output can be found in the [advanced walkthrough](advanced.md#vcf-output). More information on outputs can be found [here](outputs.md).
 
 Output files for this example can be found [here](https://github.com/phac-nml/gnali/tree/docs/examples/outputs/output-simple).
 
 ### Basic Output ###
 
-The basic output file contains a subset of the input genes, the ones that have high-confidence loss-of-function variants that pass filtering.
+The basic output file contains a subset of the input genes, the ones that have high-confidence loss-of-function variants that pass filtering. It
+also contains a list of genes that could not be found in the specified database, if any.
 
 The file shown below can also be found [here](https://github.com/phac-nml/gnali/blob/docs/examples/outputs/output-simple/Nonessential_Host_Genes_(Basic).txt).
 
 ```bash
 > cat output-simple/Nonessential_Host_Genes_\(Basic\).txt
-HGNC_Symbol
-CCR5
-ALCAM
+HGNC_Symbol Status
+CCR5        HC LoF found
+ALCAM       HC LoF found
 ```
 
 
