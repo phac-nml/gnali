@@ -30,14 +30,15 @@ class Variant:
     info_str = ''
     record_str = ''
 
-    def __init__(self, record):
+    def __init__(self, gene, record):
+        self.gene_name = gene
         self.record_str = record
         self.chrom, self.pos, self.id, self.ref, \
             self.alt, self.qual, self.filter, \
             self.info_str = record.split("\t")
-        self.info = dict([info_item.split("=") for
-                          info_item in self.info_str.split(";")
-                          if len(info_item.split("=")) > 1])
+        self.info = dict([info_item.split("=", 1) for
+                         info_item in self.info_str.split(";")
+                         if len(info_item.split("=", 1)) > 1])
 
     def __str__(self):
         if self.info_str[-1] == '\n':
@@ -63,3 +64,26 @@ class Variant:
         vep_str = self.info.get(lof_id)
         return (self.chrom, self.pos, self.id, self.ref,
                 self.alt, self.qual, self.filter, vep_str)
+
+
+class Gene:
+    name = None
+    location = None
+    status = None
+
+    def __init__(self, name, **kwargs):
+        self.name = name
+        for key, val in kwargs.items():
+            if key == "location":
+                self.location = val
+            elif key == "status":
+                self.status = val
+
+    def set_location(self, location):
+        self.location = location
+
+    def set_status(self, status):
+        self.status = status
+
+    def __str__(self):
+        return "{};{};{}".format(self.name, self.location, self.status)

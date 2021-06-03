@@ -1,2 +1,2 @@
-HGNC_Symbol
-CCR5
+HGNC_Symbol	Status
+CCR5	HC LoF found
