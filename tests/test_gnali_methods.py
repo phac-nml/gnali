@@ -270,7 +270,7 @@ class TestGNALIMethods:
         monkeypatch.setattr(gnali, "get_db_tbi", mock_get_db_tbi)
 
         temp_dir = tempfile.TemporaryDirectory()
-        header, method_variants, genes_not_found = gnali.get_variants(target_list, db_config, 
+        header, method_variants = gnali.get_variants(target_list, db_config, 
                                                      [Filter("homozygous-controls","controls_nhomalt>0")],
                                                      temp_dir.name, None, False)
         method_variants = [str(variant) for variant in method_variants]

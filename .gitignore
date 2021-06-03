@@ -75,6 +75,7 @@ combinedsars.txt
 hiv*
 multiple_transcript_lof_batch_sout.txt
 test_progress.py
+test.py
 
 # WFH
 .vscode

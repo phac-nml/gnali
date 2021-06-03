@@ -404,9 +404,9 @@ def get_variants(genes, db_info, filter_objs, output_dir,
     lof_index = str(annot_header).split("|") \
         .index(db_info.lof['annot'])
 
-    variants, genes = filter_plof(genes, variants, db_info, lof_index)
-    variants, genes = apply_filters(genes, variants, db_info, filter_objs)
-    return header, variants, genes
+    variants = filter_plof(genes, variants, db_info, lof_index)
+    variants = apply_filters(genes, variants, db_info, filter_objs)
+    return header, variants
 
 
 def apply_filters(genes, records, db_info, filters):
@@ -440,7 +440,7 @@ def apply_filters(genes, records, db_info, filters):
     except Exception as error:
         print(error)
         raise
-    return passed, genes
+    return passed
 
 
 def filter_plof(genes, records, db_info, lof_index):
@@ -472,7 +472,7 @@ def filter_plof(genes, records, db_info, lof_index):
             gene.set_status("HC LoF found, failed filtering")
         elif gene.status is None:
             gene.set_status("No HC LoF found")
-    return passed, genes
+    return passed
 
 
 def extract_lof_annotations(variants, db_info, get_pop_freqs):
@@ -700,10 +700,10 @@ def main():
         filters = transform_filters(db_config, args.predefined_filters,
                                     args.additional_filters)
 
-        header, variants, genes = get_variants(genes,
-                                               db_config, filters,
-                                               results_dir, logger,
-                                               args.verbose)
+        header, variants = get_variants(genes,
+                                        db_config, filters,
+                                        results_dir, logger,
+                                        args.verbose)
 
         results, results_as_vcf = \
             extract_lof_annotations(variants, db_config, args.pop_freqs)
