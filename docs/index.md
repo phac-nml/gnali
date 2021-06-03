@@ -9,9 +9,9 @@ available in gnomADv3 and vice versa.
 
 ## Release ##
 
-**gNALI 1.0.4**
+**gNALI 1.0.5**
 
-This release fixes an error in handling missing population frequency data.
+This release adds support for gnomADv3.1.1 and a verbose error logging option.
 
 
 ## Resources ##
