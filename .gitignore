@@ -16,6 +16,7 @@ empty_file.csv
 
 # Data stuff
 .pybiomart.sqlite
+.pybiomart
 gnali/data*
 !gnali/data/db-config.yaml
 !gnali/data/db-config-template-grch37.yaml
@@ -68,6 +69,12 @@ environment-*
 tests/data/vep/GRCh38/col6a5_gerp_scores.txt
 tests/data/vep/GRCh38/col6a5_gerp_scores.wig
 site/
+vep-test-env
+50_1.txt
+combinedsars.txt
+hiv*
+multiple_transcript_lof_batch_sout.txt
+test_progress.py
 
 # WFH
 .vscode

@@ -470,7 +470,7 @@ def filter_plof(genes, records, db_info, lof_index):
     for gene in genes:
         if gene.name in passed_genes:
             gene.set_status("HC LoF found, failed filtering")
-        else:
+        elif gene.status is None:
             gene.set_status("No HC LoF found")
     return passed, genes
 
