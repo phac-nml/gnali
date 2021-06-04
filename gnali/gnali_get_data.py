@@ -243,7 +243,7 @@ def verify_files_present(assembly, cache_root_path):
 def main():
     if len(sys.argv) == 1:
         print("Please run with a setup option: grch37, grch38, test "
-              "(ex. gnali_setup grch37)")
+              "(ex. gnali_get_data grch37)")
         return
 
     option = sys.argv[1]
@@ -259,7 +259,7 @@ def main():
         verify_files_present('GRCh38', VEP_PATH)
     else:
         print("Please run with a setup option: grch37, grch38, test "
-              "(ex. gnali_setup grch37)")
+              "(ex. gnali_get_data grch37)")
 
 
 if __name__ == '__main__':

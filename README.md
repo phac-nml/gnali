@@ -95,7 +95,7 @@ Before running tests, run `gnali_get_data test` to install required files. This 
 
 # Legal #
 
-Copyright Government of Canada 2020
+Copyright Government of Canada 2020-2021
 
 Written by: National Microbiology Laboratory, Public Health Agency of Canada
 

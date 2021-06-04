@@ -74,7 +74,7 @@ After installing, optionally run the command `gnali_get_data <reference genome>`
 * For use with custom databases WITH loss-of-function annotations, you do not have to run `gnali_get_data`
 * For use with custom databases WITHOUT loss-of-function annotations, run `gnali_get_data grch37` or `gnali_get_data grch38` depending on the reference genome used
 
-The files downloaded by `gnali_setup` for each reference genome require abut 35GB of disk space and took 1.5 hours on our systems with 16GB of RAM and a 3.20GHz processor.
+The files downloaded by `gnali_get_data` for each reference genome require abut 35GB of disk space and took 1.5 hours on our systems with 16GB of RAM and a 3.20GHz processor.
 
 The current environment may be deactivated with the following:
 
@@ -138,4 +138,4 @@ After installing, optionally run the command `gnali_get_data <reference genome>`
 * For use with custom databases WITH loss-of-function annotations, you do not have to run `gnali_get_data`
 * For use with custom databases WITHOUT loss-of-function annotations, run `gnali_get_data grch37` or `gnali_get_data grch38` depending on the reference genome used
 
-The files downloaded by `gnali_setup` for each reference genome require abut 35GB of disk space and took 1.5 hours on our systems with 16GB of RAM and a 3.20GHz processor.
+The files downloaded by `gnali_get_data` for each reference genome require abut 35GB of disk space and took 1.5 hours on our systems with 16GB of RAM and a 3.20GHz processor.
