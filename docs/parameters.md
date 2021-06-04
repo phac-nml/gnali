@@ -38,7 +38,7 @@ The following parameter relates to the database queried:
 gNALI can use:
 
 * [gnomADv2.1.1](https://gnomad.broadinstitute.org/downloads) (GRCh37/hg19)
-* [gnomADv3](https://gnomad.broadinstitute.org/downloads) (GRCh38/hg38)
+* [gnomADv3.1.1](https://gnomad.broadinstitute.org/downloads) (GRCh38/hg38)
 * A custom user-given database, with use of a custom database configuration file (see below)
 
 
@@ -71,8 +71,9 @@ The following command-line flags relate to gNALI output:
 
 The following command-line flags relate to gNALI additional output:
 
-| Option | Alternative | Parameter |Description |
+| Option | Alternative | Parameter | Description |
 |--------|-------------|-----------|-------------|
 | -P | --pop_freqs | None | If selected, gNALI will find the allele count (AC), allele number (AN), and allele frequency (AF) by population group for every variant passing filtering. This information will be included in the detailed output file. An example can be found [here](advanced.md#detailed-output).|
-| -v | --vcf | None | If selected, gNALI will generate an additional output file, a VCF file containing headers from the database selected and all variants passing filtering. An example can be found [here](advanced.md#vcf-output).|
+| None | --vcf | None | If selected, gNALI will generate an additional output file, a VCF file containing headers from the database selected and all variants passing filtering. An example can be found [here](advanced.md#vcf-output).|
+| -v | --verbose | None | Turns on verbose error logging. |
 

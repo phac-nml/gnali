@@ -16,8 +16,12 @@ dependencies:
   - cython
   - filelock
   - pyyaml
+  - pybiomart
+  - py-bgzip
+  - python-magic
+  - progress
   - samtools
-  - git
+  - git>=2
   - pip
   - pip:
     - bgzip==0.3.5

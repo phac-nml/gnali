@@ -28,7 +28,7 @@ import re
 from pathlib import Path
 from filelock import FileLock
 from gnali.gnali import download_file, get_db_config
-from gnali.gnali_setup import Dependencies
+from gnali.gnali_get_data import Dependencies
 
 
 TEST_PATH = str(Path(__file__).parent.absolute())
@@ -41,7 +41,9 @@ TEST_INPUT_COL6A5 = "{}/col6a5.txt".format(TEST_DATA_PATH)
 EXOMES_CCR5_NO_LOF = "{}/exomes_ccr5_no_lof.vcf".format(TEST_DATA_PATH)
 EXOMES_CCR5_RESULTS = "{}/ccr5_results/".format(TEST_DATA_PATH)
 GNOMADV3_RESULTS = "{}/gnomadv3_results/".format(TEST_DATA_PATH)
+
 NO_VARIANTS_INPUT = "{}/alcam_no_variants.txt".format(TEST_DATA_PATH)
+NO_VARIANTS_OUTPUT = "{}/no_vars_results".format(TEST_DATA_PATH)
 
 GNALI_ROOT_PATH = Path(TEST_PATH).parent.absolute()
 GNALI_PATH = "{}/gnali".format(str(GNALI_ROOT_PATH))
@@ -99,19 +101,12 @@ class TestGNALIIntegration:
         assert filecmp.dircmp(EXOMES_CCR5_RESULTS, gnali_results).diff_files == []
         assert results.returncode == 0
     
-    def test_gnali_gnomadv3_no_lof_annots(self):
-        deps_exist_prior = True
-        deps_version = Dependencies.versions['GRCh38']
-        deps_version_file = Dependencies.files['GRCh38']
-        if not os.path.exists(deps_version_file):
-            deps_exist_prior = False
-            with open(deps_version_file, 'w') as fh:
-                fh.write(deps_version)
+    def test_gnali_gnomadv3(self):
         temp_dir = tempfile.TemporaryDirectory()
         temp_path = temp_dir.name
         gnali_results = "{}/gnomadv3_full_results".format(temp_path)
         command_str = "gnali -i {in_col6a5} " \
-                      "-d gnomadv3 " \
+                      "-d gnomadv3.1.1 " \
                       "-p homozygous " \
                       "-c {config} " \
                       "-o {out_gnomadv3}" \
@@ -119,8 +114,6 @@ class TestGNALIIntegration:
                               config=DB_CONFIG_FILE,
                               out_gnomadv3=gnali_results)
         results = subprocess.run(command_str.split())
-        if not deps_exist_prior:
-            os.remove(deps_version_file)
         assert filecmp.dircmp(GNOMADV3_RESULTS, gnali_results).diff_files == []
         assert results.returncode == 0
 
@@ -131,12 +124,13 @@ class TestGNALIIntegration:
         command_str = "gnali -i {in_alcam} " \
                       "-p homozygous-controls " \
                       "-c {config} " \
-                      "-o {out_ccr5}" \
+                      "-o {out_ccr5} " \
+                      "--verbose" \
                       .format(in_alcam=NO_VARIANTS_INPUT,
                               config=DB_CONFIG_FILE,
                               out_ccr5=gnali_results)
         results = subprocess.run(command_str.split())
         # Make sure there is no output dir
-        assert not os.path.exists(gnali_results)
+        assert filecmp.dircmp(NO_VARIANTS_OUTPUT, gnali_results).diff_files == []
         assert results.returncode == 0
 
