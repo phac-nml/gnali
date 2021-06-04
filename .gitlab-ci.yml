@@ -20,7 +20,7 @@ tests:3.6:
     - export HOME=$CI_BUILDS_DIR
     - pip install tox
   script:
-    - gnali_setup test
+    - gnali_get_data test
     - tox -r -e py36
 
 flake8:

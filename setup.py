@@ -53,7 +53,7 @@ setup(
     install_requires=dependencies,
     entry_points = {
         'console_scripts': ['gnali=gnali.gnali:main',
-                            'gnali_setup=gnali.gnali_get_data:main'],
+                            'gnali_get_data=gnali.gnali_get_data:main'],
     },
     classifiers=[
         'Development Status :: 5 - Production/Stable',
