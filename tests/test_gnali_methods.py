@@ -192,18 +192,18 @@ class TestGNALIMethods:
         human_genes = gnali.get_human_genes(db_config)
         human_genes.columns = ['hgnc_symbol', 'chromosome_name', 'start_position', 'end_position']
 
+        genes_data = [Gene(gene) for gene in genes_list]
+        target_gene_names = [gene.name for gene in genes_data]
+
         gene_descriptions = human_genes
         gene_descriptions.columns = ['hgnc_symbol', 'chromosome_name',
                                  'start_position', 'end_position']
         gene_descriptions = gene_descriptions[~gene_descriptions['chromosome_name']
                                             .str.contains('PATCH')]
-        gene_descriptions.reset_index(drop=True, inplace=True)
-        
-        genes_data = [Gene(gene) for gene in genes_list]
-
-        target_gene_names = [gene.name for gene in genes_data]
-        expected_gene_descs = gene_descriptions[(gene_descriptions['hgnc_symbol']
+        gene_descriptions = gene_descriptions[(gene_descriptions['hgnc_symbol']
                                             .isin(target_gene_names))]
+        expected_gene_descs = gene_descriptions.reset_index(drop=True)
+
         unavailable_genes = [gene for gene in target_gene_names if gene not in
                             list(gene_descriptions['hgnc_symbol'])]
 
@@ -214,7 +214,7 @@ class TestGNALIMethods:
                 gene.set_status("Unknown gene")
                 continue
         expected_genes = genes_data
-    
+
         assert method_genes == expected_genes
         assert expected_gene_descs.equals(method_gene_descs)
 

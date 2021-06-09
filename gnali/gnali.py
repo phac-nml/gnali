@@ -115,11 +115,12 @@ def get_test_gene_descriptions(genes, db_info, logger, verbose_on):
                                  'start_position', 'end_position']
     gene_descriptions = gene_descriptions[~gene_descriptions['chromosome_name']
                                           .str.contains('PATCH')]
-    gene_descriptions.reset_index(drop=True, inplace=True)
-
     target_gene_names = [gene.name for gene in genes]
     gene_descriptions = gene_descriptions[(gene_descriptions['hgnc_symbol']
                                           .isin(target_gene_names))]
+
+    gene_descriptions.reset_index(drop=True, inplace=True)
+
     unavailable_genes = [gene for gene in target_gene_names if gene not in
                          list(gene_descriptions['hgnc_symbol'])]
 
@@ -148,8 +149,9 @@ def find_test_locations(genes, gene_descs, db_info):
     """
     # Format targets for Tabix
     prefix = "chr" if db_info.ref_genome_name == "GRCh38" else ""
-    for index, gene in enumerate(genes):
+    for gene in genes:
         if gene.status is None:
+            index = gene_descs.index[gene_descs.hgnc_symbol == gene.name][0]
             chrom = gene_descs.loc[gene_descs.index[index], 'chromosome_name']
             start = gene_descs.loc[gene_descs.index[index], 'start_position']
             end = gene_descs.loc[gene_descs.index[index], 'end_position']
@@ -341,7 +343,7 @@ def get_variants(genes, db_info, filter_objs, output_dir,
         logger: Logger object to log errors to
         verbose_on: boolean for verbose mode
     """
-    variants = []
+    variants = np.array([])
     max_time = 180
     header = None
     temp_dir = tempfile.TemporaryDirectory()
@@ -374,7 +376,24 @@ def get_variants(genes, db_info, filter_objs, output_dir,
 
                 # update to convert to Variants before filter calls
                 records = [Variant(gene.name, record) for record in records]
-                variants.extend(records)
+
+                if not db_info.has_lof_annots:
+                    header, variants = VEP.annotate_vep_loftee(header,
+                                                               variants,
+                                                               db_info)
+                lof_index = None
+                # get index of LoF in header
+                annot_header = [line for line in header
+                                if "ID={}".format(db_info.lof['id'])
+                                in line]
+                lof_index = str(annot_header).split("|") \
+                    .index(db_info.lof['annot'])
+
+                # filter records
+                records = filter_plof(genes, records, db_info, lof_index)
+                records = apply_filters(genes, records, db_info, filter_objs)
+
+                variants = np.concatenate([variants, records])
             except ValueError as error:
                 # ValueError means that location used in TabixFile.fetch()
                 # does not exist in the database
@@ -384,7 +403,8 @@ def get_variants(genes, db_info, filter_objs, output_dir,
                                  "in database {}"
                                  .format(gene.name, error, data_file.name,
                                          db_info.name))
-            except Exception:
+            except Exception as error:
+                print(error)
                 raise
 
     # Set error status for gene if it wasn't found in any database file
@@ -392,20 +412,6 @@ def get_variants(genes, db_info, filter_objs, output_dir,
         if not coverage[gene.name] and gene.status is None:
             gene.set_status("No variants in database")
 
-    if not db_info.has_lof_annots:
-        header, variants = VEP.annotate_vep_loftee(header, variants,
-                                                   db_info)
-
-    lof_index = None
-    # get index of LoF in header
-    annot_header = [line for line in header
-                    if "ID={}".format(db_info.lof['id'])
-                    in line]
-    lof_index = str(annot_header).split("|") \
-        .index(db_info.lof['annot'])
-
-    variants = filter_plof(genes, variants, db_info, lof_index)
-    variants = apply_filters(genes, variants, db_info, filter_objs)
     return header, variants
 
 
