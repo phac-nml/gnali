@@ -115,6 +115,10 @@ def get_test_gene_descriptions(genes, db_info, logger, verbose_on):
                                  'start_position', 'end_position']
     gene_descriptions = gene_descriptions[~gene_descriptions['chromosome_name']
                                           .str.contains('PATCH')]
+    target_gene_names = [gene.name for gene in genes]
+    gene_descriptions = gene_descriptions[(gene_descriptions['hgnc_symbol']
+                                          .isin(target_gene_names))]
+
     gene_descriptions.reset_index(drop=True, inplace=True)
 
     target_gene_names = [gene.name for gene in genes]
@@ -148,8 +152,9 @@ def find_test_locations(genes, gene_descs, db_info):
     """
     # Format targets for Tabix
     prefix = "chr" if db_info.ref_genome_name == "GRCh38" else ""
-    for index, gene in enumerate(genes):
+    for gene in genes:
         if gene.status is None:
+            index = gene_descs.index[gene_descs.hgnc_symbol == gene.name][0]
             chrom = gene_descs.loc[gene_descs.index[index], 'chromosome_name']
             start = gene_descs.loc[gene_descs.index[index], 'start_position']
             end = gene_descs.loc[gene_descs.index[index], 'end_position']
