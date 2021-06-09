@@ -121,9 +121,6 @@ def get_test_gene_descriptions(genes, db_info, logger, verbose_on):
 
     gene_descriptions.reset_index(drop=True, inplace=True)
 
-    target_gene_names = [gene.name for gene in genes]
-    gene_descriptions = gene_descriptions[(gene_descriptions['hgnc_symbol']
-                                          .isin(target_gene_names))]
     unavailable_genes = [gene for gene in target_gene_names if gene not in
                          list(gene_descriptions['hgnc_symbol'])]
 
