@@ -371,11 +371,9 @@ def get_variants(genes, db_info, filter_objs, output_dir,
             if gene.location is None:
                 continue
             try:
+
                 records = tbx.fetch(reference=gene.location)
                 coverage[gene.name] = True
-
-                # update to convert to Variants before filter calls
-                records = [Variant(gene.name, record) for record in records]
 
                 if not db_info.has_lof_annots:
                     header, variants = VEP.annotate_vep_loftee(header,
@@ -389,9 +387,13 @@ def get_variants(genes, db_info, filter_objs, output_dir,
                 lof_index = str(annot_header).split("|") \
                     .index(db_info.lof['annot'])
 
+                # update to convert to Variants before filter calls
+                records = [Variant(gene.name, record, db_info.lof['id']) for record in records]
+
                 # filter records
                 records = filter_plof(genes, records, db_info, lof_index)
                 records = apply_filters(genes, records, db_info, filter_objs)
+                gene.set_variants(records)
 
                 variants = np.concatenate([variants, records])
             except ValueError as error:
@@ -446,6 +448,7 @@ def apply_filters(genes, records, db_info, filters):
     except Exception as error:
         print(error)
         raise
+
     return passed
 
 
@@ -457,18 +460,24 @@ def filter_plof(genes, records, db_info, lof_index):
         db_info: database configuration as Config object
         lof_index: index of loss-of-function indicator in header
     """
-    passed = []
+    passed_variants = []
     passed_genes = []
     try:
         for record in records:
             if lof_index is not None:
                 lof_tool = db_info.lof['id']
                 conf_filter = db_info.lof['filters']['confidence']
-                vep_str = record.info[lof_tool]
-                lof = vep_str.split("|")[lof_index]
-                if lof == conf_filter:
-                    passed.append(record)
-                    passed_genes.append(record.gene_name)
+                passed = False
+
+                for trans, annot in list(record.transcripts.items()):
+                    lof = annot.split("|")[lof_index]
+                    if lof == conf_filter:
+                        if not passed:
+                            passed_variants.append(record)
+                            passed_genes.append(record.gene_name)
+                            passed = True
+                    else:
+                        record.remove_transcript(trans)
     except Exception as error:
         print(error)
         raise
@@ -478,7 +487,8 @@ def filter_plof(genes, records, db_info, lof_index):
             gene.set_status("HC LoF found, failed filtering")
         elif gene.status is None:
             gene.set_status("No HC LoF found")
-    return passed
+
+    return passed_variants
 
 
 def extract_lof_annotations(variants, db_info, get_pop_freqs):
@@ -497,6 +507,15 @@ def extract_lof_annotations(variants, db_info, get_pop_freqs):
     results_as_vcf = variant_records
     variant_tuple = [variant.as_tuple_vep(db_info.lof.get('id'))
                      for variant in variants]
+    variant_tuple = []
+
+    for variant in variants:
+        if not variant.multiple_transcripts:
+            variant_tuple.append(variant.as_tuple_vep(db_info.lof.get('id')))
+        else:
+            for key, val in variant.transcripts.items():
+                variant.as_tuple_vep(db_info.lof.get('id'))[-1].split(",")
+                variant_tuple.extend([variant.as_tuple_basic() + (val,)])
     results = np.asarray(variant_tuple, dtype=str)
     results = pd.DataFrame(data=results)
 
@@ -513,6 +532,7 @@ def extract_lof_annotations(variants, db_info, get_pop_freqs):
                                  columns=["LoF_Variant", "LoF_Annotation",
                                           "Confidence", "HGNC_Symbol",
                                           "Ensembl Code", "Rest"])
+    results_codes['HGVSc'] = results_codes.Rest.str.split("|", 6).str[5]
 
     results_codes.drop('Rest', axis=1, inplace=True)
     results_codes.drop('Confidence', axis=1, inplace=True)
@@ -537,19 +557,28 @@ def extract_pop_freqs(variants, config):
     # Make a tuple list from the population-frequencies section
     # in config file
     pop_groups = config.population_frequencies
-    pop_freqs = np.empty(shape=(len(variants), len(pop_groups)), dtype='str')
+
+    num_transcripts = [variant.num_transcripts() for variant in variants]
+    total_transcripts = np.cumsum(num_transcripts)
+    pop_freqs = np.empty(shape=(len(total_transcripts), len(pop_groups)), dtype='str')
     pop_freqs = pd.DataFrame(data=pop_freqs)
+
     # Fill array with population frequencies by variant
     for col, group in enumerate(list(pop_groups.values())):
-        for row, variant in enumerate(variants):
+        row = 0
+        for index, variant in enumerate(variants):
             if group in variant.info:
                 val = variant.info[group]
                 # Convert allele frequencies to exponential form
                 if "AF" in group:
                     val = '{:.10e}'.format(float(val))
-                pop_freqs.loc[row, col] = str(val)
+                for i in range(0, num_transcripts[index]):
+                    pop_freqs.loc[row, col] = str(val)
+                    row += 1 
             else:
-                pop_freqs.loc[row, col] = '-'
+                for i in range(0, num_transcripts[index]):
+                    pop_freqs.loc[row, col] = '-'
+                    row += 1
 
     pop_freqs.columns = list(pop_groups.keys())
     return pop_freqs
