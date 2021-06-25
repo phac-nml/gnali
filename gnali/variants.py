@@ -39,7 +39,6 @@ class Variant:
         self.info = dict([info_item.split("=", 1) for
                          info_item in self.info_str.split(";")
                          if len(info_item.split("=", 1)) > 1])
-        self.multiple_transcripts = False
         self.transcripts = {}
 
         curr_trans = ""
@@ -52,9 +51,6 @@ class Variant:
                 if trans_info[3] == self.gene_name:
                     self.transcripts[trans_info[10]] = curr_trans
                 curr_trans = ""
-
-        if len(self.transcripts.keys()) > 1:
-            self.multiple_transcripts = True
 
     def __str__(self):
         if self.info_str[-1] == '\n':
@@ -85,14 +81,19 @@ class Variant:
         return (self.chrom, self.pos, self.id, self.ref,
                 self.alt, self.qual, self.filter)
 
-    def set_transcripts(self, transcripts):
-        self.transcripts = transcripts
+    def as_tuple_transcript(self, trans_name):
+        return (self.chrom, self.pos, self.id, self.ref,
+                self.alt, self.qual, self.filter,
+                self.transcripts[trans_name])
 
     def remove_transcript(self, transcript):
         self.transcripts.pop(transcript)
 
     def num_transcripts(self):
         return len(self.transcripts.keys())
+
+    def multiple_transcripts(self):
+        return len(self.transcripts.keys()) > 1
 
 
 class Gene:

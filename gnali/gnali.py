@@ -511,7 +511,7 @@ def extract_lof_annotations(variants, db_info, get_pop_freqs):
     variant_tuple = []
 
     for variant in variants:
-        if not variant.multiple_transcripts:
+        if not variant.multiple_transcripts():
             variant_tuple.append(variant.as_tuple_vep(db_info.lof.get('id')))
         else:
             for key, val in variant.transcripts.items():
