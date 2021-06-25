@@ -16,6 +16,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
+import re
+
 
 class Variant:
 
@@ -30,7 +32,7 @@ class Variant:
     info_str = ''
     record_str = ''
 
-    def __init__(self, gene, record):
+    def __init__(self, gene, record, lof_id):
         self.gene_name = gene
         self.record_str = record
         self.chrom, self.pos, self.id, self.ref, \
@@ -39,6 +41,22 @@ class Variant:
         self.info = dict([info_item.split("=", 1) for
                          info_item in self.info_str.split(";")
                          if len(info_item.split("=", 1)) > 1])
+        self.multiple_transcripts = False
+        self.transcripts = {}
+       
+        curr_trans = ""
+        for trans in self.info[lof_id].split(","):
+            curr_trans += trans
+            if not "|" in trans:
+                curr_trans += trans
+            else:
+                trans_info = curr_trans.split("|")
+                if trans_info[3] == self.gene_name:
+                    self.transcripts[trans_info[10]] = curr_trans
+                curr_trans = ""
+
+        if len(self.transcripts.keys()) > 1:
+            self.multiple_transcripts = True
 
     def __str__(self):
         if self.info_str[-1] == '\n':
@@ -64,12 +82,26 @@ class Variant:
         vep_str = self.info.get(lof_id)
         return (self.chrom, self.pos, self.id, self.ref,
                 self.alt, self.qual, self.filter, vep_str)
+    
+    def as_tuple_basic(self):
+        return (self.chrom, self.pos, self.id, self.ref,
+                self.alt, self.qual, self.filter) 
+
+    def set_transcripts(self, transcripts):
+        self.transcripts = transcripts
+    
+    def remove_transcript(self, transcript):
+        self.transcripts.pop(transcript)
+    
+    def num_transcripts(self):
+        return len(self.transcripts.keys())
 
 
 class Gene:
     name = None
     location = None
     status = None
+    variants = []
 
     def __init__(self, name, **kwargs):
         self.name = name
@@ -84,6 +116,20 @@ class Gene:
 
     def set_status(self, status):
         self.status = status
+    
+    def set_variants(self, variants):
+        self.variants = variants
 
     def __str__(self):
         return "{};{};{}".format(self.name, self.location, self.status)
+
+
+class Transcript:
+    name = None
+    info = None
+
+    def __init__(self, variant, info_str, lof_id):
+        name = info_str("|")[3]
+        if name == variant.gene_name:
+            self.name = name  
+            self.info = info_str
