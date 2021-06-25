@@ -16,8 +16,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-import re
-
 
 class Variant:
 
@@ -43,11 +41,11 @@ class Variant:
                          if len(info_item.split("=", 1)) > 1])
         self.multiple_transcripts = False
         self.transcripts = {}
-       
+
         curr_trans = ""
         for trans in self.info[lof_id].split(","):
             curr_trans += trans
-            if not "|" in trans:
+            if "|" not in trans:
                 curr_trans += trans
             else:
                 trans_info = curr_trans.split("|")
@@ -82,17 +80,17 @@ class Variant:
         vep_str = self.info.get(lof_id)
         return (self.chrom, self.pos, self.id, self.ref,
                 self.alt, self.qual, self.filter, vep_str)
-    
+
     def as_tuple_basic(self):
         return (self.chrom, self.pos, self.id, self.ref,
-                self.alt, self.qual, self.filter) 
+                self.alt, self.qual, self.filter)
 
     def set_transcripts(self, transcripts):
         self.transcripts = transcripts
-    
+
     def remove_transcript(self, transcript):
         self.transcripts.pop(transcript)
-    
+
     def num_transcripts(self):
         return len(self.transcripts.keys())
 
@@ -116,7 +114,7 @@ class Gene:
 
     def set_status(self, status):
         self.status = status
-    
+
     def set_variants(self, variants):
         self.variants = variants
 
@@ -131,5 +129,5 @@ class Transcript:
     def __init__(self, variant, info_str, lof_id):
         name = info_str("|")[3]
         if name == variant.gene_name:
-            self.name = name  
+            self.name = name
             self.info = info_str

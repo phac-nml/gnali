@@ -379,6 +379,7 @@ def get_variants(genes, db_info, filter_objs, output_dir,
                     header, variants = VEP.annotate_vep_loftee(header,
                                                                variants,
                                                                db_info)
+
                 lof_index = None
                 # get index of LoF in header
                 annot_header = [line for line in header
@@ -388,7 +389,8 @@ def get_variants(genes, db_info, filter_objs, output_dir,
                     .index(db_info.lof['annot'])
 
                 # update to convert to Variants before filter calls
-                records = [Variant(gene.name, record, db_info.lof['id']) for record in records]
+                records = [Variant(gene.name, record, db_info.lof['id'])
+                           for record in records]
 
                 # filter records
                 records = filter_plof(genes, records, db_info, lof_index)
@@ -465,7 +467,6 @@ def filter_plof(genes, records, db_info, lof_index):
     try:
         for record in records:
             if lof_index is not None:
-                lof_tool = db_info.lof['id']
                 conf_filter = db_info.lof['filters']['confidence']
                 passed = False
 
@@ -560,7 +561,8 @@ def extract_pop_freqs(variants, config):
 
     num_transcripts = [variant.num_transcripts() for variant in variants]
     total_transcripts = np.cumsum(num_transcripts)
-    pop_freqs = np.empty(shape=(len(total_transcripts), len(pop_groups)), dtype='str')
+    pop_freqs = np.empty(shape=(len(total_transcripts), len(pop_groups)),
+                         dtype='str')
     pop_freqs = pd.DataFrame(data=pop_freqs)
 
     # Fill array with population frequencies by variant
@@ -574,7 +576,7 @@ def extract_pop_freqs(variants, config):
                     val = '{:.10e}'.format(float(val))
                 for i in range(0, num_transcripts[index]):
                     pop_freqs.loc[row, col] = str(val)
-                    row += 1 
+                    row += 1
             else:
                 for i in range(0, num_transcripts[index]):
                     pop_freqs.loc[row, col] = '-'
