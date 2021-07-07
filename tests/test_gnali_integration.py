@@ -91,7 +91,8 @@ class TestGNALIIntegration:
                       "-d gnomadv2.1.1nolof " \
                       "-p homozygous-controls " \
                       "-c {config} " \
-                      "-o {out_ccr5}" \
+                      "-o {out_ccr5} " \
+                      "--pop_freqs" \
                       .format(in_ccr5=TEST_INPUT_CCR5,
                               config=DB_CONFIG_FILE,
                               out_ccr5=gnali_results)
@@ -109,7 +110,8 @@ class TestGNALIIntegration:
                       "-d gnomadv3.1.1 " \
                       "-p homozygous " \
                       "-c {config} " \
-                      "-o {out_gnomadv3}" \
+                      "-o {out_gnomadv3} " \
+                      "--pop_freqs --vcf" \
                       .format(in_col6a5=TEST_INPUT_COL6A5,
                               config=DB_CONFIG_FILE,
                               out_gnomadv3=gnali_results)
