@@ -389,8 +389,8 @@ def get_variants(genes, db_info, filter_objs, output_dir,
                     .index(db_info.lof['annot'])
 
                 # update to convert to Variants before filter calls
-                records = [Variant(gene.name, record, db_info.lof['id'], str(annot_header))
-                           for record in records]
+                records = [Variant(gene.name, record, db_info.lof['id'],
+                           str(annot_header)) for record in records]
 
                 # filter records
                 records = filter_plof(genes, records, db_info, lof_index)
@@ -480,9 +480,11 @@ def filter_plof(genes, records, db_info, lof_index):
                             already_passed = True
                     else:
                         record.remove_transcript(trans)
+
                 if len(passed_transcripts) > 0:
                     record.set_transcripts(passed_transcripts)
-                    passed_variants.append(record) 
+                    passed_variants.append(record)
+
     except Exception as error:
         print(error)
         raise
@@ -519,7 +521,8 @@ def extract_lof_annotations(genes, db_info, get_pop_freqs):
         else:
             for trans in variant.transcripts:
                 variant.as_tuple_vep(db_info.lof.get('id'))[-1].split(",")
-                variant_tuple.extend([variant.as_tuple_basic() + (trans.info_str,)])
+                variant_tuple.extend([variant.as_tuple_basic() +
+                                      (trans.info_str,)])
     results = np.asarray(variant_tuple, dtype=str)
     results = pd.DataFrame(data=results)
 
@@ -743,9 +746,9 @@ def main():
                                     args.additional_filters)
 
         header = get_variants(genes,
-                            db_config, filters,
-                            results_dir, logger,
-                            args.verbose)
+                              db_config, filters,
+                              results_dir, logger,
+                              args.verbose)
 
         results, results_as_vcf = \
             extract_lof_annotations(genes, db_config, args.pop_freqs)

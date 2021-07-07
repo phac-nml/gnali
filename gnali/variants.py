@@ -16,7 +16,10 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
+
 import re
+
+
 class Variant:
 
     def __init__(self, gene, record, lof_id, header):
@@ -30,27 +33,8 @@ class Variant:
                          if len(info_item.split("=", 1)) > 1])
         self.transcripts = []
 
-        curr_trans = ""
-        annot_count = 0
-        trans_components = re.split(r'(\||,)', self.info[lof_id]) + [',','|']
-        annots = header.count("|") + 1
+        split_transcripts_from_rec(self, record, header, lof_id)
 
-        for index, trans_component in enumerate(trans_components):
-            if "|" == trans_component:
-                annot_count += 1
-                if annot_count == annots:
-                    trans_info = curr_trans.split("|")
-                    if trans_info[3] == self.gene_name:
-                        extra_chars = len(trans_components[index - 1])
-                        self.transcripts.append(Transcript(curr_trans[0:-extra_chars], lof_id, header))
-
-                    curr_trans = trans_components[index - 1] + "|"
-                    annot_count = 1
-                else:
-                    curr_trans += trans_component
-            else:
-                curr_trans += trans_component
-        
     def __str__(self):
         if self.info_str[-1] == '\n':
             return "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}" \
@@ -82,8 +66,8 @@ class Variant:
 
     def as_tuple_transcript(self, trans_name):
         print((self.chrom, self.pos, self.id, self.ref,
-                self.alt, self.qual, self.filter,
-                self.transcripts[trans_name]))
+               self.alt, self.qual, self.filter,
+               self.transcripts[trans_name]))
         return (self.chrom, self.pos, self.id, self.ref,
                 self.alt, self.qual, self.filter,
                 self.transcripts[trans_name])
@@ -102,6 +86,31 @@ class Variant:
 
     def multiple_transcripts(self):
         return len(self.transcripts) > 1
+
+
+def split_transcripts_from_rec(variant, record, header, lof_id):
+    curr_trans = ""
+    annot_count = 0
+    trans_components = re.split(r'(\||,)', variant.info[lof_id]) + [',', '|']
+    annots = header.count("|") + 1
+
+    for index, trans_component in enumerate(trans_components):
+        if "|" == trans_component:
+            annot_count += 1
+            if annot_count == annots:
+                trans_info = curr_trans.split("|")
+                if trans_info[3] == variant.gene_name:
+                    extra_chars = len(trans_components[index - 1])
+                    variant.transcripts.append(Transcript(curr_trans
+                                               [0:-extra_chars],
+                                               lof_id, header))
+
+                curr_trans = trans_components[index - 1] + "|"
+                annot_count = 1
+            else:
+                curr_trans += trans_component
+        else:
+            curr_trans += trans_component
 
 
 class Gene:
@@ -125,10 +134,10 @@ class Gene:
 
     def set_variants(self, variants):
         self.variants = variants
-    
+
     def add_variants(self, variants):
         self.variants.extend(variants)
-    
+
     def remove_variant(self, variant):
         self.variants.remove(variant)
 
@@ -143,7 +152,6 @@ class Transcript:
 
     def __init__(self, info_str, lof_id, header):
         header_items = header.split("|")
-        gene_index = header_items.index("SYMBOL")
         hgvsc_index = header_items.index("HGVSc")
         lof_index = header_items.index("LoF")
 
@@ -151,7 +159,3 @@ class Transcript:
         self.hgvsc = info_items[hgvsc_index]
         self.lof = info_items[lof_index]
         self.info_str = info_str
-
-def split_transcripts_from_rec(record, header):
-    pass
-
