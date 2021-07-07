@@ -92,7 +92,7 @@ class TestGNALIIntegration:
                       "-p homozygous-controls " \
                       "-c {config} " \
                       "-o {out_ccr5} " \
-                      "--pop_freqs" \
+                      "--pop_freqs --verbose" \
                       .format(in_ccr5=TEST_INPUT_CCR5,
                               config=DB_CONFIG_FILE,
                               out_ccr5=gnali_results)
