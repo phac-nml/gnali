@@ -104,7 +104,6 @@ def split_transcripts_from_rec(variant, record, header, lof_id):
                     variant.transcripts.append(Transcript(curr_trans
                                                [0:-extra_chars],
                                                lof_id, header))
-
                 curr_trans = trans_components[index - 1] + "|"
                 annot_count = 1
             else:
@@ -151,11 +150,13 @@ class Gene:
 class Transcript:
 
     def __init__(self, info_str, lof_id, header):
+
         header_items = header.split("|")
+        info_items = info_str.split("|")
+
         hgvsc_index = header_items.index("HGVSc")
         lof_index = header_items.index("LoF")
 
-        info_items = info_str.split("|")
         self.hgvsc = info_items[hgvsc_index]
         self.lof = info_items[lof_index]
         self.info_str = info_str

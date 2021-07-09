@@ -102,13 +102,9 @@ class VEP:
 
         header = []
         lof_array = []
-        genes = [variant.gene_name for variant in records]
         with open(output_path, "r") as stream:
             lines = stream.readlines()
-            headers = [line for line in lines if line[0] == "#"]
-            variants = [line for line in lines if line[0] != "#"]
-            for line in headers:
-                header.append(line)
-            for index, line in enumerate(variants):
-                lof_array.append(Variant(genes[index], line))
+            header.extend([line for line in lines if line[0] == "#"])
+            lof_array.extend([line for line in lines if line[0] != "#"])
+
         return header, lof_array
