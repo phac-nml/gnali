@@ -20,7 +20,6 @@ import os
 import subprocess
 import tempfile
 from pathlib import Path
-from gnali.variants import Variant
 from gnali.exceptions import VEPRuntimeError
 import gnali.outputs as outputs
 
