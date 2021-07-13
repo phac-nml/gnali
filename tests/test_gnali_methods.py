@@ -317,9 +317,9 @@ class TestGNALIMethods:
         test_variants = []
         with open(EXPECTED_PLOF_VARIANTS, 'r') as test_file:
             for row in test_file:
-                row = Variant("CCR5", str(row), "vep", header)
+                row = Variant("CCR5", str(row), "vep", "LoF", header)
                 test_variants.append(row)
-        genes[0].set_variants(test_variants)
+        genes[0].add_variants(test_variants)
         num_trans = sum([var.num_transcripts() for var in genes[0].variants])
         print(num_trans)
         

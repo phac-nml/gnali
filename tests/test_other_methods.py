@@ -71,10 +71,12 @@ class TestOtherMethods:
         tbx = pysam.VariantFile(data_file.path)
         header = str(tbx.header)
 
-        #print("input recs: {}".format(input_recs))
         method_headers, method_recs = VEP.annotate_vep_loftee(input_headers, input_recs, db_config)
-        annot_header = [line for line in method_headers if "ID=CSQ" in line][0]
-        method_recs = [Variant("CCR5", rec, "CSQ", str(annot_header)) for rec in method_recs]
+
+        lof_id = db_config.lof['id']
+        lof_annot = db_config.lof['annot']
+        annot_header = [line for line in method_headers if "ID={}".format(lof_id) in line][0]
+        method_recs = [Variant("CCR5", rec, lof_id, lof_annot, str(annot_header)) for rec in method_recs]
         method_recs = [rec.record_str for rec in method_recs]
 
         if not deps_exist:
