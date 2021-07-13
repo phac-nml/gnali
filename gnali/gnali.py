@@ -336,7 +336,7 @@ def get_variants(genes, db_info, filter_objs, output_dir,
         filters, and user-specified additional filters.
 
     Args:
-        target_list: list of chromosome locations to check
+        genes: list of Gene objects
         db_info: configuration of database
         filter_objs: list of all (predefined and additional)
                         filters as Filter objects
@@ -390,7 +390,8 @@ def get_variants(genes, db_info, filter_objs, output_dir,
 
                 # update to convert to Variants before filter calls
                 records = [Variant(gene.name, record, db_info.lof['id'],
-                           str(annot_header)) for record in records]
+                           db_info.lof['annot'], str(annot_header)) for
+                           record in records]
 
                 # filter records
                 records = filter_plof(genes, records, db_info, lof_index)
@@ -422,6 +423,7 @@ def apply_filters(genes, records, db_info, filters):
     """Apply predefined and additional filters.
 
     Args:
+        genes: list of Gene objects
         records: list of records as Variant objects
         db_info: database configuration as Config object
         filters: list of filters as Filter objects
@@ -458,6 +460,7 @@ def filter_plof(genes, records, db_info, lof_index):
     """Apply loss-of-function filters.
 
     Args:
+        genes: list of Gene objects
         records: list of records as Variant objects
         db_info: database configuration as Config object
         lof_index: index of loss-of-function indicator in header
@@ -504,8 +507,7 @@ def extract_lof_annotations(genes, db_info, get_pop_freqs):
         loss-of-function annotations.
 
     Args:
-        variants: list of variants from get_variants()
-                  as Variant objects
+        genes: list of Gene objects
         db_info: database configuration object
         get_pop_freqs: whether or not we additionaly get the
                         population frequencies
