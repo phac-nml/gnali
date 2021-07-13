@@ -22,7 +22,7 @@ import re
 
 class Variant:
 
-    def __init__(self, gene, record, lof_id, header):
+    def __init__(self, gene, record, lof_id, lof_annot, header):
         self.gene_name = gene
         self.record_str = record
         self.chrom, self.pos, self.id, self.ref, \
@@ -33,7 +33,7 @@ class Variant:
                          if len(info_item.split("=", 1)) > 1])
         self.transcripts = []
 
-        split_transcripts_from_rec(self, record, header, lof_id)
+        split_transcripts_from_rec(self, record, header, lof_id, lof_annot)
 
     def __str__(self):
         if self.info_str[-1] == '\n':
@@ -77,7 +77,7 @@ class Variant:
         return len(self.transcripts) > 1
 
 
-def split_transcripts_from_rec(variant, record, header, lof_id):
+def split_transcripts_from_rec(variant, record, header, lof_id, lof_annot):
     curr_trans = ""
     annot_count = 0
     trans_components = re.split(r'(\||,)', variant.info[lof_id]) + [',', '|']
@@ -89,11 +89,13 @@ def split_transcripts_from_rec(variant, record, header, lof_id):
             annot_count += 1
             if annot_count == annots:
                 trans_info = curr_trans.split("|")
+                # Verify that transcript's gene is what's expected,
+                # in case of overlapping genes. Otherwise, skip.
                 if trans_info[trans_gene_index] == variant.gene_name:
                     extra_chars = len(trans_components[index - 1])
                     variant.transcripts.append(Transcript(curr_trans
                                                [0:-extra_chars],
-                                               lof_id, header))
+                                               lof_annot, header))
                 curr_trans = trans_components[index - 1] + "|"
                 annot_count = 1
             else:
@@ -121,14 +123,8 @@ class Gene:
     def set_status(self, status):
         self.status = status
 
-    def set_variants(self, variants):
-        self.variants = variants
-
     def add_variants(self, variants):
         self.variants.extend(variants)
-
-    def remove_variant(self, variant):
-        self.variants.remove(variant)
 
     def num_variants(self):
         return len(self.variants)
@@ -139,13 +135,13 @@ class Gene:
 
 class Transcript:
 
-    def __init__(self, info_str, lof_id, header):
+    def __init__(self, info_str, lof_annot, header):
 
         header_items = header.split("|")
         info_items = info_str.split("|")
 
         hgvsc_index = header_items.index("HGVSc")
-        lof_index = header_items.index("LoF")
+        lof_index = header_items.index(lof_annot)
 
         self.hgvsc = info_items[hgvsc_index]
         self.lof = info_items[lof_index]
