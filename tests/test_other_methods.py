@@ -67,7 +67,7 @@ class TestOtherMethods:
 
         db_config = RuntimeConfig(db_config)
         data_file = next((file for file in db_config.files if file.name == 'ccr5'), None)
-        print("index at {}".format(EXOMES_CCR5_NO_LOF))
+
         tbx = pysam.VariantFile(data_file.path)
         header = str(tbx.header)
 

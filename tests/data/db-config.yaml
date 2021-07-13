@@ -190,3 +190,48 @@ databases:
       female-AC: AC_female
       female-AN: AN_female
       female-AF: AF_female
+  mult-trans:
+    files:
+      chr2:
+        path: tests/data/psmd1_htr2b.vcf
+    ref-genome:
+      name: GRCh38 
+      path: http://ensembl.org
+    lof:
+      id: vep
+      annot: LoF
+      filters:
+        confidence: HC
+    predefined-filters: 
+      homozygous: nhomalt>0
+    population-frequencies:
+      african-AC: AC_afr
+      african-AN: AN_afr
+      african-AF: AF_afr
+      ashkenazi-jewish-AC: AC_asj
+      ashkenazi-jewish-AN: AN_asj
+      ashkenazi-jewish-AF: AF_asj
+      european-non-finnish-AC: AC_nfe
+      european-non-finnish-AN: AN_nfe
+      european-non-finnish-AF: AF_nfe
+      finnish-AC: AC_fin
+      finnish-AN: AN_fin
+      finnish-AF: AF_fin
+      south-asian-AC: AC_sas
+      south-asian-AN: AN_sas
+      south-asian-AF: AF_sas
+      latino-AC: AC_amr
+      latino-AN: AN_amr
+      latino-AF: AF_amr
+      east-asian-AC: AC_eas
+      east-asian-AN: AN_eas
+      east-asian-AF: AF_eas
+      other-AC: AC_oth
+      other-AF: AF_oth
+      other-AN: AN_oth
+      XY-AC: AC_XY
+      XY-AN: AN_XY
+      XY-AF: AF_XY
+      XX-AC: AC_XX
+      XX-AN: AN_XX
+      XX-AF: AF_XX

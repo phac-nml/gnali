@@ -39,8 +39,11 @@ TEST_DATA_PATH = "{}/data".format(str(TEST_PATH))
 TEST_INPUT_CCR5 = "{}/ccr5.txt".format(TEST_DATA_PATH)
 TEST_INPUT_COL6A5 = "{}/col6a5.txt".format(TEST_DATA_PATH)
 EXOMES_CCR5_NO_LOF = "{}/exomes_ccr5_no_lof.vcf".format(TEST_DATA_PATH)
+OVERLAPPING_INPUT = "{}/overlapping_genes.txt".format(TEST_DATA_PATH)
+
 EXOMES_CCR5_RESULTS = "{}/ccr5_results/".format(TEST_DATA_PATH)
 GNOMADV3_RESULTS = "{}/gnomadv3_results/".format(TEST_DATA_PATH)
+OVERLAPPING_OUTPUT = "{}/overlapping_genes_output/".format(TEST_DATA_PATH)
 
 NO_VARIANTS_INPUT = "{}/alcam_no_variants.txt".format(TEST_DATA_PATH)
 NO_VARIANTS_OUTPUT = "{}/no_vars_results".format(TEST_DATA_PATH)
@@ -71,7 +74,7 @@ class TestGNALIIntegration:
         captured = str(capfd.readouterr())
         db_config = get_db_config(DB_CONFIG_FILE, '')
         for db in db_config.configs:
-            if db.name == "gnomadv2.1.1nolof":
+            if db.name == "gnomadv2.1.1nolof" or db.name =="mult-trans":
                 continue
             assert db.name in captured
         assert results.returncode == 0
@@ -136,3 +139,19 @@ class TestGNALIIntegration:
         assert filecmp.dircmp(NO_VARIANTS_OUTPUT, gnali_results).diff_files == []
         assert results.returncode == 0
 
+    def test_multiple_genes_in_variant(self):
+        temp_dir = tempfile.TemporaryDirectory()
+        temp_path = temp_dir.name
+        gnali_results = "{}/results".format(temp_path)
+        command_str = "gnali -i {in_psmd1_htr2b} " \
+                      "-d mult-trans " \
+                      "-c {config} " \
+                      "-o {out_dir} " \
+                      "--verbose --pop_freqs --vcf" \
+                      .format(in_psmd1_htr2b=OVERLAPPING_INPUT,
+                              config=DB_CONFIG_FILE,
+                              out_dir=gnali_results)
+        results = subprocess.run(command_str.split())
+        # get output data
+        assert filecmp.dircmp(OVERLAPPING_OUTPUT, gnali_results).diff_files == []
+        assert results.returncode == 0
