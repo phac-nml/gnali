@@ -160,3 +160,6 @@ class Transcript:
         self.hgvsc = info_items[hgvsc_index]
         self.lof = info_items[lof_index]
         self.info_str = info_str
+
+    def __str__(self):
+        return self.info_str
