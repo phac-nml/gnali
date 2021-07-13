@@ -64,22 +64,11 @@ class Variant:
         return (self.chrom, self.pos, self.id, self.ref,
                 self.alt, self.qual, self.filter)
 
-    def as_tuple_transcript(self, trans_name):
-        print((self.chrom, self.pos, self.id, self.ref,
-               self.alt, self.qual, self.filter,
-               self.transcripts[trans_name]))
-        return (self.chrom, self.pos, self.id, self.ref,
-                self.alt, self.qual, self.filter,
-                self.transcripts[trans_name])
-
     def remove_transcript(self, transcript):
         self.transcripts.remove(transcript)
 
     def set_transcripts(self, transcripts):
         self.transcripts = transcripts
-
-    def add_transcripts(self, transcripts):
-        self.transcripts.extend(transcripts)
 
     def num_transcripts(self):
         return len(self.transcripts)
@@ -93,13 +82,14 @@ def split_transcripts_from_rec(variant, record, header, lof_id):
     annot_count = 0
     trans_components = re.split(r'(\||,)', variant.info[lof_id]) + [',', '|']
     annots = header.count("|") + 1
+    trans_gene_index = header.split("|").index("SYMBOL")
 
     for index, trans_component in enumerate(trans_components):
         if "|" == trans_component:
             annot_count += 1
             if annot_count == annots:
                 trans_info = curr_trans.split("|")
-                if trans_info[3] == variant.gene_name:
+                if trans_info[trans_gene_index] == variant.gene_name:
                     extra_chars = len(trans_components[index - 1])
                     variant.transcripts.append(Transcript(curr_trans
                                                [0:-extra_chars],

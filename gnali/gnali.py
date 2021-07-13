@@ -518,7 +518,6 @@ def extract_lof_annotations(genes, db_info, get_pop_freqs):
 
     for variant in variants:
         for trans in variant.transcripts:
-            variant.as_tuple_vep(db_info.lof.get('id'))[-1].split(",")
             variant_tuple.extend([variant.as_tuple_basic() +
                                  (trans.info_str,)])
     results = np.asarray(variant_tuple, dtype=str)
