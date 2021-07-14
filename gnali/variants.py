@@ -22,7 +22,15 @@ import re
 
 class Variant:
 
-    def __init__(self, gene, record, lof_id, lof_annot, header):
+    def __init__(self, gene, record, lof_id, lof_annot, lof_header):
+        """Args:
+            gene: name of gene
+            record: VCF record
+            lof_id: id of LoF annotation tool used (specified in config)
+            lof_annot: annot of LoF annotation tool used (specified in config)
+            lof_header: VCF header line of LoF annotation tool used
+        """
+
         self.gene_name = gene
         self.record_str = record
         self.chrom, self.pos, self.id, self.ref, \
@@ -33,7 +41,7 @@ class Variant:
                          if len(info_item.split("=", 1)) > 1])
         self.transcripts = []
 
-        split_transcripts_from_rec(self, record, header, lof_id, lof_annot)
+        split_transcripts_from_rec(self, record, lof_header, lof_id, lof_annot)
 
     def __str__(self):
         if self.info_str[-1] == '\n':
@@ -98,8 +106,10 @@ def split_transcripts_from_rec(variant, record, header, lof_id, lof_annot):
                                                lof_annot, header))
                 curr_trans = trans_components[index - 1] + "|"
                 annot_count = 1
+
             else:
                 curr_trans += trans_component
+
         else:
             curr_trans += trans_component
 
