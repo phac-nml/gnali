@@ -516,13 +516,13 @@ def extract_lof_annotations(genes, db_info, get_pop_freqs):
     variant_records = [variant.record_str for variant in variants]
     # Remove duplicate VCF records, this can happen with overlapping genes
     results_as_vcf = list(dict.fromkeys(variant_records))
-    variant_tuple = []
+    variant_tuples = []
 
     for variant in variants:
         for trans in variant.transcripts:
-            variant_tuple.extend([variant.as_tuple_basic() +
-                                 (trans.info_str,)])
-    results = np.asarray(variant_tuple, dtype=str)
+            variant_tuples.append(variant.as_tuple_basic() +
+                                  (trans.info_str,))
+    results = np.asarray(variant_tuples, dtype=str)
     results = pd.DataFrame(data=results)
 
     if len(results.columns) == 1:
@@ -544,8 +544,6 @@ def extract_lof_annotations(genes, db_info, get_pop_freqs):
     results_codes.drop('Confidence', axis=1, inplace=True)
     results.drop('VEP', axis=1, inplace=True)
     results = pd.concat([results, results_codes], axis=1)
-
-    results = results.drop_duplicates(keep='first', inplace=False)
 
     if get_pop_freqs:
         pop_freqs = extract_pop_freqs(variants, db_info)
