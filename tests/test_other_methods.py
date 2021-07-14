@@ -25,7 +25,7 @@ import gnali.outputs as outputs
 from gnali.dbconfig import Config, RuntimeConfig
 import yaml
 from gnali.gnali_get_data import Dependencies
-from gnali.variants import Variant
+from gnali.variants import Variant, split_transcripts_from_rec
 
 TEST_PATH = str(Path(__file__).parent.absolute())
 TEST_DATA_PATH = "{}/data".format(TEST_PATH)
@@ -41,6 +41,8 @@ TEST_REFS_PATH = "{}/dependencies-dev.yaml".format(str(GNALI_ROOT_PATH))
 GNALI_PATH = "{}/gnali".format(str(GNALI_ROOT_PATH))
 DEPS_SUMS_FILE = "{}/dependency_sums.txt".format(TEST_DATA_PATH)
 DEPS_VERSION_FILE = "{}/data/dependency_version.txt".format(GNALI_PATH)
+
+TEST_VEP_RECORD = "{}/test_vep_record.txt".format(TEST_DATA_PATH)
 
 class TestOtherMethods:
 
@@ -89,3 +91,29 @@ class TestOtherMethods:
             expected_headers = [line for line in lines if line[0] == '#']
             expected_recs = [line for line in lines if line[0] != '#']
         assert method_recs == expected_recs
+    
+    def test_split_transcripts_from_rec(self):
+        header = None
+        record = None
+        with open(TEST_VEP_RECORD, 'r') as stream:
+            lines = stream.readlines()
+            header = [line for line in lines if line[0] == '#'][0]
+            record = [line for line in lines if line[0] != '#'][0]
+        
+        test_variant = MockVariant("COL6A5", record)
+
+        split_transcripts_from_rec(test_variant, record, header, "vep", "LoF")
+
+
+class MockVariant:
+    def __init__(self, gene, record):
+        self.gene_name = gene
+        self.record_str = record
+        self.chrom, self.pos, self.id, self.ref, \
+            self.alt, self.qual, self.filter, \
+            self.info_str = record.split("\t")
+        self.info = dict([info_item.split("=", 1) for
+                         info_item in self.info_str.split(";")
+                         if len(info_item.split("=", 1)) > 1])
+        self.transcripts = []
+
