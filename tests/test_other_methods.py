@@ -43,6 +43,8 @@ DEPS_SUMS_FILE = "{}/dependency_sums.txt".format(TEST_DATA_PATH)
 DEPS_VERSION_FILE = "{}/data/dependency_version.txt".format(GNALI_PATH)
 
 TEST_VEP_RECORD = "{}/test_vep_record.txt".format(TEST_DATA_PATH)
+TEST_VEP_RECORD_OUTPUT_1 = "{}/test_vep_record_transcripts.txt".format(TEST_DATA_PATH)
+TEST_VEP_RECORD_OUTPUT_2 = "{}/test_vep_record_transcripts_2.txt".format(TEST_DATA_PATH)
 
 class TestOtherMethods:
 
@@ -94,16 +96,33 @@ class TestOtherMethods:
     
     def test_split_transcripts_from_rec(self):
         header = None
-        record = None
+        record_1 = None
+        record_2 = None
         with open(TEST_VEP_RECORD, 'r') as stream:
             lines = stream.readlines()
             header = [line for line in lines if line[0] == '#'][0]
-            record = [line for line in lines if line[0] != '#'][0]
+            records = [line for line in lines if line[0] != '#']
+        record_1 = records[0]
+        record_2 = records[1]
         
-        test_variant = MockVariant("COL6A5", record)
-
-        split_transcripts_from_rec(test_variant, record, header, "vep", "LoF")
-
+        test_variant_1 = MockVariant("COL6A5", record_1)
+        split_transcripts_from_rec(test_variant_1, header, "vep", "LoF")
+        
+        with open(TEST_VEP_RECORD_OUTPUT_1) as stream:
+            expected_transcripts = [line.strip("\n") for line in stream.readlines()]
+            method_transcripts = [str(trans) for trans in test_variant_1.transcripts]
+            # record has commas in last VEP field 
+            assert method_transcripts == expected_transcripts
+        
+        test_variant_2 = MockVariant("COL6A5", record_2)
+        split_transcripts_from_rec(test_variant_2, header, "vep", "LoF")
+        
+        with open(TEST_VEP_RECORD_OUTPUT_2) as stream:
+            expected_transcripts = [line.strip("\n") for line in stream.readlines()]
+            method_transcripts = [str(trans) for trans in test_variant_2.transcripts]
+            # record has commas in VEP field other than last
+            assert method_transcripts == expected_transcripts
+        
 
 class MockVariant:
     def __init__(self, gene, record):
@@ -113,7 +132,10 @@ class MockVariant:
             self.alt, self.qual, self.filter, \
             self.info_str = record.split("\t")
         self.info = dict([info_item.split("=", 1) for
-                         info_item in self.info_str.split(";")
-                         if len(info_item.split("=", 1)) > 1])
+                            info_item in self.info_str.split(";")
+                            if len(info_item.split("=", 1)) > 1])
         self.transcripts = []
+    
+    def set_transcripts(self, transcripts):
+        self.transcripts = transcripts
 
