@@ -101,29 +101,39 @@ def split_transcripts_from_rec(variant, header, lof_id, lof_annot):
     delims_seen = 0
 
     transcripts = []
+    enough_delims = False
+    trans_str = None
+
+    # Parse VEP annotation character by character
     for i, char in enumerate(vep_info_str):
+        # edge case for last character
+        if i == len(vep_info_str) - 1:
+            # omit last character, VCF records end with newline
+            trans_str = vep_info_str[start_index:-1]
+            # Don't add transcript if transcript gene is not what is expected
+            # (this can happen with overlapping genes)
+            if trans_str.split("|")[trans_gene_index] == variant.gene_name:
+                transcripts.append(Transcript(trans_str,
+                                              lof_annot, header))
+            variant.set_transcripts(transcripts)
+            return
 
-        if char == ",":
-            last_comma_index = i
-        elif char == "|":
+        if char == "|" and not enough_delims:
             delims_seen += 1
-
-        if delims_seen == num_delims + 1:
+            if delims_seen == num_delims:
+                enough_delims = True
+        # Once we've hit one extra delimiter, backtrack to find where
+        # the last transcript ended
+        elif char == "|" and enough_delims:
             trans_str = vep_info_str[start_index:last_comma_index]
             if trans_str.split("|")[trans_gene_index] == variant.gene_name:
-                transcripts.append(Transcript(vep_info_str[start_index:
-                                                           last_comma_index],
+                transcripts.append(Transcript(trans_str,
                                               lof_annot, header))
-            delims_seen = 0
+            delims_seen = 1
+            enough_delims = False
             start_index = last_comma_index + 1
-        elif i == len(vep_info_str) - 1:
-            # omit the last character as it will be a newline
-            trans_str = vep_info_str[start_index:-1]
-            if trans_str.split("|")[trans_gene_index] == variant.gene_name:
-                transcripts.append(Transcript(vep_info_str[start_index:-1],
-                                   lof_annot, header))
-
-    variant.set_transcripts(transcripts)
+        elif enough_delims and char == ",":
+            last_comma_index = i
 
 
 class Gene:
