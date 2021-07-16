@@ -5,7 +5,7 @@ potential loss-of-function variants of human genes. gNALI has built-in support f
 and can be configured to be used with other VCF databases.
 
 NOTE: loss-of-function is influenced by the genome build. Not all variants available in gnomADv2.1.1 are
-available in gnomADv3 and vice versa.
+available in gnomADv3.1.1 and vice versa.
 
 ## Release ##
 

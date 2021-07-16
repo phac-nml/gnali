@@ -6,7 +6,7 @@ gNALI's output directory contains the following items:
 | Item | Type | Description | 
 |------|------|-------------|
 | Basic output | `txt` file | Status of all input genes. |
-| Detailed output | `txt` file | Variants of input genes passing filtering with some annotations extracted. |
+| Detailed output | `txt` file | Transcripts of input genes passing filtering with some annotations extracted. |
 | VCF output | `vcf` file | (Optional) Variants of input genes passing filtering as a VCF. |
 
 
@@ -23,7 +23,7 @@ All input genes will be flagged with one of the following:
 
 ## Detailed output ##
 
-Contains variant records with loss-of-function annotations and (optionally) [population frequency](parameters.md#output) annotations extracted.
+Contains transcripts with loss-of-function annotations and (optionally) [population frequency](parameters.md#output) annotations extracted.
 
 
 ## VCF output ##
