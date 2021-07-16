@@ -164,8 +164,9 @@ class Gene:
 
 class Transcript:
     def __init__(self, info_str, lof_annot, header):
-        self.info = dict(zip(header.split("|"), info_str.split("|")))
-        self.lof = self.info[lof_annot]
+        self.info_str = info_str
+        lof_index = header.split("|").index(lof_annot)
+        self.lof = self.info_str.split("|")[lof_index]
 
     def __str__(self):
-        return "|".join(list(self.info.values()))
+        return self.info_str
