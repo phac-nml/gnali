@@ -102,7 +102,6 @@ def split_transcripts_from_rec(variant, header, lof_id, lof_annot):
 
     transcripts = []
     enough_delims = False
-    trans_str = None
 
     # Parse VEP annotation character by character
     for i, char in enumerate(vep_info_str):
@@ -113,8 +112,7 @@ def split_transcripts_from_rec(variant, header, lof_id, lof_annot):
             # Don't add transcript if transcript gene is not what is expected
             # (this can happen with overlapping genes)
             if trans_str.split("|")[trans_gene_index] == variant.gene_name:
-                transcripts.append(Transcript(trans_str,
-                                              lof_annot, header))
+                transcripts.append(Transcript(trans_str, lof_annot, header))
             variant.set_transcripts(transcripts)
             return
 
@@ -127,8 +125,7 @@ def split_transcripts_from_rec(variant, header, lof_id, lof_annot):
         elif char == "|" and enough_delims:
             trans_str = vep_info_str[start_index:last_comma_index]
             if trans_str.split("|")[trans_gene_index] == variant.gene_name:
-                transcripts.append(Transcript(trans_str,
-                                              lof_annot, header))
+                transcripts.append(Transcript(trans_str, lof_annot, header))
             delims_seen = 1
             enough_delims = False
             start_index = last_comma_index + 1
