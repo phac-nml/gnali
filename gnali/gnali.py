@@ -384,13 +384,13 @@ def get_variants(genes, db_info, filter_objs, output_dir,
                 # get index of LoF in header
                 annot_header = [line for line in header
                                 if "ID={}".format(db_info.lof['id'])
-                                in line]
-                lof_index = str(annot_header).split("|") \
+                                in line][0]
+                lof_index = annot_header.split("|") \
                     .index(db_info.lof['annot'])
 
                 # update to convert to Variants before filter calls
                 records = [Variant(gene.name, record, db_info.lof['id'],
-                           db_info.lof['annot'], str(annot_header)) for
+                           db_info.lof['annot'], annot_header) for
                            record in records]
 
                 # filter records
@@ -521,7 +521,7 @@ def extract_lof_annotations(genes, db_info, get_pop_freqs):
     for variant in variants:
         for trans in variant.transcripts:
             variant_tuples.append(variant.as_tuple_basic() +
-                                  (trans.info_str,))
+                                  (str(trans),))
     results = np.asarray(variant_tuples, dtype=str)
     results = pd.DataFrame(data=results)
 
