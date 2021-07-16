@@ -1,0 +1,9 @@
+A|splice_donor_variant|HIGH|COL6A5|ENSG00000172752|Transcript|ENST00000265379|protein_coding||42/42|ENST00000265379.10:c.*74+1G>A|||||||1||1|SNV||HGNC|HGNC:26674|YES|5|P1||ENSP00000265379|||||||||||||LC|3UTR_SPLICE,ANC_ALLELE||INTRON_SIZE:6895
+A|splice_donor_variant&NMD_transcript_variant|HIGH|COL6A5|ENSG00000172752|Transcript|ENST00000312481|nonsense_mediated_decay||41/41|ENST00000312481.11:c.*74+1G>A|||||||1||1|SNV||HGNC|HGNC:26674||1|||ENSP00000309762||||||||||||||||
+A|intron_variant|MODIFIER|COL6A5|ENSG00000172752|Transcript|ENST00000373157|protein_coding||6/6|ENST00000373157.8:c.1648+5214G>A|||||||1||1|SNV||HGNC|HGNC:26674||2|||ENSP00000362250||||||||||||||||
+A|3_prime_UTR_variant|MODIFIER|COL6A5|ENSG00000172752|Transcript|ENST00000512482|protein_coding|6/6||ENST00000512482.1:c.*250G>A||1582|||||1||1|SNV||HGNC|HGNC:26674||5|||ENSP00000424968||||||||||||||||
+A|intron_variant|MODIFIER|COL6A5|ENSG00000172752|Transcript|ENST00000512836|protein_coding||7/7|ENST00000512836.5:c.2328+6173G>A|||||||1||1|SNV||HGNC|HGNC:26674||2|||ENSP00000422898||||||||||||||||
+A|intron_variant|MODIFIER|COL6A5|256076|Transcript|NM_001278298.1|protein_coding||40/40|NM_001278298.1:c.7819+5214G>A|||||||1||1|SNV||EntrezGene|HGNC:26674|||||NP_001265227.1||||||||||||||||
+A|intron_variant|MODIFIER|COL6A5|256076|Transcript|NM_153264.6|protein_coding||39/39|NM_153264.6:c.7574+6173G>A|||||||1||1|SNV||EntrezGene|HGNC:26674|||||NP_694996.5||||||||||||||||
+A|splice_donor_variant&non_coding_transcript_variant|HIGH|COL6A5|256076|Transcript|NR_022012.2|misc_RNA||41/41|NR_022012.2:n.8416+1G>A|||||||1||1|SNV||EntrezGene|HGNC:26674|YES||||||||||||||||||||
+A|splice_donor_variant|HIGH|COL6A5|256076|Transcript|XM_011512621.2|protein_coding||40/40|XM_011512621.2:c.*74+1G>A|||||||1||1|SNV||EntrezGene|HGNC:26674|||||XP_011510923.1|||||||||||||LC|3UTR_SPLICE,ANC_ALLELE||INTRON_SIZE:6895
