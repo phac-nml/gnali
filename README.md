@@ -11,8 +11,8 @@ available in gnomADv3 and vice versa.
 # Resources #
 
 * **Website**: [https://phac-nml.github.io/gnali/](https://phac-nml.github.io/gnali/)
-* **Installation**: [https://phac-nml.github.io/gnali/install/](https://phac-nml.github.io/gnali/install/)
-* **Parameters**: [https://phac-nml.github.io/gnali/parameters/](https://phac-nml.github.io/gnali/parameters/)
+* **Installation**: [https://phac-nml.github.io/gnali/install.html/](https://phac-nml.github.io/gnali/install/)
+* **Parameters**: [https://phac-nml.github.io/gnali/parameters.html/](https://phac-nml.github.io/gnali/parameters/)
 
 
 # Getting Started #
