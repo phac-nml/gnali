@@ -337,7 +337,7 @@ class TestGNALIMethods:
                 for trans in variant.transcripts:
                     variant.as_tuple_vep(config.lof.get('id'))[-1].split(",")
                     variant_tuple.extend([variant.as_tuple_basic() +
-                                        (trans.info_str,)])
+                                        (str(trans),)])
         results = np.asarray(variant_tuple, dtype=str)
         results = pd.DataFrame(data=results)
 
