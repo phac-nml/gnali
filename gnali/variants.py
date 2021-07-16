@@ -17,9 +17,6 @@ specific language governing permissions and limitations under the License.
 """
 
 
-import re
-
-
 class Variant:
 
     def __init__(self, gene, record, lof_id, lof_annot, lof_header):
@@ -41,7 +38,7 @@ class Variant:
                          if len(info_item.split("=", 1)) > 1])
         self.transcripts = []
 
-        split_transcripts_from_rec(self, record, lof_header, lof_id, lof_annot)
+        split_transcripts_from_rec(self, lof_header, lof_id, lof_annot)
 
     def __str__(self):
         if self.info_str[-1] == '\n':
@@ -85,33 +82,36 @@ class Variant:
         return len(self.transcripts) > 1
 
 
-def split_transcripts_from_rec(variant, record, header, lof_id, lof_annot):
-    curr_trans = ""
-    annot_count = 0
-    trans_components = re.split(r'(\||,)', variant.info[lof_id]) + [',', '|']
-    annots = header.count("|") + 1
+def split_transcripts_from_rec(variant, header, lof_id, lof_annot):
+    transcripts = []
+    start_index = 0
+    last_comma_index = 0
+    num_delims = header.count("|")
+    delims_seen = 0
+    vep_info_str = variant.info[lof_id]
     trans_gene_index = header.split("|").index("SYMBOL")
 
-    for index, trans_component in enumerate(trans_components):
-        if "|" == trans_component:
-            annot_count += 1
-            if annot_count == annots:
-                trans_info = curr_trans.split("|")
-                # Verify that transcript's gene is what's expected,
-                # in case of overlapping genes. Otherwise, skip.
-                if trans_info[trans_gene_index] == variant.gene_name:
-                    extra_chars = len(trans_components[index - 1])
-                    variant.transcripts.append(Transcript(curr_trans
-                                               [0:-extra_chars],
-                                               lof_annot, header))
-                curr_trans = trans_components[index - 1] + "|"
-                annot_count = 1
+    for i, char in enumerate(vep_info_str):
+        if char == ",":
+            last_comma_index = i
+        elif char == "|":
+            delims_seen += 1
+        if delims_seen == num_delims + 1:
+            trans_str = vep_info_str[start_index:last_comma_index]
+            if trans_str.split("|")[trans_gene_index] == variant.gene_name:
+                transcripts.append(Transcript(vep_info_str[start_index:
+                                                           last_comma_index],
+                                              lof_annot, header))
+            delims_seen = 0
+            start_index = last_comma_index + 1
+        elif i == len(vep_info_str) - 1:
+            # omit the last character as it will be a newline
+            trans_str = vep_info_str[start_index:-1]
+            if trans_str.split("|")[trans_gene_index] == variant.gene_name:
+                transcripts.append(Transcript(vep_info_str[start_index:-1],
+                                   lof_annot, header))
 
-            else:
-                curr_trans += trans_component
-
-        else:
-            curr_trans += trans_component
+    variant.set_transcripts(transcripts)
 
 
 class Gene:
@@ -144,18 +144,9 @@ class Gene:
 
 
 class Transcript:
-
     def __init__(self, info_str, lof_annot, header):
-
-        header_items = header.split("|")
-        info_items = info_str.split("|")
-
-        hgvsc_index = header_items.index("HGVSc")
-        lof_index = header_items.index(lof_annot)
-
-        self.hgvsc = info_items[hgvsc_index]
-        self.lof = info_items[lof_index]
-        self.info_str = info_str
+        self.info = dict(zip(header.split("|"), info_str.split("|")))
+        self.lof = self.info[lof_annot]
 
     def __str__(self):
-        return self.info_str
+        return "|".join(list(self.info.values()))
