@@ -9,9 +9,9 @@ available in gnomADv3 and vice versa.
 
 ## Release ##
 
-**gNALI 1.0.5**
+**gNALI 1.1.0**
 
-This release adds support for gnomADv3.1.1 and a verbose error logging option.
+This release adds functionality to work with VCF records with multiple transcripts and fixes handling of overlapping genes.
 
 
 ## Resources ##
