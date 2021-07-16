@@ -83,19 +83,31 @@ class Variant:
 
 
 def split_transcripts_from_rec(variant, header, lof_id, lof_annot):
-    transcripts = []
-    start_index = 0
-    last_comma_index = 0
-    num_delims = header.count("|")
-    delims_seen = 0
+    """Parse a VCF record for individual transcript loss-of-function
+        annotations.
+
+    Args:
+        variant: Variant object
+        header: loss-of-function header line
+        lof_id: loss-of-function tool ID from a RuntimeConfig
+        lof_annot:  loss-of-function tool annotation from a RuntimeConfig
+    """
     vep_info_str = variant.info[lof_id]
+    num_delims = header.count("|")
     trans_gene_index = header.split("|").index("SYMBOL")
 
+    start_index = 0
+    last_comma_index = 0
+    delims_seen = 0
+
+    transcripts = []
     for i, char in enumerate(vep_info_str):
+
         if char == ",":
             last_comma_index = i
         elif char == "|":
             delims_seen += 1
+
         if delims_seen == num_delims + 1:
             trans_str = vep_info_str[start_index:last_comma_index]
             if trans_str.split("|")[trans_gene_index] == variant.gene_name:
