@@ -19,18 +19,15 @@ specific language governing permissions and limitations under the License.
 
 class Variant:
 
-    chrom = ''
-    pos = ''
-    id = ''
-    ref = ''
-    alt = ''
-    qual = ''
-    filter = ''
-    info = {}
-    info_str = ''
-    record_str = ''
+    def __init__(self, gene, record, lof_id, lof_annot, lof_header):
+        """Args:
+            gene: name of gene
+            record: VCF record
+            lof_id: id of LoF annotation tool used (specified in config)
+            lof_annot: annot of LoF annotation tool used (specified in config)
+            lof_header: VCF header line of LoF annotation tool used
+        """
 
-    def __init__(self, gene, record):
         self.gene_name = gene
         self.record_str = record
         self.chrom, self.pos, self.id, self.ref, \
@@ -39,6 +36,9 @@ class Variant:
         self.info = dict([info_item.split("=", 1) for
                          info_item in self.info_str.split(";")
                          if len(info_item.split("=", 1)) > 1])
+        self.transcripts = []
+
+        split_transcripts_from_rec(self, lof_header, lof_id, lof_annot)
 
     def __str__(self):
         if self.info_str[-1] == '\n':
@@ -65,14 +65,81 @@ class Variant:
         return (self.chrom, self.pos, self.id, self.ref,
                 self.alt, self.qual, self.filter, vep_str)
 
+    def as_tuple_basic(self):
+        return (self.chrom, self.pos, self.id, self.ref,
+                self.alt, self.qual, self.filter)
+
+    def remove_transcript(self, transcript):
+        self.transcripts.remove(transcript)
+
+    def set_transcripts(self, transcripts):
+        self.transcripts = transcripts
+
+    def num_transcripts(self):
+        return len(self.transcripts)
+
+    def multiple_transcripts(self):
+        return len(self.transcripts) > 1
+
+
+def split_transcripts_from_rec(variant, header, lof_id, lof_annot):
+    """Parse a VCF record for individual transcript loss-of-function
+        annotations.
+
+    Args:
+        variant: Variant object
+        header: loss-of-function header line
+        lof_id: loss-of-function tool ID from a RuntimeConfig
+        lof_annot:  loss-of-function tool annotation from a RuntimeConfig
+    """
+    vep_info_str = variant.info[lof_id]
+    num_delims = header.count("|")
+    trans_gene_index = header.split("|").index("SYMBOL")
+
+    start_index = 0
+    last_comma_index = 0
+    delims_seen = 0
+
+    transcripts = []
+    enough_delims = False
+
+    # Parse VEP annotation character by character
+    for i, char in enumerate(vep_info_str):
+        # edge case for last character
+        if i == len(vep_info_str) - 1:
+            # omit last character, VCF records end with newline
+            trans_str = vep_info_str[start_index:-1]
+            # Don't add transcript if transcript gene is not what is expected
+            # (this can happen with overlapping genes)
+            if trans_str.split("|")[trans_gene_index] == variant.gene_name:
+                transcripts.append(Transcript(trans_str, lof_annot, header))
+            variant.set_transcripts(transcripts)
+            return
+
+        if char == "|" and not enough_delims:
+            delims_seen += 1
+            if delims_seen == num_delims:
+                enough_delims = True
+        # Once we've hit one extra delimiter, backtrack to find where
+        # the last transcript ended
+        elif char == "|" and enough_delims:
+            trans_str = vep_info_str[start_index:last_comma_index]
+            if trans_str.split("|")[trans_gene_index] == variant.gene_name:
+                transcripts.append(Transcript(trans_str, lof_annot, header))
+            delims_seen = 1
+            enough_delims = False
+            start_index = last_comma_index + 1
+        elif enough_delims and char == ",":
+            last_comma_index = i
+
 
 class Gene:
-    name = None
-    location = None
-    status = None
 
     def __init__(self, name, **kwargs):
         self.name = name
+        self.location = None
+        self.status = None
+        self.variants = []
         for key, val in kwargs.items():
             if key == "location":
                 self.location = val
@@ -85,5 +152,21 @@ class Gene:
     def set_status(self, status):
         self.status = status
 
+    def add_variants(self, variants):
+        self.variants.extend(variants)
+
+    def num_variants(self):
+        return len(self.variants)
+
     def __str__(self):
         return "{};{};{}".format(self.name, self.location, self.status)
+
+
+class Transcript:
+    def __init__(self, info_str, lof_annot, header):
+        self.info_str = info_str
+        lof_index = header.split("|").index(lof_annot)
+        self.lof = self.info_str.split("|")[lof_index]
+
+    def __str__(self):
+        return self.info_str
