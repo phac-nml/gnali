@@ -251,7 +251,7 @@ class TestGNALIMethods:
 
     ### Tests for get_plof_variants() ######################
     def test_get_variants_happy(self, monkeypatch):
-        target_list = [Gene('CCR5', location="3:46411633-46417697")]
+        target_genes = [Gene('CCR5', location="3:46411633-46417697")]
         
         expected_variants = []
         with open(EXPECTED_PLOF_VARIANTS, 'r') as test_file:
@@ -270,11 +270,10 @@ class TestGNALIMethods:
         monkeypatch.setattr(gnali, "get_db_tbi", mock_get_db_tbi)
 
         temp_dir = tempfile.TemporaryDirectory()
-        header, method_variants = gnali.get_variants(target_list, db_config, 
-                                                     [Filter("homozygous-controls","controls_nhomalt>0")],
-                                                     temp_dir.name, None, False)
-        method_variants = [str(variant) for variant in method_variants]
-
+        header = gnali.get_variants(target_genes, db_config, 
+                                    [Filter("homozygous-controls","controls_nhomalt>0")],
+                                    temp_dir.name, None, False)
+        method_variants = [var.record_str + "\n" for var in sum([gene.variants for gene in target_genes], [])]
         assert expected_variants == method_variants
 
 
@@ -305,26 +304,58 @@ class TestGNALIMethods:
     ########################################################
 
     def test_extract_lof_annotations(self):
+        
+
+        config_file = open(DB_CONFIG_FILE, 'r')
+        config = Config('gnomadv2.1.1', yaml.load(config_file.read(), Loader=yaml.FullLoader))
+        config = RuntimeConfig(config)
+        data_file = next((file for file in config.files if file.name == 'exomes'), None)
+        tbx = pysam.TabixFile(data_file.path)
+        header = [line for line in tbx.header if "ID=vep" in line][0]
+
+        genes = [Gene("CCR5")]
         test_variants = []
         with open(EXPECTED_PLOF_VARIANTS, 'r') as test_file:
             for row in test_file:
-                row = Variant(None, str(row))
+                row = Variant("CCR5", str(row), "vep", "LoF", header)
                 test_variants.append(row)
+        genes[0].add_variants(test_variants)
+        num_trans = sum([var.num_transcripts() for var in genes[0].variants])
+        print(num_trans)
+        
+        method_results, results_as_vcf = gnali.extract_lof_annotations(genes, config, False)
 
-        config = self.get_db_config(DB_CONFIG_FILE, 'gnomadv2.1.1')
-        method_results, results_as_vcf = gnali.extract_lof_annotations(test_variants, config, False)
+        variants = genes[0].variants
+        variant_records = [variant.record_str for variant in variants]
+        results_as_vcf = variant_records
+        variant_tuple = []
 
-        test_variants = [variant.as_tuple_vep(config.lof.get('id')) for variant in test_variants]
-        results = np.asarray(test_variants, dtype=str)
+        for variant in variants:
+            if not variant.multiple_transcripts():
+                variant_tuple.append(variant.as_tuple_vep(config.lof.get('id')))
+            else:
+                for trans in variant.transcripts:
+                    variant.as_tuple_vep(config.lof.get('id'))[-1].split(",")
+                    variant_tuple.extend([variant.as_tuple_basic() +
+                                        (str(trans),)])
+        results = np.asarray(variant_tuple, dtype=str)
         results = pd.DataFrame(data=results)
 
-        results.columns = ["Chromosome", "Position_Start", "RSID", "Reference_Allele", "Alternate_Allele", "Score", "Quality", "Codes"]
-        results_codes = pd.DataFrame(results['Codes'].str.split('|',5).tolist(),
-                                    columns = ["LoF_Variant", "LoF_Annotation", "Confidence", "HGNC_Symbol", "Ensembl Code", "Rest"])
+        results.columns = ["Chromosome", "Position_Start", "RSID",
+                       "Reference_Allele", "Alternate_Allele",
+                       "Score", "Quality", "VEP"]
+
+        results_codes = pd.DataFrame(results['VEP'].str.split('|', 5).tolist(),
+                                    columns=["LoF_Variant", "LoF_Annotation",
+                                            "Confidence", "HGNC_Symbol",
+                                            "Ensembl Code", "Rest"])
+        results_codes['HGVSc'] = results_codes.Rest.str.split("|", 6).str[5]
+
         results_codes.drop('Rest', axis=1, inplace=True)
         results_codes.drop('Confidence', axis=1, inplace=True)
-        results.drop('Codes', axis=1, inplace=True)
+        results.drop('VEP', axis=1, inplace=True)
         results = pd.concat([results, results_codes], axis=1)
+
         expected_results = results.drop_duplicates(keep='first', inplace=False)
 
         assert expected_results.equals(method_results)
