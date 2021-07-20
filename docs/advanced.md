@@ -72,7 +72,7 @@ The detailed output file contains the high-confidence loss-of-function transcrip
 The file shown below can also be found [here](https://github.com/phac-nml/gnali/blob/docs/examples/outputs/output-advanced/Nonessential_Host_Genes_(Detailed).txt).
 
 ```txt
-> cat output-advanced/Nonessential_Host_Genes_\(Detailed\).txt:
+output-advanced/Nonessential_Host_Genes_\(Detailed\).txt:
 ```
 | Chromosome | Position_Start | RSID | Reference_Allele | Alternate_Allele | Score | Quality | LoF_Variant | LoF_Annotation | HGNC_Symbol | Ensembl Code | HGVSc | african-AC | african-AN | african-AF | ashkenazi-jewish-AC | ashkenazi-jewish-AN | ashkenazi-jewish-AF | european-non-finnish-AC | european-non-finnish-AN | european-non-finnish-AF | finnish-AC | finnish-AN | finnish-AF | south-asian-AC | south-asian-AN | south-asian-AF | latino-AC | latino-AN | latino-AF | east-asian-AC | east-asian-AN | east-asian-AF | other-AC | other-AF | other-AN | male-AC | male-AF | male-AN | female-AC | female-AN | female-AF |
 |------------|----------------|------|------------------|------------------|-------|---------|-------------|----------------|-------------|--------------|-------|------------|------------|------------|---------------------|---------------------|---------------------|-------------------------|-------------------------|-------------------------|------------|------------|------------|----------------|----------------|----------------|-----------|-----------|-----------|---------------|---------------|---------------|----------|----------|----------|---------|---------|---------|-----------|-----------|-----------|
@@ -93,7 +93,7 @@ When using the `-v`/`--vcf` flag, variants passing filtering as well as headers 
 The file shown below can also be found [here](https://github.com/phac-nml/gnali/blob/docs/examples/outputs/output-advanced/Nonessential_Gene_Variants.vcf).
 
 ```txt
-output-advanced/Nonessential_Gene_Variants.vcf:
+> cat output-advanced/Nonessential_Gene_Variants.vcf:
 
 ##fileformat=VCFv4.2
 ##hailversion=0.2.7-c860755b5da3
