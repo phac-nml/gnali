@@ -14,7 +14,7 @@ gNALI defines a few filters natively. We can view them using the help command.
                         spaces. Options: {'gnomadv2.1.1': {'homozygous-
                         controls': 'controls_nhomalt>0', 'heterozygous-
                         controls': 'controls_nhomalt=0', 'homozygous':
-                        'nhomalt>0'}, 'gnomadv3': {'homozygous': 'nhomalt>0'}}
+                        'nhomalt>0'}, 'gnomadv3.1.1': {'homozygous': 'nhomalt>0'}}
 ...
 ```
 

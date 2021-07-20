@@ -1,7 +1,7 @@
 # gNALI #
 
 gNALI (**g**ene **n**onessentiality **a**nd **l**oss-of-function **i**dentifier) is a tool to find and filter (high-confidence) 
-potential loss-of-function variants of human genes. gNALI has built-in support for [gnomADv2.1.1 and gnomadv3](https://gnomad.broadinstitute.org/) 
+potential loss-of-function variants of human genes. gNALI has built-in support for [gnomADv2.1.1 and gnomadv3.1.1](https://gnomad.broadinstitute.org/) 
 and can be configured to be used with other VCF databases.
 
 NOTE: loss-of-function is influenced by the genome build. Not all variants available in gnomADv2.1.1 are
