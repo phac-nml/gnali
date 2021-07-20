@@ -93,7 +93,7 @@ When using the `-v`/`--vcf` flag, variants passing filtering as well as headers 
 The file shown below can also be found [here](https://github.com/phac-nml/gnali/blob/docs/examples/outputs/output-advanced/Nonessential_Gene_Variants.vcf).
 
 ```txt
-> cat output-advanced/Nonessential_Gene_Variants.vcf:
+> cat output-advanced/Nonessential_Gene_Variants.vcf
 
 ##fileformat=VCFv4.2
 ##hailversion=0.2.7-c860755b5da3
