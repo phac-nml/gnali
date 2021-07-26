@@ -46,7 +46,7 @@ The following parameters relate to custom configuration files:
 
 | Option | Alternative | Parameter | Description |
 |--------|-------------|-----------|-------------|
-| -c | --config | `yaml` | Path to a configuration file (see below). Defaults to gNALI's own configuration file (with support for gnomADv2.1.1 and gnomADv3) if unspecified. |
+| -c | --config | `yaml` | Path to a configuration file (see below). Defaults to gNALI's own configuration file (with support for gnomADv2.1.1 and gnomADv3.1.1) if unspecified. |
 | None | --config_template_grch37 | None | Running gNALI with this parameter will generate a fillable configuration file template in the current directory for a VCF database using the GRCh37 reference genome. |
 | None | --config_template_grch38 | None | Running gNALI with this parameter will generate a fillable configuration file template in the current directory for a VCF database using the GRCh38 reference genome. |
 

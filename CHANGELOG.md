@@ -3,6 +3,20 @@
 All notable changes to gNALI will be documented in this file.
 
 
+## 1.1.0 ##
+ 
+2021-07-16
+
+### Added ###
+
+- Add functionality to work with VCF records with multiple transcripts
+
+### Changed ###
+ 
+- Changed detailed output file to have one line per transcript passing filtering
+- Fixed an error in handling overlapping genes
+
+
 ## 1.0.5 ##
  
 2021-06-03

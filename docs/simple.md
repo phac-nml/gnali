@@ -53,64 +53,168 @@ also contains a list of genes that could not be found in the specified database,
 The file shown below can also be found [here](https://github.com/phac-nml/gnali/blob/docs/examples/outputs/output-simple/Nonessential_Host_Genes_(Basic).txt).
 
 ```bash
-> cat output-simple/Nonessential_Host_Genes_\(Basic\).txt
-HGNC_Symbol Status
-CCR5        HC LoF found
-ALCAM       HC LoF found
+output-simple/Nonessential_Host_Genes_\(Basic\).txt:
 ```
+| HGNC_Symbol | Status |
+|-------------|--------|
+| CCR5 | HC LoF found |
+| ALCAM | HC LoF found |
+
 
 
 ### Detailed Output ###
 
-The detailed output file contains the high-confidence loss-of-function varaints that pass filtering as VCF records, and replaces the INFO column with loss-of-function annotations extracted from it.
+The detailed output file contains the high-confidence loss-of-function variants that pass filtering with some annotations extracted.
 
 The file shown below can also be found [here](https://github.com/phac-nml/gnali/blob/docs/examples/outputs/output-simple/Nonessential_Host_Genes_(Detailed).txt).
 
 ```bash
-> cat output-simple/Nonessential_Host_Genes_\(Detailed\).txt
-Chromosome	Position_Start	RSID	        Reference_Allele	                Alternate_Allele	Score	    Quality	LoF_Variant	LoF_Annotation                          HGNC_Symbol	Ensembl Code	    
-3			46414403		rs748244565	    CAA	                                C	                2676.90	    PASS	-			frameshift_variant	    				CCR5		ENSG00000160791
-3			46414434		rs758662716	    AT	                                A	                4280.25	    PASS	-			frameshift_variant	    				CCR5		ENSG00000160791
-3			46414436		rs200209014	    TA	                                T	                58824.12	PASS	-			frameshift_variant	    				CCR5		ENSG00000160791
-3			46414443		rs369206494	    C	                                A	                73505.83	PASS	A			stop_gained			    				CCR5		ENSG00000160791
-3			46414453		rs760428955	    C	                                A	                2656.37	    PASS	A			stop_gained			    				CCR5		ENSG00000160791
-3			46414454		rs780235820	    C	                                CA	                3750.42	    PASS	A			frameshift_variant	    				CCR5		ENSG00000160791
-3			46414457		rs768398484	    A	                                T	                2699.39	    PASS	T			stop_gained			    				CCR5		ENSG00000160791
-3			46414541		rs747388089	    CT	                                C	                6002.15	    PASS	-			frameshift_variant	    				CCR5		ENSG00000160791
-3			46414604		rs769057798	    AACCTGGC	                        A	                2763.36	    PASS	-			frameshift_variant	    				CCR5		ENSG00000160791
-3			46414651		rs777330502	    G	                                A	                25606.70	PASS	A			stop_gained			    				CCR5		ENSG00000160791
-3			46414696		rs1800560	    T	                                A	                540878.23	PASS	A			stop_gained			    				CCR5		ENSG00000160791
-3			46414697		rs1294651548	C	                                T	                5088.14	    PASS	T			stop_gained			    				CCR5		ENSG00000160791
-3			46414702		rs56068070	    CTT	                                C	                19747.17	PASS	-			frameshift_variant	    				CCR5		ENSG00000160791
-3			46414714		rs1249868905	C	                                CTA	                1526.36	    PASS	TA			frameshift_variant	    				CCR5		ENSG00000160791
-3			46414774		rs1372217574	C	                                G	                950.36	    PASS	G			stop_gained			    				CCR5		ENSG00000160791
-3			46414791		rs1215591945	CTG	                                C	                1355.36	    PASS	-			frameshift_variant	        			CCR5		ENSG00000160791
-3			46414909		rs1188964664	AG	                                A	                712.37	    PASS	-			frameshift_variant	    				CCR5		ENSG00000160791
-3			46414935		rs938517991	    AT	                                A	                9974.16	    PASS	-			frameshift_variant	    				CCR5		ENSG00000160791
-3			46414943		rs775750898	    TACAGTCAGTATCAATTCTGGAAGAATTTCCAG	T	                74264261.52	PASS	-			frameshift_variant	    				CCR5		ENSG00000160791
-3			46414945		rs746626584	    C	                                G	                74247720.02	PASS	G			stop_gained			    				CCR5		ENSG00000160791
-3			46414949		rs113869679	    C	                                T	                74238735.71	PASS	T			stop_gained			    				CCR5		ENSG00000160791
-3			46415066		rs146972949	    C	                                T	                120238.89	PASS	T			stop_gained			    				CCR5		ENSG00000160791
-3			46415168		rs910924386	    AC	                                A	                156.36	    PASS	-			frameshift_variant	    				CCR5		ENSG00000160791
-3			46415174		rs775289875	    C	                                T	                8429.37	    PASS	T			stop_gained			    				CCR5		ENSG00000160791
-3			46415177		rs1446832405	G	                                T	                700.38	    PASS	T			stop_gained			    				CCR5		ENSG00000160791
-3			46415238		rs1294154353	CAG	                                C	                1387.53	    PASS	-			frameshift_variant	    				CCR5		ENSG00000160791
-3			46415271		rs774050135	    AC	                                A	                10605.94	PASS	-			frameshift_variant	    				CCR5		ENSG00000160791
-3			105243261		rs1401656526	T	                                TAATGC	            3920.14	    PASS	AATGC		frameshift_variant	                    ALCAM		ENSG00000170017
-3			105243324		rs748382272	    TG	                                T	                3638.37	    PASS	-			frameshift_variant	                    ALCAM		ENSG00000170017
-3			105252448		rs763351683	    TG	                                T	                904.36	    PASS	-			frameshift_variant&splice_region_variantALCAM		ENSG00000170017
-3			105253574		rs753626110	    GGAGTACAA	                        G	                26588.50	PASS	-			frameshift_variant	                    ALCAM		ENSG00000170017
-3			105258923		rs1409380546	G	                                T	                230.36	    PASS	T			stop_gained	                            ALCAM		ENSG00000170017
-3			105266064		rs748308492	    C	                                A	                7063.46	    PASS	A			stop_gained	                            ALCAM		ENSG00000170017
-3			105266100		rs1189829981	AAG	                                A	                54.42	    PASS	-			frameshift_variant	                    ALCAM		ENSG00000170017
-3			105266129		rs1165397359	G	                                T	                244.57	    PASS	T	        splice_donor_variant	                ALCAM		ENSG00000170017
-3			105268977	    .	            G	                                T	                273.40	    PASS	T			stop_gained	                            ALCAM		ENSG00000170017
-3			105270986		rs1249936676	A	                                G	                151.43	    PASS	G	        splice_acceptor_variant	                ALCAM		ENSG00000170017
-3			105270987		rs764096754	    G	                                A	                1329.70	    PASS	A	        splice_acceptor_variant	                ALCAM		ENSG00000170017
-3			46414434		rs758662716	    AT	                                A	                296.46	    PASS	-			frameshift_variant	    				CCR5		ENSG00000160791
-3			46414696		rs1800560	    T	                                A	                16687.73	PASS	A			stop_gained			    				CCR5		ENSG00000160791
-3			46414943		rs775750898	    TACAGTCAGTATCAATTCTGGAAGAATTTCCAG	T	                1947603.90	PASS	-			frameshift_variant	    				CCR5		ENSG00000160791
-3			46414949		rs113869679	    C	                                T	                1942568.40	PASS	T			stop_gained			    				CCR5		ENSG00000160791
-3			46415066		rs146972949	    C	                                T	                3449.38	    PASS	T			stop_gained			    				CCR5		ENSG00000160791
-3			105252445		rs1264516297	A	                                T	                208.47	    PASS	T	        splice_acceptor_variant	                ALCAM		ENSG00000170017
+output-simple/Nonessential_Host_Genes_\(Detailed\).txt:
 ```
+| Chromosome | Position_Start | RSID | Reference_Allele | Alternate_Allele | Score | Quality | LoF_Variant | LoF_Annotation | HGNC_Symbol | Ensembl_Code | HGVSc |
+|------------|----------------|------|------------------|------------------|-------|---------|-------------|----------------|-------------|--------------|-------|
+| 3 | 46414403 | rs748244565 | CAA | C | 2676.90 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000292303.4:c.11_12delAA |
+| 3 | 46414403 | rs748244565 | CAA | C | 2676.90 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000343801.4:c.11_12delAA |
+| 3 | 46414403 | rs748244565 | CAA | C | 2676.90 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000445772.1:c.11_12delAA |
+| 3 | 46414434 | rs758662716 | AT | A | 4280.25 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000292303.4:c.43delT |
+| 3 | 46414434 | rs758662716 | AT | A | 4280.25 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000343801.4:c.43delT |
+| 3 | 46414434 | rs758662716 | AT | A | 4280.25 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000445772.1:c.43delT |
+| 3 | 46414436 | rs200209014 | TA | T | 58824.12 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000292303.4:c.44delA |
+| 3 | 46414436 | rs200209014 | TA | T | 58824.12 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000343801.4:c.44delA |
+| 3 | 46414436 | rs200209014 | TA | T | 58824.12 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000445772.1:c.44delA |
+| 3 | 46414443 | rs369206494 | C | A | 73505.83 | PASS | A | stop_gained | CCR5 | ENSG00000160791 | ENST00000292303.4:c.50C>A |
+| 3 | 46414443 | rs369206494 | C | A | 73505.83 | PASS | A | stop_gained | CCR5 | ENSG00000160791 | ENST00000343801.4:c.50C>A |
+| 3 | 46414443 | rs369206494 | C | A | 73505.83 | PASS | A | stop_gained | CCR5 | ENSG00000160791 | ENST00000445772.1:c.50C>A |
+| 3 | 46414453 | rs760428955 | C | A | 2656.37 | PASS | A | stop_gained | CCR5 | ENSG00000160791 | ENST00000292303.4:c.60C>A |
+| 3 | 46414453 | rs760428955 | C | A | 2656.37 | PASS | A | stop_gained | CCR5 | ENSG00000160791 | ENST00000343801.4:c.60C>A |
+| 3 | 46414453 | rs760428955 | C | A | 2656.37 | PASS | A | stop_gained | CCR5 | ENSG00000160791 | ENST00000445772.1:c.60C>A |
+| 3 | 46414454 | rs780235820 | C | CA | 3750.42 | PASS | A | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000292303.4:c.67dupA |
+| 3 | 46414454 | rs780235820 | C | CA | 3750.42 | PASS | A | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000343801.4:c.67dupA |
+| 3 | 46414454 | rs780235820 | C | CA | 3750.42 | PASS | A | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000445772.1:c.67dupA |
+| 3 | 46414457 | rs768398484 | A | T | 2699.39 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000292303.4:c.64A>T |
+| 3 | 46414457 | rs768398484 | A | T | 2699.39 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000343801.4:c.64A>T |
+| 3 | 46414457 | rs768398484 | A | T | 2699.39 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000445772.1:c.64A>T |
+| 3 | 46414541 | rs747388089 | CT | C | 6002.15 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000292303.4:c.149delT |
+| 3 | 46414541 | rs747388089 | CT | C | 6002.15 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000343801.4:c.149delT |
+| 3 | 46414541 | rs747388089 | CT | C | 6002.15 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000445772.1:c.149delT |
+| 3 | 46414604 | rs769057798 | AACCTGGC | A | 2763.36 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000292303.4:c.212_218delACCTGGC |
+| 3 | 46414604 | rs769057798 | AACCTGGC | A | 2763.36 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000343801.4:c.212_218delACCTGGC |
+| 3 | 46414604 | rs769057798 | AACCTGGC | A | 2763.36 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000445772.1:c.212_218delACCTGGC |
+| 3 | 46414651 | rs777330502 | G | A | 25606.70 | PASS | A | stop_gained | CCR5 | ENSG00000160791 | ENST00000292303.4:c.258G>A |
+| 3 | 46414651 | rs777330502 | G | A | 25606.70 | PASS | A | stop_gained | CCR5 | ENSG00000160791 | ENST00000343801.4:c.258G>A |
+| 3 | 46414651 | rs777330502 | G | A | 25606.70 | PASS | A | stop_gained | CCR5 | ENSG00000160791 | ENST00000445772.1:c.258G>A |
+| 3 | 46414696 | rs1800560 | T | A | 540878.23 | PASS | A | stop_gained | CCR5 | ENSG00000160791 | ENST00000292303.4:c.303T>A |
+| 3 | 46414696 | rs1800560 | T | A | 540878.23 | PASS | A | stop_gained | CCR5 | ENSG00000160791 | ENST00000343801.4:c.303T>A |
+| 3 | 46414696 | rs1800560 | T | A | 540878.23 | PASS | A | stop_gained | CCR5 | ENSG00000160791 | ENST00000445772.1:c.303T>A |
+| 3 | 46414697 | rs1294651548 | C | T | 5088.14 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000292303.4:c.304C>T |
+| 3 | 46414697 | rs1294651548 | C | T | 5088.14 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000343801.4:c.304C>T |
+| 3 | 46414697 | rs1294651548 | C | T | 5088.14 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000445772.1:c.304C>T |
+| 3 | 46414702 | rs56068070 | CTT | C | 19747.17 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000292303.4:c.310_311delTT |
+| 3 | 46414702 | rs56068070 | CTT | C | 19747.17 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000343801.4:c.310_311delTT |
+| 3 | 46414702 | rs56068070 | CTT | C | 19747.17 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000445772.1:c.310_311delTT |
+| 3 | 46414714 | rs1249868905 | C | CTA | 1526.36 | PASS | TA | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000292303.4:c.323_324dupAT |
+| 3 | 46414714 | rs1249868905 | C | CTA | 1526.36 | PASS | TA | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000343801.4:c.323_324dupAT |
+| 3 | 46414714 | rs1249868905 | C | CTA | 1526.36 | PASS | TA | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000445772.1:c.323_324dupAT |
+| 3 | 46414774 | rs1372217574 | C | G | 950.36 | PASS | G | stop_gained | CCR5 | ENSG00000160791 | ENST00000292303.4:c.381C>G |
+| 3 | 46414774 | rs1372217574 | C | G | 950.36 | PASS | G | stop_gained | CCR5 | ENSG00000160791 | ENST00000343801.4:c.381C>G |
+| 3 | 46414774 | rs1372217574 | C | G | 950.36 | PASS | G | stop_gained | CCR5 | ENSG00000160791 | ENST00000445772.1:c.381C>G |
+| 3 | 46414791 | rs1215591945 | CTG | C | 1355.36 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000292303.4:c.402_403delGT |
+| 3 | 46414791 | rs1215591945 | CTG | C | 1355.36 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000343801.4:c.402_403delGT |
+| 3 | 46414791 | rs1215591945 | CTG | C | 1355.36 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000445772.1:c.402_403delGT |
+| 3 | 46414909 | rs1188964664 | AG | A | 712.37 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000292303.4:c.518delG |
+| 3 | 46414909 | rs1188964664 | AG | A | 712.37 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000343801.4:c.518delG |
+| 3 | 46414909 | rs1188964664 | AG | A | 712.37 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000445772.1:c.518delG |
+| 3 | 46414935 | rs938517991 | AT | A | 9974.16 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000292303.4:c.546delT |
+| 3 | 46414935 | rs938517991 | AT | A | 9974.16 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000343801.4:c.546delT |
+| 3 | 46414935 | rs938517991 | AT | A | 9974.16 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000445772.1:c.546delT |
+| 3 | 46414943 | rs775750898 | TACAGTCAGTATCAATTCTGGAAGAATTTCCAG | T | 74264261.52 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000292303.4:c.554_585delGTCAGTATCAATTCTGGAAGAATTTCCAGACA |
+| 3 | 46414943 | rs775750898 | TACAGTCAGTATCAATTCTGGAAGAATTTCCAG | T | 74264261.52 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000343801.4:c.554_585delGTCAGTATCAATTCTGGAAGAATTTCCAGACA |
+| 3 | 46414943 | rs775750898 | TACAGTCAGTATCAATTCTGGAAGAATTTCCAG | T | 74264261.52 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000445772.1:c.554_585delGTCAGTATCAATTCTGGAAGAATTTCCAGACA |
+| 3 | 46414945 | rs746626584 | C | G | 74247720.02 | PASS | G | stop_gained | CCR5 | ENSG00000160791 | ENST00000292303.4:c.552C>G |
+| 3 | 46414945 | rs746626584 | C | G | 74247720.02 | PASS | G | stop_gained | CCR5 | ENSG00000160791 | ENST00000343801.4:c.552C>G |
+| 3 | 46414945 | rs746626584 | C | G | 74247720.02 | PASS | G | stop_gained | CCR5 | ENSG00000160791 | ENST00000445772.1:c.552C>G |
+| 3 | 46414949 | rs113869679 | C | T | 74238735.71 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000292303.4:c.556C>T |
+| 3 | 46414949 | rs113869679 | C | T | 74238735.71 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000343801.4:c.556C>T |
+| 3 | 46414949 | rs113869679 | C | T | 74238735.71 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000445772.1:c.556C>T |
+| 3 | 46415066 | rs146972949 | C | T | 120238.89 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000292303.4:c.673C>T |
+| 3 | 46415066 | rs146972949 | C | T | 120238.89 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000343801.4:c.673C>T |
+| 3 | 46415066 | rs146972949 | C | T | 120238.89 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000445772.1:c.673C>T |
+| 3 | 46415168 | rs910924386 | AC | A | 156.36 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000292303.4:c.777delC |
+| 3 | 46415168 | rs910924386 | AC | A | 156.36 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000343801.4:c.777delC |
+| 3 | 46415168 | rs910924386 | AC | A | 156.36 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000445772.1:c.777delC |
+| 3 | 46415174 | rs775289875 | C | T | 8429.37 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000292303.4:c.781C>T |
+| 3 | 46415174 | rs775289875 | C | T | 8429.37 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000343801.4:c.781C>T |
+| 3 | 46415174 | rs775289875 | C | T | 8429.37 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000445772.1:c.781C>T |
+| 3 | 46415177 | rs1446832405 | G | T | 700.38 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000292303.4:c.784G>T |
+| 3 | 46415177 | rs1446832405 | G | T | 700.38 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000343801.4:c.784G>T |
+| 3 | 46415177 | rs1446832405 | G | T | 700.38 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000445772.1:c.784G>T |
+| 3 | 46415238 | rs1294154353 | CAG | C | 1387.53 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000292303.4:c.849_850delGA |
+| 3 | 46415238 | rs1294154353 | CAG | C | 1387.53 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000343801.4:c.849_850delGA |
+| 3 | 46415238 | rs1294154353 | CAG | C | 1387.53 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000445772.1:c.849_850delGA |
+| 3 | 46415271 | rs774050135 | AC | A | 10605.94 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000292303.4:c.882delC |
+| 3 | 46415271 | rs774050135 | AC | A | 10605.94 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000343801.4:c.882delC |
+| 3 | 46415271 | rs774050135 | AC | A | 10605.94 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000445772.1:c.882delC |
+| 3 | 46414434 | rs758662716 | AT | A | 296.46 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000292303.4:c.43delT |
+| 3 | 46414434 | rs758662716 | AT | A | 296.46 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000343801.4:c.43delT |
+| 3 | 46414434 | rs758662716 | AT | A | 296.46 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000445772.1:c.43delT |
+| 3 | 46414696 | rs1800560 | T | A | 16687.73 | PASS | A | stop_gained | CCR5 | ENSG00000160791 | ENST00000292303.4:c.303T>A |
+| 3 | 46414696 | rs1800560 | T | A | 16687.73 | PASS | A | stop_gained | CCR5 | ENSG00000160791 | ENST00000343801.4:c.303T>A |
+| 3 | 46414696 | rs1800560 | T | A | 16687.73 | PASS | A | stop_gained | CCR5 | ENSG00000160791 | ENST00000445772.1:c.303T>A |
+| 3 | 46414943 | rs775750898 | TACAGTCAGTATCAATTCTGGAAGAATTTCCAG | T | 1947603.90 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000292303.4:c.554_585delGTCAGTATCAATTCTGGAAGAATTTCCAGACA |
+| 3 | 46414943 | rs775750898 | TACAGTCAGTATCAATTCTGGAAGAATTTCCAG | T | 1947603.90 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000343801.4:c.554_585delGTCAGTATCAATTCTGGAAGAATTTCCAGACA |
+| 3 | 46414943 | rs775750898 | TACAGTCAGTATCAATTCTGGAAGAATTTCCAG | T | 1947603.90 | PASS | - | frameshift_variant | CCR5 | ENSG00000160791 | ENST00000445772.1:c.554_585delGTCAGTATCAATTCTGGAAGAATTTCCAGACA |
+| 3 | 46414949 | rs113869679 | C | T | 1942568.40 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000292303.4:c.556C>T |
+| 3 | 46414949 | rs113869679 | C | T | 1942568.40 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000343801.4:c.556C>T |
+| 3 | 46414949 | rs113869679 | C | T | 1942568.40 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000445772.1:c.556C>T |
+| 3 | 46415066 | rs146972949 | C | T | 3449.38 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000292303.4:c.673C>T |
+| 3 | 46415066 | rs146972949 | C | T | 3449.38 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000343801.4:c.673C>T |
+| 3 | 46415066 | rs146972949 | C | T | 3449.38 | PASS | T | stop_gained | CCR5 | ENSG00000160791 | ENST00000445772.1:c.673C>T |
+| 3 | 105243261 | rs1401656526 | T | TAATGC | 3920.14 | PASS | AATGC | frameshift_variant | ALCAM | ENSG00000170017 | ENST00000306107.5:c.306_310dupTGCAA |
+| 3 | 105243261 | rs1401656526 | T | TAATGC | 3920.14 | PASS | AATGC | frameshift_variant | ALCAM | ENSG00000170017 | ENST00000472644.2:c.306_310dupTGCAA |
+| 3 | 105243261 | rs1401656526 | T | TAATGC | 3920.14 | PASS | AATGC | frameshift_variant | ALCAM | ENSG00000170017 | ENST00000486979.2:c.153_157dupTGCAA |
+| 3 | 105243324 | rs748382272 | TG | T | 3638.37 | PASS | - | frameshift_variant | ALCAM | ENSG00000170017 | ENST00000306107.5:c.367delG |
+| 3 | 105243324 | rs748382272 | TG | T | 3638.37 | PASS | - | frameshift_variant | ALCAM | ENSG00000170017 | ENST00000472644.2:c.367delG |
+| 3 | 105243324 | rs748382272 | TG | T | 3638.37 | PASS | - | frameshift_variant | ALCAM | ENSG00000170017 | ENST00000486979.2:c.214delG |
+| 3 | 105252448 | rs763351683 | TG | T | 904.36 | PASS | - | frameshift_variant&splice_region_variant | ALCAM | ENSG00000170017 | ENST00000306107.5:c.464delG |
+| 3 | 105252448 | rs763351683 | TG | T | 904.36 | PASS | - | frameshift_variant | ALCAM | ENSG00000170017 | ENST00000465413.2:c.6delG |
+| 3 | 105252448 | rs763351683 | TG | T | 904.36 | PASS | - | frameshift_variant&splice_region_variant | ALCAM | ENSG00000170017 | ENST00000472644.2:c.464delG |
+| 3 | 105252448 | rs763351683 | TG | T | 904.36 | PASS | - | frameshift_variant&splice_region_variant | ALCAM | ENSG00000170017 | ENST00000486979.2:c.311delG |
+| 3 | 105253574 | rs753626110 | GGAGTACAA | G | 26588.50 | PASS | - | frameshift_variant | ALCAM | ENSG00000170017 | ENST00000306107.5:c.618_625delGTACAAGA |
+| 3 | 105253574 | rs753626110 | GGAGTACAA | G | 26588.50 | PASS | - | frameshift_variant | ALCAM | ENSG00000170017 | ENST00000389927.4:c.45_52delGTACAAGA |
+| 3 | 105253574 | rs753626110 | GGAGTACAA | G | 26588.50 | PASS | - | frameshift_variant | ALCAM | ENSG00000170017 | ENST00000465413.2:c.160_167delGTACAAGA |
+| 3 | 105253574 | rs753626110 | GGAGTACAA | G | 26588.50 | PASS | - | frameshift_variant | ALCAM | ENSG00000170017 | ENST00000472644.2:c.618_625delGTACAAGA |
+| 3 | 105253574 | rs753626110 | GGAGTACAA | G | 26588.50 | PASS | - | frameshift_variant | ALCAM | ENSG00000170017 | ENST00000486979.2:c.465_472delGTACAAGA |
+| 3 | 105258923 | rs1409380546 | G | T | 230.36 | PASS | T | stop_gained | ALCAM | ENSG00000170017 | ENST00000306107.5:c.835G>T |
+| 3 | 105258923 | rs1409380546 | G | T | 230.36 | PASS | T | stop_gained | ALCAM | ENSG00000170017 | ENST00000472644.2:c.835G>T |
+| 3 | 105258923 | rs1409380546 | G | T | 230.36 | PASS | T | stop_gained | ALCAM | ENSG00000170017 | ENST00000486979.2:c.682G>T |
+| 3 | 105266064 | rs748308492 | C | A | 7063.46 | PASS | A | stop_gained | ALCAM | ENSG00000170017 | ENST00000306107.5:c.1176C>A |
+| 3 | 105266064 | rs748308492 | C | A | 7063.46 | PASS | A | stop_gained | ALCAM | ENSG00000170017 | ENST00000389927.4:c.342C>A |
+| 3 | 105266064 | rs748308492 | C | A | 7063.46 | PASS | A | stop_gained | ALCAM | ENSG00000170017 | ENST00000465413.2:c.457C>A |
+| 3 | 105266064 | rs748308492 | C | A | 7063.46 | PASS | A | stop_gained | ALCAM | ENSG00000170017 | ENST00000472644.2:c.1176C>A |
+| 3 | 105266064 | rs748308492 | C | A | 7063.46 | PASS | A | stop_gained | ALCAM | ENSG00000170017 | ENST00000486979.2:c.1023C>A |
+| 3 | 105266100 | rs1189829981 | AAG | A | 54.42 | PASS | - | frameshift_variant | ALCAM | ENSG00000170017 | ENST00000306107.5:c.1217_1218delAG |
+| 3 | 105266100 | rs1189829981 | AAG | A | 54.42 | PASS | - | frameshift_variant | ALCAM | ENSG00000170017 | ENST00000389927.4:c.383_384delAG |
+| 3 | 105266100 | rs1189829981 | AAG | A | 54.42 | PASS | - | frameshift_variant | ALCAM | ENSG00000170017 | ENST00000465413.2:c.498_499delAG |
+| 3 | 105266100 | rs1189829981 | AAG | A | 54.42 | PASS | - | frameshift_variant | ALCAM | ENSG00000170017 | ENST00000472644.2:c.1217_1218delAG |
+| 3 | 105266100 | rs1189829981 | AAG | A | 54.42 | PASS | - | frameshift_variant | ALCAM | ENSG00000170017 | ENST00000486979.2:c.1064_1065delAG |
+| 3 | 105266129 | rs1165397359 | G | T | 244.57 | PASS | T | splice_donor_variant | ALCAM | ENSG00000170017 | ENST00000306107.5:c.1240+1G>T |
+| 3 | 105266129 | rs1165397359 | G | T | 244.57 | PASS | T | splice_donor_variant | ALCAM | ENSG00000170017 | ENST00000389927.4:c.406+1G>T |
+| 3 | 105266129 | rs1165397359 | G | T | 244.57 | PASS | T | splice_donor_variant | ALCAM | ENSG00000170017 | ENST00000465413.2:c.521+1G>T |
+| 3 | 105266129 | rs1165397359 | G | T | 244.57 | PASS | T | splice_donor_variant | ALCAM | ENSG00000170017 | ENST00000472644.2:c.1240+1G>T |
+| 3 | 105266129 | rs1165397359 | G | T | 244.57 | PASS | T | splice_donor_variant | ALCAM | ENSG00000170017 | ENST00000486979.2:c.1087+1G>T |
+| 3 | 105268977 | . | G | T | 273.40 | PASS | T | stop_gained | ALCAM | ENSG00000170017 | ENST00000306107.5:c.1381G>T |
+| 3 | 105268977 | . | G | T | 273.40 | PASS | T | stop_gained | ALCAM | ENSG00000170017 | ENST00000389927.4:c.547G>T |
+| 3 | 105268977 | . | G | T | 273.40 | PASS | T | stop_gained | ALCAM | ENSG00000170017 | ENST00000465413.2:c.662G>T |
+| 3 | 105268977 | . | G | T | 273.40 | PASS | T | stop_gained | ALCAM | ENSG00000170017 | ENST00000472644.2:c.1381G>T |
+| 3 | 105268977 | . | G | T | 273.40 | PASS | T | stop_gained | ALCAM | ENSG00000170017 | ENST00000486979.2:c.1228G>T |
+| 3 | 105270986 | rs1249936676 | A | G | 151.43 | PASS | G | splice_acceptor_variant | ALCAM | ENSG00000170017 | ENST00000306107.5:c.1508-2A>G |
+| 3 | 105270986 | rs1249936676 | A | G | 151.43 | PASS | G | splice_acceptor_variant | ALCAM | ENSG00000170017 | ENST00000389927.4:c.674-2A>G |
+| 3 | 105270986 | rs1249936676 | A | G | 151.43 | PASS | G | splice_acceptor_variant | ALCAM | ENSG00000170017 | ENST00000465413.2:c.789-2A>G |
+| 3 | 105270986 | rs1249936676 | A | G | 151.43 | PASS | G | splice_acceptor_variant | ALCAM | ENSG00000170017 | ENST00000486979.2:c.1355-2A>G |
+| 3 | 105270987 | rs764096754 | G | A | 1329.70 | PASS | A | splice_acceptor_variant | ALCAM | ENSG00000170017 | ENST00000306107.5:c.1508-1G>A |
+| 3 | 105270987 | rs764096754 | G | A | 1329.70 | PASS | A | splice_acceptor_variant | ALCAM | ENSG00000170017 | ENST00000389927.4:c.674-1G>A |
+| 3 | 105270987 | rs764096754 | G | A | 1329.70 | PASS | A | splice_acceptor_variant | ALCAM | ENSG00000170017 | ENST00000465413.2:c.789-1G>A |
+| 3 | 105270987 | rs764096754 | G | A | 1329.70 | PASS | A | splice_acceptor_variant | ALCAM | ENSG00000170017 | ENST00000486979.2:c.1355-1G>A |
+| 3 | 105252445 | rs1264516297 | A | T | 208.47 | PASS | T | splice_acceptor_variant | ALCAM | ENSG00000170017 | ENST00000306107.5:c.460-2A>T |
+| 3 | 105252445 | rs1264516297 | A | T | 208.47 | PASS | T | splice_acceptor_variant | ALCAM | ENSG00000170017 | ENST00000472644.2:c.460-2A>T |
+| 3 | 105252445 | rs1264516297 | A | T | 208.47 | PASS | T | splice_acceptor_variant | ALCAM | ENSG00000170017 | ENST00000486979.2:c.307-2A>T |

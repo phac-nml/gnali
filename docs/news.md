@@ -1,10 +1,10 @@
 # News #
 
-## 1.0.5 ##
+## 1.1.0 ##
 
-2021-06-03
+2021-07-16
 
-This release adds support for gnomADv3.1.1 and a verbose error logging option.
+This release adds functionality to work with VCF records with multiple transcripts and fixes handling of overlapping genes.
 
 
 * **GitHub**: [https://github.com/phac-nml/gnali](https://github.com/phac-nml/gnali)
