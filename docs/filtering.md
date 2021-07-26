@@ -14,7 +14,7 @@ gNALI defines a few filters natively. We can view them using the help command.
                         spaces. Options: {'gnomadv2.1.1': {'homozygous-
                         controls': 'controls_nhomalt>0', 'heterozygous-
                         controls': 'controls_nhomalt=0', 'homozygous':
-                        'nhomalt>0'}, 'gnomadv3': {'homozygous': 'nhomalt>0'}}
+                        'nhomalt>0'}, 'gnomadv3.1.1': {'homozygous': 'nhomalt>0'}}
 ...
 ```
 
@@ -25,8 +25,8 @@ We can see we have three predefined filters (and the filter expressions they use
 * `heterozygous-controls` will filter for variants with a non-zero number of heterozygous samples in the control group 
 * `homozygous` will filter for variants with a non-zero number of homozygous samples
 
-### gnomADv3 Filters ###
-We can see we have one predefined filters (and the filter expression it usse) for gnomADv3 available:
+### gnomADv3.1.1 Filters ###
+We can see we have one predefined filters (and the filter expression it usse) for gnomADv3.1.1 available:
 
 * `homozygous` will filter for variants with a non-zero number of homozygous samples
 
@@ -928,7 +928,7 @@ Note that not all gnomAD annotations are supported as filters by gNALI.
 | controls_nhomalt_popmax | Integer | Count of homozygous individuals in the population with the maximum allele frequency in the controls subset |
 
 
-### gnomADv3 Filters ###
+### gnomADv3.1.1 Filters ###
 
 | Annotation | Value Type | Description |
 |------------|------------|-------------|

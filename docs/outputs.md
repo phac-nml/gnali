@@ -23,7 +23,7 @@ All input genes will be flagged with one of the following:
 
 ## Detailed output ##
 
-Contains variant records with loss-of-function annotations and (optionally) [population frequency](parameters.md#output) annotations extracted.
+Contains loss-of-function variants passing filtering with some annotations extracted (and optionally [population frequency](parameters.md#output) data).
 
 
 ## VCF output ##

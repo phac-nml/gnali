@@ -159,6 +159,7 @@ def find_test_locations(genes, gene_descs, db_info):
             gene.set_location(location="{prefix}{}:{}-{}"
                                        .format(chrom, start, end,
                                                prefix=prefix))
+
     return genes
 
 
@@ -335,7 +336,7 @@ def get_variants(genes, db_info, filter_objs, output_dir,
         filters, and user-specified additional filters.
 
     Args:
-        target_list: list of chromosome locations to check
+        genes: list of Gene objects
         db_info: configuration of database
         filter_objs: list of all (predefined and additional)
                         filters as Filter objects
@@ -374,26 +375,29 @@ def get_variants(genes, db_info, filter_objs, output_dir,
                 records = tbx.fetch(reference=gene.location)
                 coverage[gene.name] = True
 
-                # update to convert to Variants before filter calls
-                records = [Variant(gene.name, record) for record in records]
-
                 if not db_info.has_lof_annots:
                     header, variants = VEP.annotate_vep_loftee(header,
                                                                variants,
                                                                db_info)
+
                 lof_index = None
                 # get index of LoF in header
                 annot_header = [line for line in header
                                 if "ID={}".format(db_info.lof['id'])
-                                in line]
-                lof_index = str(annot_header).split("|") \
+                                in line][0]
+                lof_index = annot_header.split("|") \
                     .index(db_info.lof['annot'])
+
+                # update to convert to Variants before filter calls
+                records = [Variant(gene.name, record, db_info.lof['id'],
+                           db_info.lof['annot'], annot_header) for
+                           record in records]
 
                 # filter records
                 records = filter_plof(genes, records, db_info, lof_index)
                 records = apply_filters(genes, records, db_info, filter_objs)
+                gene.add_variants(records)
 
-                variants = np.concatenate([variants, records])
             except ValueError as error:
                 # ValueError means that location used in TabixFile.fetch()
                 # does not exist in the database
@@ -412,19 +416,21 @@ def get_variants(genes, db_info, filter_objs, output_dir,
         if not coverage[gene.name] and gene.status is None:
             gene.set_status("No variants in database")
 
-    return header, variants
+    return header
 
 
 def apply_filters(genes, records, db_info, filters):
     """Apply predefined and additional filters.
 
     Args:
+        genes: list of Gene objects
         records: list of records as Variant objects
         db_info: database configuration as Config object
         filters: list of filters as Filter objects
     """
     passed = []
     qual_filter = "PASS"
+
     try:
         for record in records:
             # quality filter
@@ -446,6 +452,7 @@ def apply_filters(genes, records, db_info, filters):
     except Exception as error:
         print(error)
         raise
+
     return passed
 
 
@@ -453,22 +460,34 @@ def filter_plof(genes, records, db_info, lof_index):
     """Apply loss-of-function filters.
 
     Args:
+        genes: list of Gene objects
         records: list of records as Variant objects
         db_info: database configuration as Config object
         lof_index: index of loss-of-function indicator in header
     """
-    passed = []
+    passed_variants = []
     passed_genes = []
+
     try:
         for record in records:
             if lof_index is not None:
-                lof_tool = db_info.lof['id']
                 conf_filter = db_info.lof['filters']['confidence']
-                vep_str = record.info[lof_tool]
-                lof = vep_str.split("|")[lof_index]
-                if lof == conf_filter:
-                    passed.append(record)
-                    passed_genes.append(record.gene_name)
+                already_passed = False
+                passed_transcripts = []
+                for trans in record.transcripts.copy():
+                    lof = trans.lof
+                    if lof == conf_filter:
+                        passed_transcripts.append(trans)
+                        if not already_passed:
+                            passed_genes.append(record.gene_name)
+                            already_passed = True
+                    else:
+                        record.remove_transcript(trans)
+
+                if len(passed_transcripts) > 0:
+                    record.set_transcripts(passed_transcripts)
+                    passed_variants.append(record)
+
     except Exception as error:
         print(error)
         raise
@@ -478,26 +497,32 @@ def filter_plof(genes, records, db_info, lof_index):
             gene.set_status("HC LoF found, failed filtering")
         elif gene.status is None:
             gene.set_status("No HC LoF found")
-    return passed
+
+    return passed_variants
 
 
-def extract_lof_annotations(variants, db_info, get_pop_freqs):
+def extract_lof_annotations(genes, db_info, get_pop_freqs):
     """Take the variants returned from get_variants() and
         organize them into dataframes, then extract the
         loss-of-function annotations.
 
     Args:
-        variants: list of variants from get_variants()
-                  as Variant objects
+        genes: list of Gene objects
         db_info: database configuration object
         get_pop_freqs: whether or not we additionaly get the
                         population frequencies
     """
+    variants = sum([gene.variants for gene in genes], [])
     variant_records = [variant.record_str for variant in variants]
-    results_as_vcf = variant_records
-    variant_tuple = [variant.as_tuple_vep(db_info.lof.get('id'))
-                     for variant in variants]
-    results = np.asarray(variant_tuple, dtype=str)
+    # Remove duplicate VCF records, this can happen with overlapping genes
+    results_as_vcf = list(dict.fromkeys(variant_records))
+    variant_tuples = []
+
+    for variant in variants:
+        for trans in variant.transcripts:
+            variant_tuples.append(variant.as_tuple_basic() +
+                                  (str(trans),))
+    results = np.asarray(variant_tuples, dtype=str)
     results = pd.DataFrame(data=results)
 
     if len(results.columns) == 1:
@@ -513,12 +538,12 @@ def extract_lof_annotations(variants, db_info, get_pop_freqs):
                                  columns=["LoF_Variant", "LoF_Annotation",
                                           "Confidence", "HGNC_Symbol",
                                           "Ensembl Code", "Rest"])
+    results_codes['HGVSc'] = results_codes.Rest.str.split("|", 6).str[5]
 
     results_codes.drop('Rest', axis=1, inplace=True)
     results_codes.drop('Confidence', axis=1, inplace=True)
     results.drop('VEP', axis=1, inplace=True)
     results = pd.concat([results, results_codes], axis=1)
-    results = results.drop_duplicates(keep='first', inplace=False)
 
     if get_pop_freqs:
         pop_freqs = extract_pop_freqs(variants, db_info)
@@ -537,19 +562,30 @@ def extract_pop_freqs(variants, config):
     # Make a tuple list from the population-frequencies section
     # in config file
     pop_groups = config.population_frequencies
-    pop_freqs = np.empty(shape=(len(variants), len(pop_groups)), dtype='str')
+
+    num_transcripts = [variant.num_transcripts() for variant in variants]
+    total_transcripts = sum(num_transcripts)
+
+    pop_freqs = np.empty(shape=(total_transcripts, len(pop_groups)),
+                         dtype='str')
     pop_freqs = pd.DataFrame(data=pop_freqs)
+
     # Fill array with population frequencies by variant
     for col, group in enumerate(list(pop_groups.values())):
-        for row, variant in enumerate(variants):
+        row = 0
+        for index, variant in enumerate(variants):
             if group in variant.info:
                 val = variant.info[group]
                 # Convert allele frequencies to exponential form
                 if "AF" in group:
                     val = '{:.10e}'.format(float(val))
-                pop_freqs.loc[row, col] = str(val)
+                for i in range(0, num_transcripts[index]):
+                    pop_freqs.loc[row, col] = str(val)
+                    row += 1
             else:
-                pop_freqs.loc[row, col] = '-'
+                for i in range(0, num_transcripts[index]):
+                    pop_freqs.loc[row, col] = '-'
+                    row += 1
 
     pop_freqs.columns = list(pop_groups.keys())
     return pop_freqs
@@ -706,13 +742,13 @@ def main():
         filters = transform_filters(db_config, args.predefined_filters,
                                     args.additional_filters)
 
-        header, variants = get_variants(genes,
-                                        db_config, filters,
-                                        results_dir, logger,
-                                        args.verbose)
+        header = get_variants(genes,
+                              db_config, filters,
+                              results_dir, logger,
+                              args.verbose)
 
         results, results_as_vcf = \
-            extract_lof_annotations(variants, db_config, args.pop_freqs)
+            extract_lof_annotations(genes, db_config, args.pop_freqs)
 
         write_results_all(results, genes, header,
                           results_as_vcf, results_dir, args.vcf)
