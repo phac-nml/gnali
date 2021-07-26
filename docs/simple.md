@@ -64,7 +64,7 @@ output-simple/Nonessential_Host_Genes_\(Basic\).txt:
 
 ### Detailed Output ###
 
-The detailed output file contains the high-confidence loss-of-function transcripts that pass filtering as VCF records, and replaces the INFO column with loss-of-function annotations extracted from it.
+The detailed output file contains the high-confidence loss-of-function variants that pass filtering with some annotations extracted.
 
 The file shown below can also be found [here](https://github.com/phac-nml/gnali/blob/docs/examples/outputs/output-simple/Nonessential_Host_Genes_(Detailed).txt).
 
