@@ -431,6 +431,9 @@ def apply_filters(genes, records, db_info, filters):
     passed = []
     qual_filter = "PASS"
 
+    any_filters_passed = False  # starts false; if we see 1 true, then in becomes true
+    all_filters_passed = True   # starts true; if we see 1 false, then it becomes false
+
     try:
         for record in records:
             # quality filter
@@ -438,17 +441,20 @@ def apply_filters(genes, records, db_info, filters):
                 continue
 
             # additional filters from user
-            filters_passed = True
             for filt in filters:
-                if not filt.apply(record):
-                    filters_passed = False
+                # Filter passes:
+                if filt.apply(record):
+                    any_filters_passed = True
                     break
-            if not filters_passed:
-                continue
-            passed.append(record)
-            for gene in genes:
-                if gene.name == record.gene_name:
-                    gene.set_status("HC LoF found")
+                # Filter fails:
+                else:
+                    all_filters_passed = False
+
+            if any_filters_passed:
+                passed.append(record)
+                for gene in genes:
+                    if gene.name == record.gene_name:
+                        gene.set_status("HC LoF found")
     except Exception as error:
         print(error)
         raise
@@ -493,7 +499,7 @@ def filter_plof(genes, records, db_info, lof_index):
         raise
 
     for gene in genes:
-        if gene.name in passed_genes:
+        if gene.name in passed_genes and gene.status != "HC LoF found":
             gene.set_status("HC LoF found, failed filtering")
         elif gene.status is None:
             gene.set_status("No HC LoF found")
