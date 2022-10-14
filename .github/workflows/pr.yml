@@ -44,6 +44,4 @@ jobs:
       run: pip install tox
     - name: Run tests
       shell: bash -l {0}
-      run:
-        gnali_get_data test
-        tox -e py36
+      run: gnali_get_data test; tox -e py36
