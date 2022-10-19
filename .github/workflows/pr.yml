@@ -1,5 +1,10 @@
 name: gnali Linting and Tests for push and PR
-on: [push, pull_request]
+on:
+  pull_request: # Run on all pull requests
+  push:
+    branches: # Run on any push to development or master
+      - development
+      - master
 
 jobs:
   flake8:
