@@ -1,5 +1,5 @@
 GRCh37:
-  - https://personal.broadinstitute.org/konradk/loftee_data/GRCh37/phylocsf_gerp.sql
+  - https://personal.broadinstitute.org/konradk/loftee_data/GRCh37/phylocsf_gerp.sql.gz
   - https://personal.broadinstitute.org/konradk/loftee_data/GRCh37/GERP_scores.final.sorted.txt.gz
   - https://personal.broadinstitute.org/konradk/loftee_data/GRCh37/GERP_scores.final.sorted.txt.gz.tbi
   - https://s3.amazonaws.com/bcbio_nextgen/human_ancestor.fa.gz

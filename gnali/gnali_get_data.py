@@ -82,9 +82,11 @@ def download_test_refs():
 
     for file_url in required_files_grch37:
         file_name = file_url.split('/')[-1]
-        download_file(file_url, "{}/{}".format(data_path_grch37, file_name),
-                      1800)
-        print("Downloaded ref file {}".format(file_name))
+        file_path = "{}/{}".format(data_path_grch37, file_name)
+        download_file(file_url, file_path, 1800)
+        print("Downloaded ref file {} (requires unzip)".format(file_name))
+        decompress_file(file_path)
+        print("Unzipped {}".format(file_name))
 
     for file_url in required_files_grch38:
         file_name = file_url.split('/')[-1]
