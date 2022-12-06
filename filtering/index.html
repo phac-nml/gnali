@@ -1,0 +1,5429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    
+    <link rel="shortcut icon" href="../img/favicon.ico">
+
+    
+    <title>Filtering - gNALI</title>
+    
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/v4-shims.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hack-font@3.3.0/build/web/hack.min.css">
+    <link href='//rsms.me/inter/inter.css' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,600,700&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
+    <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+    <link href="../css/base.min.css" rel="stylesheet">
+    <link href="../css/cinder.min.css" rel="stylesheet">
+
+    
+        
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/styles/github.min.css">
+        
+    
+    <link href="../css/extra.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+            <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+        <![endif]-->
+
+    
+
+     
+</head>
+
+<body>
+
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+
+            
+              <a class="navbar-brand" href="..">gNALI</a>
+            
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="..">Home</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">News <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../news/">News</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../CHANGELOG/">CHANGELOG</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Install <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../install/">gNALI</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../parameters/">Parameters</a>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../outputs/">Outputs</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Examples <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../simple/">Walkthrough (Simple)</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../advanced/">Walkthrough (Advanced)</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="active">
+                        <a href="./">Filtering</a>
+                    </li>
+                
+                
+                </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                            <i class="fas fa-search"></i> Search
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../advanced/">
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li class="disabled">
+                        <a rel="next" >
+                            Next <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/phac-nml/gnali/edit/master/docs/filtering.md"><i class="fab fa-github"></i> Edit on GitHub</a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+    <div class="container">
+        
+        
+        <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="first-level active"><a href="#filtering">Filtering</a></li>
+            <li class="second-level"><a href="#predefined-filters">Predefined Filters</a></li>
+                
+                <li class="third-level"><a href="#gnomadv211-filters">gnomADv2.1.1 Filters</a></li>
+                <li class="third-level"><a href="#gnomadv311-filters">gnomADv3.1.1 Filters</a></li>
+            <li class="second-level"><a href="#additional-filters">Additional Filters</a></li>
+                
+                <li class="third-level"><a href="#gnomadv211-filters_1">gnomADv2.1.1 Filters</a></li>
+                <li class="third-level"><a href="#gnomadv311-filters_1">gnomADv3.1.1 Filters</a></li>
+    </ul>
+</div></div>
+        <div class="col-md-9" role="main">
+
+<h1 id="filtering">Filtering<a class="headerlink" href="#filtering" title="Permanent link">&para;</a></h1>
+<p>Note that by default, gNALI filters for high-confidence loss-of-function variants. There is currently no way to disable this. Other filters are available through optional parameters.</p>
+<h2 id="predefined-filters">Predefined Filters<a class="headerlink" href="#predefined-filters" title="Permanent link">&para;</a></h2>
+<p>gNALI defines a few filters natively. We can view them using the help command.</p>
+<pre><code class="language-bash">&gt; gnali --help
+...
+-p [PREDEFINED_FILTERS [PREDEFINED_FILTERS ...]], --predefined_filters [PREDEFINED_FILTERS [PREDEFINED_FILTERS ...]]
+                        Predefined filters. To use multiple, separate them by
+                        spaces. Options: {'gnomadv2.1.1': {'homozygous-
+                        controls': 'controls_nhomalt&gt;0', 'heterozygous-
+                        controls': 'controls_nhomalt=0', 'homozygous':
+                        'nhomalt&gt;0'}, 'gnomadv3.1.1': {'homozygous': 'nhomalt&gt;0'}}
+...
+</code></pre>
+<h3 id="gnomadv211-filters">gnomADv2.1.1 Filters<a class="headerlink" href="#gnomadv211-filters" title="Permanent link">&para;</a></h3>
+<p>We can see we have three predefined filters (and the filter expressions they use) for gnomADv2.1.1 available:</p>
+<ul>
+<li><code>homozygous-controls</code> will filter for variants with a non-zero number of homozygous samples in the control group</li>
+<li><code>heterozygous-controls</code> will filter for variants with a non-zero number of heterozygous samples in the control group </li>
+<li><code>homozygous</code> will filter for variants with a non-zero number of homozygous samples</li>
+</ul>
+<h3 id="gnomadv311-filters">gnomADv3.1.1 Filters<a class="headerlink" href="#gnomadv311-filters" title="Permanent link">&para;</a></h3>
+<p>We can see we have one predefined filters (and the filter expression it usse) for gnomADv3.1.1 available:</p>
+<ul>
+<li><code>homozygous</code> will filter for variants with a non-zero number of homozygous samples</li>
+</ul>
+<p>For example, if we were using gnomADv2.1.1 and wanted to filter for variants with a non-zero number of homozygous samples in the control group, we could use the following command:</p>
+<pre><code class="language-bash">gnali
+    --input my_gnali_stuff/data/genes.txt
+    --predefined_filters homozygous-controls
+    --output my_results/
+</code></pre>
+<p>To use several predefined filters, separate them with spaces in your command. </p>
+<p>An example execution using predefined filters can be found <a href="../advanced/">here</a>.</p>
+<h2 id="additional-filters">Additional Filters<a class="headerlink" href="#additional-filters" title="Permanent link">&para;</a></h2>
+<p>To filter based on an annotation, construct an expression of the form &lt;annotation>&lt;operator>&lt;value>, where <code>annotation</code> appears in the below available filters or in the VCF header of your database, <code>operator</code> is one of <code>!=</code>/<code>==</code>/<code>&lt;</code>/<code>&gt;</code>/<code>&lt;=</code>/<code>&gt;=</code>, and <code>value</code> is a value to compare to, subject to the value type (ex. integer, floating point, string, etc). Enclose them in quotes and separate by spaces if you're using several additional filters at once.</p>
+<p>For example, if we were using gnomADv2.1.1 and wanted to filter for variants with an alternate allele count greater than 3, and total allele number greater than 10, we would find the following annotations <a href="./#gnomadv211-filters_1">below</a>:</p>
+<table>
+<thead>
+<tr>
+<th>Annotation</th>
+<th>Value Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC</td>
+<td>Integer</td>
+<td>Alternate allele count for samples</td>
+</tr>
+<tr>
+<td>AN</td>
+<td>Integer</td>
+<td>Total number of alleles in samples</td>
+</tr>
+</tbody>
+</table>
+<p>... and add the expressions "AC&gt;3" and "AN&gt;10" to our command, like so:</p>
+<pre><code class="language-bash">gnali
+    --input my_gnali_stuff/data/genes.txt
+    --additional_filters &quot;AC&gt;3&quot; &quot;AN&gt;10&quot;
+    --output my_results/
+</code></pre>
+<p>An example execution using additional filters can be found <a href="../advanced/">here</a>.</p>
+<p>Note that not all gnomAD annotations are supported as filters by gNALI.</p>
+<h3 id="gnomadv211-filters_1">gnomADv2.1.1 Filters<a class="headerlink" href="#gnomadv211-filters_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Annotation</th>
+<th>Value Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC</td>
+<td>Integer</td>
+<td>Alternate allele count for samples</td>
+</tr>
+<tr>
+<td>AN</td>
+<td>Integer</td>
+<td>Total number of alleles in samples</td>
+</tr>
+<tr>
+<td>AF</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples</td>
+</tr>
+<tr>
+<td>rf_tp_probability</td>
+<td>Float</td>
+<td>Random forest prediction probability for a site being a true variant</td>
+</tr>
+<tr>
+<td>FS</td>
+<td>Float</td>
+<td>Phred-scaled p-value of Fisher's exact test for strand bias</td>
+</tr>
+<tr>
+<td>InbreedingCoeff</td>
+<td>Float</td>
+<td>Inbreeding coefficient as estimated from the genotype likelihoods per-sample when compared against the Hardy-Weinberg expectation</td>
+</tr>
+<tr>
+<td>MQ</td>
+<td>Float</td>
+<td>Root mean square of the mapping quality of reads across all samples</td>
+</tr>
+<tr>
+<td>MQRankSum</td>
+<td>Float</td>
+<td>Z-score from Wilcoxon rank sum test of alternate vs. reference read mapping qualities</td>
+</tr>
+<tr>
+<td>QD</td>
+<td>Float</td>
+<td>Variant call confidence normalized by depth of sample reads supporting a variant</td>
+</tr>
+<tr>
+<td>ReadPosRankSum</td>
+<td>Float</td>
+<td>Z-score from Wilcoxon rank sum test of alternate vs. reference read position bias</td>
+</tr>
+<tr>
+<td>SOR</td>
+<td>Float</td>
+<td>Strand bias estimated by the symmetric odds ratio test</td>
+</tr>
+<tr>
+<td>BaseQRankSum</td>
+<td>Float</td>
+<td>Z-score from Wilcoxon rank sum test of alternate vs. reference base qualities</td>
+</tr>
+<tr>
+<td>ClippingRankSum</td>
+<td>Float</td>
+<td>Z-score from Wilcoxon rank sum test of alternate vs. reference number of hard clipped bases</td>
+</tr>
+<tr>
+<td>DP</td>
+<td>Integer</td>
+<td>Depth of informative coverage for each sample; reads with MQ=255 or with bad mates are filtered</td>
+</tr>
+<tr>
+<td>VQSLOD</td>
+<td>Float</td>
+<td>Log-odds ratio of being a true variant versus being a false positive under the trained VQSR Gaussian mixture model</td>
+</tr>
+<tr>
+<td>VQSR_culprit</td>
+<td>String</td>
+<td>Worst-performing annotation in the VQSR Gaussian mixture model</td>
+</tr>
+<tr>
+<td>rf_label</td>
+<td>String</td>
+<td>Random forest training label</td>
+</tr>
+<tr>
+<td>variant_type</td>
+<td>String</td>
+<td>Variant type (snv, indel, multi-snv, multi-indel, or mixed)</td>
+</tr>
+<tr>
+<td>allele_type</td>
+<td>String</td>
+<td>Allele type (snv, indel, multi-snv, multi-indel, or mixed)</td>
+</tr>
+<tr>
+<td>n_alt_alleles</td>
+<td>Integer</td>
+<td>Total number of alternate alleles observed at variant locus</td>
+</tr>
+<tr>
+<td>pab_max</td>
+<td>Float</td>
+<td>Maximum p-value over callset for binomial test of observed allele balance for a heterozygous genotype</td>
+</tr>
+<tr>
+<td>gq_hist_alt_bin_freq</td>
+<td>String</td>
+<td>Histogram for GQ in heterozygous individuals; bin edges are: 0</td>
+</tr>
+<tr>
+<td>gq_hist_all_bin_freq</td>
+<td>String</td>
+<td>Histogram for GQ; bin edges are: 0</td>
+</tr>
+<tr>
+<td>dp_hist_alt_bin_freq</td>
+<td>String</td>
+<td>Histogram for DP in heterozygous individuals; bin edges are: 0</td>
+</tr>
+<tr>
+<td>dp_hist_alt_n_larger</td>
+<td>Integer</td>
+<td>Count of DP values falling above highest histogram bin edge</td>
+</tr>
+<tr>
+<td>dp_hist_all_bin_freq</td>
+<td>String</td>
+<td>Histogram for DP; bin edges are: 0</td>
+</tr>
+<tr>
+<td>dp_hist_all_n_larger</td>
+<td>Integer</td>
+<td>Count of DP values falling above highest histogram bin edge</td>
+</tr>
+<tr>
+<td>ab_hist_alt_bin_freq</td>
+<td>String</td>
+<td>Histogram for AB in heterozygous individuals; bin edges are: 0.00</td>
+</tr>
+<tr>
+<td>AC_nfe_seu</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Southern European ancestry</td>
+</tr>
+<tr>
+<td>AN_nfe_seu</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Southern European ancestry</td>
+</tr>
+<tr>
+<td>AF_nfe_seu</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Southern European ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_nfe_seu</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Southern European ancestry</td>
+</tr>
+<tr>
+<td>controls_AC_afr_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of African-American/African ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_afr_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of African-American/African ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_afr_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of African-American/African ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_afr_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of African-American/African ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_eas_kor</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Korean ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_eas_kor</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Korean ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_eas_kor</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Korean ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_eas_kor</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Korean ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_amr</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Latino ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_amr</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Latino ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_amr</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Latino ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_amr</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Latino ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_asj_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Ashkenazi Jewish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_asj_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Ashkenazi Jewish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_asj_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Ashkenazi Jewish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_asj_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Ashkenazi Jewish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>AC_raw</td>
+<td>Integer</td>
+<td>Alternate allele count for samples</td>
+</tr>
+<tr>
+<td>AN_raw</td>
+<td>Integer</td>
+<td>Total number of alleles in samples</td>
+</tr>
+<tr>
+<td>AF_raw</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples</td>
+</tr>
+<tr>
+<td>nhomalt_raw</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples</td>
+</tr>
+<tr>
+<td>AC_fin_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>AN_fin_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>AF_fin_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_fin_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>non_cancer_AC_oth_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Other ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_oth_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Other ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_oth_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Other ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_oth_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Other ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>AC_nfe_bgr</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Bulgarian (Eastern European) ancestry</td>
+</tr>
+<tr>
+<td>AN_nfe_bgr</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Bulgarian (Eastern European) ancestry</td>
+</tr>
+<tr>
+<td>AF_nfe_bgr</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Bulgarian (Eastern European) ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_nfe_bgr</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Bulgarian (Eastern European) ancestry</td>
+</tr>
+<tr>
+<td>non_neuro_AC_asj_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Ashkenazi Jewish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_asj_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Ashkenazi Jewish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_asj_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Ashkenazi Jewish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_asj_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Ashkenazi Jewish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>AC_sas_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>AN_sas_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>AF_sas_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_sas_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>non_neuro_AC_afr_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of African-American/African ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_afr_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of African-American/African ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_afr_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of African-American/African ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_afr_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of African-American/African ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>AC_afr_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>AN_afr_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>AF_afr_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_afr_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>AC_afr</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>AN_afr</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>AF_afr</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_afr</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>controls_AC_nfe_swe</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Swedish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_nfe_swe</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Swedish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_nfe_swe</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Swedish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_nfe_swe</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Swedish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_afr_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of African-American/African ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_afr_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of African-American/African ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_afr_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of African-American/African ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_afr_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of African-American/African ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_amr_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Latino ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_amr_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Latino ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_amr_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Latino ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_amr_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Latino ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_nfe_onf</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Other Non-Finnish European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_nfe_onf</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Other Non-Finnish European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_nfe_onf</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Other Non-Finnish European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_nfe_onf</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Other Non-Finnish European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_oth_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Other ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_oth_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Other ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_oth_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Other ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_oth_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Other ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>AC_eas_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>AN_eas_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>AF_eas_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_eas_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>non_cancer_AC_sas_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of South Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_sas_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of South Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_sas_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of South Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_sas_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of South Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>AC_afr_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>AN_afr_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>AF_afr_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_afr_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>AC_sas</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>AN_sas</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>AF_sas</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_sas</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>non_neuro_AC_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples in the non_neuro subset</td>
+</tr>
+<tr>
+<td>controls_AC_afr</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of African-American/African ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_afr</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of African-American/African ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_afr</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of African-American/African ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_afr</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of African-American/African ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_eas_jpn</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Japanese ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_eas_jpn</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Japanese ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_eas_jpn</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Japanese ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_eas_jpn</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Japanese ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>AC_nfe_onf</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Other Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>AN_nfe_onf</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Other Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>AF_nfe_onf</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Other Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_nfe_onf</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Other Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>non_cancer_AC_amr_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Latino ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_amr_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Latino ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_amr_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Latino ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_amr_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Latino ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>controls_AC_fin_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Finnish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_fin_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Finnish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_fin_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Finnish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_fin_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Finnish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_nfe_nwe</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of North-Western European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_nfe_nwe</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of North-Western European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_nfe_nwe</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of North-Western European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_nfe_nwe</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of North-Western European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>AC_fin_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>AN_fin_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>AF_fin_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_fin_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>AC_nfe_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>AN_nfe_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>AF_nfe_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_nfe_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>AC_amr</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>AN_amr</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>AF_amr</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_amr</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>non_topmed_AC_nfe_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Non-Finnish European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_nfe_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Non-Finnish European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_nfe_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Non-Finnish European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_nfe_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Non-Finnish European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_sas</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of South Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_sas</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of South Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_sas</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of South Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_sas</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of South Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_fin_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Finnish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_fin_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Finnish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_fin_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Finnish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_fin_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Finnish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_nfe_seu</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Southern European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_nfe_seu</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Southern European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_nfe_seu</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Southern European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_nfe_seu</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Southern European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>AC_eas</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>AN_eas</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>AF_eas</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_eas</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>nhomalt</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples</td>
+</tr>
+<tr>
+<td>non_neuro_AC_nfe_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Non-Finnish European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_nfe_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Non-Finnish European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_nfe_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Non-Finnish European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_nfe_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Non-Finnish European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_afr</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of African-American/African ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_afr</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of African-American/African ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_afr</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of African-American/African ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_afr</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of African-American/African ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>controls_AC_raw</td>
+<td>Integer</td>
+<td>Alternate allele count for samples in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_raw</td>
+<td>Integer</td>
+<td>Total number of alleles in samples in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_raw</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_raw</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples in the controls subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_eas</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of East Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_eas</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of East Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_eas</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of East Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_eas</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of East Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_amr_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Latino ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_amr_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Latino ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_amr_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Latino ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_amr_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Latino ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_nfe_swe</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Swedish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_nfe_swe</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Swedish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_nfe_swe</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Swedish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_nfe_swe</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Swedish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>controls_AC_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples in the controls subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples in the non_topmed subset</td>
+</tr>
+<tr>
+<td>controls_AC_eas_jpn</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Japanese ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_eas_jpn</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Japanese ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_eas_jpn</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Japanese ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_eas_jpn</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Japanese ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AC_nfe_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Non-Finnish European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_nfe_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Non-Finnish European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_nfe_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Non-Finnish European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_nfe_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Non-Finnish European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_amr</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Latino ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_amr</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Latino ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_amr</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Latino ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_amr</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Latino ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_eas_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of East Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_eas_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of East Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_eas_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of East Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_eas_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of East Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>AC_asj_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>AN_asj_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>AF_asj_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_asj_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>controls_AC_nfe_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Non-Finnish European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_nfe_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Non-Finnish European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_nfe_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Non-Finnish European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_nfe_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Non-Finnish European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_fin</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Finnish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_fin</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Finnish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_fin</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Finnish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_fin</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Finnish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_sas</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of South Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_sas</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of South Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_sas</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of South Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_sas</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of South Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_nfe_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Non-Finnish European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_nfe_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Non-Finnish European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_nfe_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Non-Finnish European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_nfe_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Non-Finnish European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>AC_oth_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Other ancestry</td>
+</tr>
+<tr>
+<td>AN_oth_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Other ancestry</td>
+</tr>
+<tr>
+<td>AF_oth_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Other ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_oth_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Other ancestry</td>
+</tr>
+<tr>
+<td>non_cancer_AC_asj</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Ashkenazi Jewish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_asj</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Ashkenazi Jewish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_asj</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Ashkenazi Jewish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_asj</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Ashkenazi Jewish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>AC_nfe_swe</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Swedish ancestry</td>
+</tr>
+<tr>
+<td>AN_nfe_swe</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Swedish ancestry</td>
+</tr>
+<tr>
+<td>AF_nfe_swe</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Swedish ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_nfe_swe</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Swedish ancestry</td>
+</tr>
+<tr>
+<td>controls_AC_nfe</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Non-Finnish European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_nfe</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Non-Finnish European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_nfe</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Non-Finnish European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_nfe</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Non-Finnish European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AC_oth_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Other ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_oth_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Other ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_oth_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Other ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_oth_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Other ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AC_asj</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Ashkenazi Jewish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_asj</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Ashkenazi Jewish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_asj</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Ashkenazi Jewish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_asj</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Ashkenazi Jewish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_amr_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Latino ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_amr_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Latino ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_amr_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Latino ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_amr_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Latino ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>controls_AC_nfe_nwe</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of North-Western European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_nfe_nwe</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of North-Western European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_nfe_nwe</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of North-Western European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_nfe_nwe</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of North-Western European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>AC_nfe_nwe</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of North-Western European ancestry</td>
+</tr>
+<tr>
+<td>AN_nfe_nwe</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of North-Western European ancestry</td>
+</tr>
+<tr>
+<td>AF_nfe_nwe</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of North-Western European ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_nfe_nwe</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of North-Western European ancestry</td>
+</tr>
+<tr>
+<td>controls_AC_nfe_seu</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Southern European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_nfe_seu</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Southern European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_nfe_seu</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Southern European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_nfe_seu</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Southern European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AC_sas_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of South Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_sas_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of South Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_sas_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of South Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_sas_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of South Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_amr_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Latino ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_amr_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Latino ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_amr_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Latino ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_amr_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Latino ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_eas_jpn</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Japanese ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_eas_jpn</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Japanese ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_eas_jpn</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Japanese ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_eas_jpn</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Japanese ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_nfe_onf</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Other Non-Finnish European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_nfe_onf</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Other Non-Finnish European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_nfe_onf</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Other Non-Finnish European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_nfe_onf</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Other Non-Finnish European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_eas_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of East Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_eas_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of East Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_eas_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of East Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_eas_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of East Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>AC_eas_jpn</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Japanese ancestry</td>
+</tr>
+<tr>
+<td>AN_eas_jpn</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Japanese ancestry</td>
+</tr>
+<tr>
+<td>AF_eas_jpn</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Japanese ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_eas_jpn</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Japanese ancestry</td>
+</tr>
+<tr>
+<td>non_cancer_AC_afr_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of African-American/African ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_afr_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of African-American/African ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_afr_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of African-American/African ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_afr_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of African-American/African ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_afr</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of African-American/African ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_afr</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of African-American/African ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_afr</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of African-American/African ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_afr</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of African-American/African ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>controls_AC_amr_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Latino ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_amr_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Latino ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_amr_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Latino ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_amr_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Latino ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_fin_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Finnish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_fin_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Finnish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_fin_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Finnish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_fin_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Finnish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>AC_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples</td>
+</tr>
+<tr>
+<td>AN_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples</td>
+</tr>
+<tr>
+<td>AF_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples</td>
+</tr>
+<tr>
+<td>nhomalt_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples</td>
+</tr>
+<tr>
+<td>non_neuro_AC_nfe_bgr</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Bulgarian (Eastern European) ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_nfe_bgr</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Bulgarian (Eastern European) ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_nfe_bgr</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Bulgarian (Eastern European) ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_nfe_bgr</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Bulgarian (Eastern European) ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_oth_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Other ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_oth_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Other ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_oth_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Other ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_oth_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Other ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_nfe_est</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Estonian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_nfe_est</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Estonian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_nfe_est</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Estonian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_nfe_est</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Estonian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_nfe_nwe</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of North-Western European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_nfe_nwe</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of North-Western European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_nfe_nwe</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of North-Western European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_nfe_nwe</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of North-Western European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_amr_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Latino ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_amr_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Latino ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_amr_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Latino ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_amr_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Latino ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_amr</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Latino ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_amr</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Latino ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_amr</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Latino ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_amr</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Latino ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_nfe_swe</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Swedish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_nfe_swe</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Swedish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_nfe_swe</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Swedish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_nfe_swe</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Swedish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_nfe_onf</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Other Non-Finnish European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_nfe_onf</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Other Non-Finnish European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_nfe_onf</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Other Non-Finnish European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_nfe_onf</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Other Non-Finnish European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>controls_AC_eas_kor</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Korean ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_eas_kor</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Korean ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_eas_kor</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Korean ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_eas_kor</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Korean ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_eas_oea</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Other East Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_eas_oea</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Other East Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_eas_oea</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Other East Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_eas_oea</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Other East Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>controls_AC_eas_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of East Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_eas_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of East Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_eas_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of East Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_eas_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of East Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AC_oth_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Other ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_oth_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Other ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_oth_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Other ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_oth_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Other ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC</td>
+<td>Integer</td>
+<td>Alternate allele count for samples in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN</td>
+<td>Integer</td>
+<td>Total number of alleles in samples in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples in the non_topmed subset</td>
+</tr>
+<tr>
+<td>controls_AC_fin</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Finnish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_fin</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Finnish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_fin</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Finnish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_fin</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Finnish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>AC_eas_kor</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Korean ancestry</td>
+</tr>
+<tr>
+<td>AN_eas_kor</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Korean ancestry</td>
+</tr>
+<tr>
+<td>AF_eas_kor</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Korean ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_eas_kor</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Korean ancestry</td>
+</tr>
+<tr>
+<td>non_neuro_AC_nfe</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Non-Finnish European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_nfe</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Non-Finnish European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_nfe</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Non-Finnish European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_nfe</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Non-Finnish European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_fin_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Finnish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_fin_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Finnish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_fin_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Finnish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_fin_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Finnish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_nfe_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Non-Finnish European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_nfe_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Non-Finnish European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_nfe_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Non-Finnish European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_nfe_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Non-Finnish European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>controls_AC_eas_oea</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Other East Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_eas_oea</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Other East Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_eas_oea</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Other East Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_eas_oea</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Other East Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_nfe_seu</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Southern European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_nfe_seu</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Southern European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_nfe_seu</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Southern European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_nfe_seu</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Southern European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>controls_AC_eas_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of East Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_eas_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of East Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_eas_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of East Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_eas_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of East Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_asj</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Ashkenazi Jewish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_asj</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Ashkenazi Jewish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_asj</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Ashkenazi Jewish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_asj</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Ashkenazi Jewish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>controls_AC_nfe_onf</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Other Non-Finnish European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_nfe_onf</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Other Non-Finnish European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_nfe_onf</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Other Non-Finnish European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_nfe_onf</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Other Non-Finnish European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC</td>
+<td>Integer</td>
+<td>Alternate allele count for samples in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN</td>
+<td>Integer</td>
+<td>Total number of alleles in samples in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples in the non_neuro subset</td>
+</tr>
+<tr>
+<td>AC_eas_oea</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Other East Asian ancestry</td>
+</tr>
+<tr>
+<td>AN_eas_oea</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Other East Asian ancestry</td>
+</tr>
+<tr>
+<td>AF_eas_oea</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Other East Asian ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_eas_oea</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Other East Asian ancestry</td>
+</tr>
+<tr>
+<td>non_topmed_AC_nfe</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Non-Finnish European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_nfe</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Non-Finnish European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_nfe</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Non-Finnish European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_nfe</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Non-Finnish European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_oth</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Other ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_oth</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Other ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_oth</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Other ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_oth</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Other ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_raw</td>
+<td>Integer</td>
+<td>Alternate allele count for samples in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_raw</td>
+<td>Integer</td>
+<td>Total number of alleles in samples in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_raw</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_raw</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_nfe_est</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Estonian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_nfe_est</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Estonian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_nfe_est</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Estonian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_nfe_est</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Estonian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_oth_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Other ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_oth_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Other ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_oth_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Other ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_oth_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Other ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_oth_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Other ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_oth_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Other ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_oth_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Other ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_oth_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Other ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>AC_nfe_est</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Estonian ancestry</td>
+</tr>
+<tr>
+<td>AN_nfe_est</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Estonian ancestry</td>
+</tr>
+<tr>
+<td>AF_nfe_est</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Estonian ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_nfe_est</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Estonian ancestry</td>
+</tr>
+<tr>
+<td>non_cancer_AC_afr_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of African-American/African ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_afr_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of African-American/African ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_afr_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of African-American/African ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_afr_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of African-American/African ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_afr_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of African-American/African ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_afr_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of African-American/African ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_afr_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of African-American/African ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_afr_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of African-American/African ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>AC_eas_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>AN_eas_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>AF_eas_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_eas_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>controls_AC_eas</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of East Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_eas</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of East Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_eas</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of East Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_eas</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of East Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_eas_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of East Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_eas_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of East Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_eas_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of East Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_eas_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of East Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_nfe_nwe</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of North-Western European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_nfe_nwe</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of North-Western European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_nfe_nwe</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of North-Western European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_nfe_nwe</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of North-Western European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>controls_AC_sas</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of South Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_sas</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of South Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_sas</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of South Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_sas</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of South Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_sas_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of South Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_sas_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of South Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_sas_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of South Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_sas_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of South Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_asj_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Ashkenazi Jewish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_asj_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Ashkenazi Jewish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_asj_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Ashkenazi Jewish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_asj_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Ashkenazi Jewish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_nfe_bgr</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Bulgarian (Eastern European) ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_nfe_bgr</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Bulgarian (Eastern European) ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_nfe_bgr</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Bulgarian (Eastern European) ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_nfe_bgr</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Bulgarian (Eastern European) ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>controls_AC_oth</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Other ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_oth</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Other ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_oth</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Other ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_oth</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Other ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_eas_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of East Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_eas_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of East Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_eas_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of East Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_eas_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of East Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>AC_nfe</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>AN_nfe</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>AF_nfe</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_nfe</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>non_topmed_AC_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_asj</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Ashkenazi Jewish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_asj</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Ashkenazi Jewish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_asj</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Ashkenazi Jewish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_asj</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Ashkenazi Jewish ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_eas_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of East Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_eas_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of East Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_eas_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of East Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_eas_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of East Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_raw</td>
+<td>Integer</td>
+<td>Alternate allele count for samples in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_raw</td>
+<td>Integer</td>
+<td>Total number of alleles in samples in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_raw</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_raw</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_eas</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of East Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_eas</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of East Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_eas</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of East Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_eas</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of East Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_fin_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Finnish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_fin_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Finnish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_fin_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Finnish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_fin_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Finnish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_asj_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Ashkenazi Jewish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_asj_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Ashkenazi Jewish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_asj_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Ashkenazi Jewish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_asj_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Ashkenazi Jewish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>AC_fin</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>AN_fin</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>AF_fin</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_fin</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>AC_nfe_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>AN_nfe_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>AF_nfe_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_nfe_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>non_topmed_AC_eas_kor</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Korean ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_eas_kor</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Korean ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_eas_kor</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Korean ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_eas_kor</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Korean ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>controls_AC_amr_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Latino ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_amr_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Latino ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_amr_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Latino ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_amr_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Latino ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_eas_oea</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Other East Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_eas_oea</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Other East Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_eas_oea</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Other East Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_eas_oea</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Other East Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>AC_sas_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>AN_sas_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>AF_sas_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_sas_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>controls_AC_afr_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of African-American/African ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_afr_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of African-American/African ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_afr_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of African-American/African ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_afr_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of African-American/African ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AC_amr</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Latino ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_amr</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Latino ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_amr</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Latino ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_amr</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Latino ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_eas_jpn</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Japanese ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_eas_jpn</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Japanese ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_eas_jpn</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Japanese ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_eas_jpn</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Japanese ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>AC_asj_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>AN_asj_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>AF_asj_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_asj_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>non_topmed_AC_nfe_bgr</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Bulgarian (Eastern European) ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_nfe_bgr</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Bulgarian (Eastern European) ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_nfe_bgr</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Bulgarian (Eastern European) ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_nfe_bgr</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Bulgarian (Eastern European) ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_nfe_est</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Estonian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_nfe_est</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Estonian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_nfe_est</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Estonian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_nfe_est</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Estonian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_eas</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of East Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_eas</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of East Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_eas</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of East Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_eas</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of East Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_nfe</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Non-Finnish European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_nfe</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Non-Finnish European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_nfe</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Non-Finnish European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_nfe</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Non-Finnish European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_sas_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of South Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_sas_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of South Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_sas_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of South Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_sas_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of South Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>AC_asj</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>AN_asj</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>AF_asj</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_asj</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>controls_AC_nfe_est</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Estonian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_nfe_est</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Estonian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_nfe_est</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Estonian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_nfe_est</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Estonian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_asj_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Ashkenazi Jewish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_asj_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Ashkenazi Jewish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_asj_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Ashkenazi Jewish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_asj_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Ashkenazi Jewish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_nfe_swe</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Swedish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_nfe_swe</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Swedish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_nfe_swe</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Swedish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_nfe_swe</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Swedish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC</td>
+<td>Integer</td>
+<td>Alternate allele count for samples in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN</td>
+<td>Integer</td>
+<td>Total number of alleles in samples in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_oth</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Other ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_oth</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Other ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_oth</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Other ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_oth</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Other ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_fin_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Finnish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_fin_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Finnish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_fin_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Finnish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_fin_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Finnish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_fin_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Finnish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_fin_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Finnish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_fin_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Finnish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_fin_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Finnish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>AC_oth</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Other ancestry</td>
+</tr>
+<tr>
+<td>AN_oth</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Other ancestry</td>
+</tr>
+<tr>
+<td>AF_oth</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Other ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_oth</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Other ancestry</td>
+</tr>
+<tr>
+<td>non_neuro_AC_nfe_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Non-Finnish European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_nfe_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Non-Finnish European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_nfe_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Non-Finnish European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_nfe_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Non-Finnish European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>controls_AC_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples in the controls subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_fin</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Finnish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_fin</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Finnish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_fin</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Finnish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_fin</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Finnish ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_fin</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Finnish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_fin</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Finnish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_fin</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Finnish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_fin</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Finnish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_eas_oea</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Other East Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_eas_oea</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Other East Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_eas_oea</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Other East Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_eas_oea</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Other East Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_nfe_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Non-Finnish European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_nfe_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Non-Finnish European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_nfe_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Non-Finnish European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_nfe_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Non-Finnish European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_sas_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of South Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_sas_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of South Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_sas_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of South Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_sas_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of South Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>controls_AC_asj_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Ashkenazi Jewish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_asj_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Ashkenazi Jewish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_asj_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Ashkenazi Jewish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_asj_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Ashkenazi Jewish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_raw</td>
+<td>Integer</td>
+<td>Alternate allele count for samples in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_raw</td>
+<td>Integer</td>
+<td>Total number of alleles in samples in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_raw</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_raw</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_eas_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of East Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_eas_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of East Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_eas_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of East Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_eas_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of East Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_asj_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Ashkenazi Jewish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_asj_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Ashkenazi Jewish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_asj_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Ashkenazi Jewish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_asj_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Ashkenazi Jewish ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_oth</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Other ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_oth</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Other ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_oth</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Other ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_oth</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Other ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>AC_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples</td>
+</tr>
+<tr>
+<td>AN_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples</td>
+</tr>
+<tr>
+<td>AF_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples</td>
+</tr>
+<tr>
+<td>nhomalt_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples</td>
+</tr>
+<tr>
+<td>controls_AC_fin_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Finnish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_fin_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Finnish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_fin_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Finnish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_fin_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Finnish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AC_nfe_bgr</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Bulgarian (Eastern European) ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_nfe_bgr</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Bulgarian (Eastern European) ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_nfe_bgr</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Bulgarian (Eastern European) ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_nfe_bgr</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Bulgarian (Eastern European) ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AC_asj_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Ashkenazi Jewish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_asj_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Ashkenazi Jewish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_asj_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Ashkenazi Jewish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_asj_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Ashkenazi Jewish ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>AC_amr_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>AN_amr_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>AF_amr_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_amr_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>AC_amr_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>AN_amr_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>AF_amr_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_amr_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>non_topmed_AC_sas_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of South Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_sas_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of South Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_sas_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of South Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_sas_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of South Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>AC_oth_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Other ancestry</td>
+</tr>
+<tr>
+<td>AN_oth_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Other ancestry</td>
+</tr>
+<tr>
+<td>AF_oth_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Other ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_oth_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Other ancestry</td>
+</tr>
+<tr>
+<td>non_cancer_AC_sas</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of South Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_sas</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of South Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_sas</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of South Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_sas</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of South Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_nfe_seu</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Southern European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_nfe_seu</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Southern European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_nfe_seu</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Southern European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_nfe_seu</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Southern European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_eas_kor</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Korean ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_eas_kor</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Korean ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_eas_kor</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Korean ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_eas_kor</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Korean ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_afr_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of African-American/African ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_afr_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of African-American/African ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_afr_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of African-American/African ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_afr_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of African-American/African ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>controls_AC_sas_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of South Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_sas_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of South Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_sas_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of South Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt_sas_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of South Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_sas_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of South Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_sas_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of South Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_sas_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of South Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_sas_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of South Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_afr</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of African-American/African ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_afr</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of African-American/African ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_afr</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of African-American/African ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_afr</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of African-American/African ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>controls_AC</td>
+<td>Integer</td>
+<td>Alternate allele count for samples in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN</td>
+<td>Integer</td>
+<td>Total number of alleles in samples in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples in the controls subset</td>
+</tr>
+<tr>
+<td>controls_nhomalt</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples in the controls subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_oth_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Other ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_oth_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Other ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_oth_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Other ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_oth_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Other ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_topmed_faf95_amr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of Latino ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_faf99_amr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of Latino ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>faf95_afr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>faf99_afr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>faf95_sas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>faf99_sas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>controls_faf95_afr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of African-American/African ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_faf99_afr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of African-American/African ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>faf95_amr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>faf99_amr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>non_neuro_faf95_sas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of South Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_faf99_sas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of South Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>faf95_eas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>faf99_eas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>faf95</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples</td>
+</tr>
+<tr>
+<td>faf99</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples</td>
+</tr>
+<tr>
+<td>non_neuro_faf95_afr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of African-American/African ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_faf99_afr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of African-American/African ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_cancer_faf95_eas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of East Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_faf99_eas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of East Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_neuro_faf95_amr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of Latino ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_faf99_amr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of Latino ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_topmed_faf95_sas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of South Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_faf99_sas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of South Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>controls_faf95_nfe</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of Non-Finnish European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_faf99_nfe</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of Non-Finnish European ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_cancer_faf95_afr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of African-American/African ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_faf99_afr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of African-American/African ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_faf95_amr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of Latino ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_faf99_amr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of Latino ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_topmed_faf95</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_faf99</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_neuro_faf95_nfe</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of Non-Finnish European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_faf99_nfe</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of Non-Finnish European ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_faf95</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_faf99</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_topmed_faf95_nfe</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of Non-Finnish European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_faf99_nfe</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of Non-Finnish European ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>controls_faf95_eas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of East Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_faf99_eas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of East Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_faf95_sas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of South Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_faf99_sas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of South Asian ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>faf95_nfe</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>faf99_nfe</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>non_topmed_faf95_eas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of East Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_faf99_eas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of East Asian ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>controls_faf95_amr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of Latino ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>controls_faf99_amr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of Latino ancestry in the controls subset</td>
+</tr>
+<tr>
+<td>non_neuro_faf95_eas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of East Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_faf99_eas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of East Asian ancestry in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_cancer_faf95_nfe</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of Non-Finnish European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_faf99_nfe</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of Non-Finnish European ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_faf95</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_faf99</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_faf95_sas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of South Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_faf99_sas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of South Asian ancestry in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_topmed_faf95_afr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of African-American/African ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_faf99_afr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of African-American/African ancestry in the non_topmed subset</td>
+</tr>
+<tr>
+<td>controls_faf95</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples in the controls subset</td>
+</tr>
+<tr>
+<td>controls_faf99</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples in the controls subset</td>
+</tr>
+<tr>
+<td>popmax</td>
+<td>String</td>
+<td>Population with maximum AF</td>
+</tr>
+<tr>
+<td>AC_popmax</td>
+<td>Integer</td>
+<td>Allele count in the population with the maximum AF</td>
+</tr>
+<tr>
+<td>AN_popmax</td>
+<td>Integer</td>
+<td>Total number of alleles in the population with the maximum AF</td>
+</tr>
+<tr>
+<td>AF_popmax</td>
+<td>Float</td>
+<td>Maximum allele frequency across populations (excluding samples of Ashkenazi</td>
+</tr>
+<tr>
+<td>nhomalt_popmax</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in the population with the maximum allele frequency</td>
+</tr>
+<tr>
+<td>age_hist_het_bin_freq</td>
+<td>String</td>
+<td>Histogram of ages of heterozygous individuals; bin edges are: 30.0</td>
+</tr>
+<tr>
+<td>age_hist_het_n_smaller</td>
+<td>Integer</td>
+<td>Count of age values falling below lowest histogram bin edge for heterozygous individuals</td>
+</tr>
+<tr>
+<td>age_hist_het_n_larger</td>
+<td>Integer</td>
+<td>Count of age values falling above highest histogram bin edge for heterozygous individuals</td>
+</tr>
+<tr>
+<td>age_hist_hom_bin_freq</td>
+<td>String</td>
+<td>Histogram of ages of homozygous alternate individuals; bin edges are: 30.0</td>
+</tr>
+<tr>
+<td>age_hist_hom_n_smaller</td>
+<td>Integer</td>
+<td>Count of age values falling below lowest histogram bin edge for homozygous alternate individuals</td>
+</tr>
+<tr>
+<td>age_hist_hom_n_larger</td>
+<td>Integer</td>
+<td>Count of age values falling above highest histogram bin edge for homozygous alternate individuals</td>
+</tr>
+<tr>
+<td>non_topmed_popmax</td>
+<td>String</td>
+<td>Population with maximum AF in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AC_popmax</td>
+<td>Integer</td>
+<td>Allele count in the population with the maximum AF in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AN_popmax</td>
+<td>Integer</td>
+<td>Total number of alleles in the population with the maximum AF in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_topmed_AF_popmax</td>
+<td>Float</td>
+<td>Maximum allele frequency across populations (excluding samples of Ashkenazi</td>
+</tr>
+<tr>
+<td>non_topmed_nhomalt_popmax</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in the population with the maximum allele frequency in the non_topmed subset</td>
+</tr>
+<tr>
+<td>non_neuro_popmax</td>
+<td>String</td>
+<td>Population with maximum AF in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AC_popmax</td>
+<td>Integer</td>
+<td>Allele count in the population with the maximum AF in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AN_popmax</td>
+<td>Integer</td>
+<td>Total number of alleles in the population with the maximum AF in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_neuro_AF_popmax</td>
+<td>Float</td>
+<td>Maximum allele frequency across populations (excluding samples of Ashkenazi</td>
+</tr>
+<tr>
+<td>non_neuro_nhomalt_popmax</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in the population with the maximum allele frequency in the non_neuro subset</td>
+</tr>
+<tr>
+<td>non_cancer_popmax</td>
+<td>String</td>
+<td>Population with maximum AF in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AC_popmax</td>
+<td>Integer</td>
+<td>Allele count in the population with the maximum AF in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AN_popmax</td>
+<td>Integer</td>
+<td>Total number of alleles in the population with the maximum AF in the non_cancer subset</td>
+</tr>
+<tr>
+<td>non_cancer_AF_popmax</td>
+<td>Float</td>
+<td>Maximum allele frequency across populations (excluding samples of Ashkenazi</td>
+</tr>
+<tr>
+<td>non_cancer_nhomalt_popmax</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in the population with the maximum allele frequency in the non_cancer subset</td>
+</tr>
+<tr>
+<td>controls_popmax</td>
+<td>String</td>
+<td>Population with maximum AF in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AC_popmax</td>
+<td>Integer</td>
+<td>Allele count in the population with the maximum AF in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AN_popmax</td>
+<td>Integer</td>
+<td>Total number of alleles in the population with the maximum AF in the controls subset</td>
+</tr>
+<tr>
+<td>controls_AF_popmax</td>
+<td>Float</td>
+<td>Maximum allele frequency across populations (excluding samples of Ashkenazi</td>
+</tr>
+<tr>
+<td>controls_nhomalt_popmax</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in the population with the maximum allele frequency in the controls subset</td>
+</tr>
+</tbody>
+</table>
+<h3 id="gnomadv311-filters_1">gnomADv3.1.1 Filters<a class="headerlink" href="#gnomadv311-filters_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Annotation</th>
+<th>Value Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC</td>
+<td>Integer</td>
+<td>Alternate allele count for samples</td>
+</tr>
+<tr>
+<td>AN</td>
+<td>Integer</td>
+<td>Total number of alleles in samples</td>
+</tr>
+<tr>
+<td>AF</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples</td>
+</tr>
+<tr>
+<td>variant_type</td>
+<td>String</td>
+<td>Variant type (snv, indel, multi-snv, multi-indel, or mixed)</td>
+</tr>
+<tr>
+<td>n_alt_alleles</td>
+<td>Integer</td>
+<td>Total number of alternate alleles observed at variant locus</td>
+</tr>
+<tr>
+<td>ReadPosRankSum</td>
+<td>Float</td>
+<td>Z-score from Wilcoxon rank sum test of alternate vs. reference read position bias</td>
+</tr>
+<tr>
+<td>MQRankSum</td>
+<td>Float</td>
+<td>Z-score from Wilcoxon rank sum test of alternate vs. reference read mapping qualities</td>
+</tr>
+<tr>
+<td>RAW_MQ</td>
+<td>Float</td>
+<td>(No description from gnomAD)</td>
+</tr>
+<tr>
+<td>DP</td>
+<td>Integer</td>
+<td>Depth of informative coverage for each sample; reads with MQ=255 or with bad mates are filtered</td>
+</tr>
+<tr>
+<td>MQ_DP</td>
+<td>Integer</td>
+<td>(No description from gnomAD)</td>
+</tr>
+<tr>
+<td>VarDP</td>
+<td>Integer</td>
+<td>(No description from gnomAD)</td>
+</tr>
+<tr>
+<td>MQ</td>
+<td>Float</td>
+<td>Root mean square of the mapping quality of reads across all samples</td>
+</tr>
+<tr>
+<td>QD</td>
+<td>Float</td>
+<td>Variant call confidence normalized by depth of sample reads supporting a variant</td>
+</tr>
+<tr>
+<td>FS</td>
+<td>Float</td>
+<td>Phred-scaled p-value of Fisher's exact test for strand bias</td>
+</tr>
+<tr>
+<td>SB</td>
+<td>Integer</td>
+<td>(No description from gnomAD)</td>
+</tr>
+<tr>
+<td>InbreedingCoeff</td>
+<td>Float</td>
+<td>Inbreeding coefficient as estimated from the genotype likelihoods per-sample when compared against the Hardy-Weinberg expectation</td>
+</tr>
+<tr>
+<td>AS_VQSLOD</td>
+<td>Float</td>
+<td>Log-odds ratio of being a true variant versus being a false positive under the trained allele-specific VQSR Gaussian mixture model</td>
+</tr>
+<tr>
+<td>culprit</td>
+<td>String</td>
+<td>Worst-performing annotation in the VQSR Gaussian mixture model</td>
+</tr>
+<tr>
+<td>SOR</td>
+<td>Float</td>
+<td>Strand bias estimated by the symmetric odds ratio test</td>
+</tr>
+<tr>
+<td>AC_asj_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>AN_asj_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>AF_asj_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_asj_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>AC_eas_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>AN_eas_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>AF_eas_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_eas_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>AC_afr_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>AN_afr_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>AF_afr_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_afr_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>AC_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples</td>
+</tr>
+<tr>
+<td>AN_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples</td>
+</tr>
+<tr>
+<td>AF_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples</td>
+</tr>
+<tr>
+<td>nhomalt_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples</td>
+</tr>
+<tr>
+<td>AC_fin_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>AN_fin_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>AF_fin_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_fin_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>AC_oth_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Other ancestry</td>
+</tr>
+<tr>
+<td>AN_oth_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Other ancestry</td>
+</tr>
+<tr>
+<td>AF_oth_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Other ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_oth_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Other ancestry</td>
+</tr>
+<tr>
+<td>AC_ami</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Amish ancestry</td>
+</tr>
+<tr>
+<td>AN_ami</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Amish ancestry</td>
+</tr>
+<tr>
+<td>AF_ami</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Amish ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_ami</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Amish ancestry</td>
+</tr>
+<tr>
+<td>AC_oth</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Other ancestry</td>
+</tr>
+<tr>
+<td>AN_oth</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Other ancestry</td>
+</tr>
+<tr>
+<td>AF_oth</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Other ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_oth</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Other ancestry</td>
+</tr>
+<tr>
+<td>AC_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples</td>
+</tr>
+<tr>
+<td>AN_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples</td>
+</tr>
+<tr>
+<td>AF_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples</td>
+</tr>
+<tr>
+<td>nhomalt_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples</td>
+</tr>
+<tr>
+<td>AC_ami_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Amish ancestry</td>
+</tr>
+<tr>
+<td>AN_ami_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Amish ancestry</td>
+</tr>
+<tr>
+<td>AF_ami_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Amish ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_ami_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Amish ancestry</td>
+</tr>
+<tr>
+<td>AC_afr</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>AN_afr</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>AF_afr</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_afr</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>AC_eas_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>AN_eas_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>AF_eas_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_eas_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>AC_sas</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>AN_sas</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>AF_sas</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_sas</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>AC_nfe_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>AN_nfe_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>AF_nfe_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_nfe_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>AC_asj_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>AN_asj_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>AF_asj_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_asj_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>AC_raw</td>
+<td>Integer</td>
+<td>Alternate allele count for samples</td>
+</tr>
+<tr>
+<td>AN_raw</td>
+<td>Integer</td>
+<td>Total number of alleles in samples</td>
+</tr>
+<tr>
+<td>AF_raw</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples</td>
+</tr>
+<tr>
+<td>nhomalt_raw</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples</td>
+</tr>
+<tr>
+<td>AC_oth_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Other ancestry</td>
+</tr>
+<tr>
+<td>AN_oth_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Other ancestry</td>
+</tr>
+<tr>
+<td>AF_oth_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Other ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_oth_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Other ancestry</td>
+</tr>
+<tr>
+<td>AC_nfe_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>AN_nfe_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>AF_nfe_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_nfe_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>AC_asj</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>AN_asj</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>AF_asj</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_asj</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Ashkenazi Jewish ancestry</td>
+</tr>
+<tr>
+<td>AC_amr_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>AN_amr_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>AF_amr_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_amr_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>nhomalt</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples</td>
+</tr>
+<tr>
+<td>AC_amr_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>AN_amr_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>AF_amr_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_amr_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>AC_sas_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>AN_sas_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>AF_sas_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_sas_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>AC_fin</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>AN_fin</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>AF_fin</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_fin</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>AC_afr_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>AN_afr_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>AF_afr_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_afr_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>AC_sas_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>AN_sas_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>AF_sas_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_sas_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>AC_amr</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>AN_amr</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>AF_amr</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_amr</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>AC_nfe</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>AN_nfe</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>AF_nfe</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_nfe</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>AC_eas</td>
+<td>Integer</td>
+<td>Alternate allele count for samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>AN_eas</td>
+<td>Integer</td>
+<td>Total number of alleles in samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>AF_eas</td>
+<td>Float</td>
+<td>Alternate allele frequency in samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_eas</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>AC_ami_male</td>
+<td>Integer</td>
+<td>Alternate allele count for male samples of Amish ancestry</td>
+</tr>
+<tr>
+<td>AN_ami_male</td>
+<td>Integer</td>
+<td>Total number of alleles in male samples of Amish ancestry</td>
+</tr>
+<tr>
+<td>AF_ami_male</td>
+<td>Float</td>
+<td>Alternate allele frequency in male samples of Amish ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_ami_male</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in male samples of Amish ancestry</td>
+</tr>
+<tr>
+<td>AC_fin_female</td>
+<td>Integer</td>
+<td>Alternate allele count for female samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>AN_fin_female</td>
+<td>Integer</td>
+<td>Total number of alleles in female samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>AF_fin_female</td>
+<td>Float</td>
+<td>Alternate allele frequency in female samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>nhomalt_fin_female</td>
+<td>Integer</td>
+<td>Count of homozygous individuals in female samples of Finnish ancestry</td>
+</tr>
+<tr>
+<td>faf95_afr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>faf99_afr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of African-American/African ancestry</td>
+</tr>
+<tr>
+<td>faf95_sas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>faf99_sas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of South Asian ancestry</td>
+</tr>
+<tr>
+<td>faf95_adj</td>
+<td>Float</td>
+<td>(No description from gnomAD)</td>
+</tr>
+<tr>
+<td>faf99_adj</td>
+<td>Float</td>
+<td>(No description from gnomAD)</td>
+</tr>
+<tr>
+<td>faf95_amr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>faf99_amr</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of Latino ancestry</td>
+</tr>
+<tr>
+<td>faf95_nfe</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>faf99_nfe</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of Non-Finnish European ancestry</td>
+</tr>
+<tr>
+<td>faf95_eas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 95% CI) for samples of East Asian ancestry</td>
+</tr>
+<tr>
+<td>faf99_eas</td>
+<td>Float</td>
+<td>Filtering allele frequency (using Poisson 99% CI) for samples of East Asian ancestry</td>
+</tr>
+</tbody>
+</table></div>
+        
+        
+    </div>
+
+    
+      <footer class="col-md-12 text-center">
+          
+          
+            <hr>
+            <p>
+            <small>gNALI is licensed under the <a href='https://github.com/phac-nml/gnali/blob/master/LICENSE.txt'>Apache License Version 2.0</a><br>Copyright Government of Canada 2020-2021</small><br>
+            
+            <small>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</small>
+            </p>
+          
+
+          
+          
+      </footer>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="../js/bootstrap-3.0.3.min.js"></script>
+
+    
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/highlight.min.js"></script>
+        
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    <script>var base_url = ".."</script>
+    
+    <script src="../js/base.js"></script>
+    <script src="../search/main.js"></script>
+
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    </body>
+
+</html>

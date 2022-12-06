@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    
+    <link rel="shortcut icon" href="../img/favicon.ico">
+
+    
+    <title>gNALI - gNALI</title>
+    
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/v4-shims.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hack-font@3.3.0/build/web/hack.min.css">
+    <link href='//rsms.me/inter/inter.css' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,600,700&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
+    <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+    <link href="../css/base.min.css" rel="stylesheet">
+    <link href="../css/cinder.min.css" rel="stylesheet">
+
+    
+        
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/styles/github.min.css">
+        
+    
+    <link href="../css/extra.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+            <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+        <![endif]-->
+
+    
+
+     
+</head>
+
+<body>
+
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+
+            
+              <a class="navbar-brand" href="..">gNALI</a>
+            
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="..">Home</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">News <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../news/">News</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../CHANGELOG/">CHANGELOG</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Install <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li class="active">
+    <a href="./">gNALI</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../parameters/">Parameters</a>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../outputs/">Outputs</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Examples <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../simple/">Walkthrough (Simple)</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../advanced/">Walkthrough (Advanced)</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../filtering/">Filtering</a>
+                    </li>
+                
+                
+                </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                            <i class="fas fa-search"></i> Search
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../CHANGELOG/">
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="next" href="../parameters/">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/phac-nml/gnali/edit/master/docs/install.md"><i class="fab fa-github"></i> Edit on GitHub</a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+    <div class="container">
+        
+        
+        <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="first-level active"><a href="#installation">Installation</a></li>
+            <li class="second-level"><a href="#bioconda">Bioconda</a></li>
+                
+                <li class="third-level"><a href="#overview">Overview</a></li>
+                <li class="third-level"><a href="#miniconda-python-38">Miniconda (Python 3.8)</a></li>
+                <li class="third-level"><a href="#bioconda_1">Bioconda</a></li>
+                <li class="third-level"><a href="#gnali-miniconda-38">gNALI (Miniconda 3.8)</a></li>
+            <li class="second-level"><a href="#github">GitHub</a></li>
+                
+                <li class="third-level"><a href="#overview_1">Overview</a></li>
+                <li class="third-level"><a href="#python">Python</a></li>
+                <li class="third-level"><a href="#dependencies">Dependencies</a></li>
+                <li class="third-level"><a href="#gnali">gNALI</a></li>
+    </ul>
+</div></div>
+        <div class="col-md-9" role="main">
+
+<h1 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h1>
+<p>This installation guide assumes the use of the <a href="https://en.wikipedia.org/wiki/Bash_(Unix_shell)">BASH</a> Unix shell and a 64-bit Linux system. gNALI may either be installed directly or as a <a href="https://bioconda.github.io/">Bioconda</a> package. gNALI may either be run on a single machine or a computing cluster.</p>
+<h2 id="bioconda">Bioconda<a class="headerlink" href="#bioconda" title="Permanent link">&para;</a></h2>
+<p>The simpliest and recommended way to install gNALI is using the <a href="https://bioconda.github.io/">Bioconda</a> channel for the <a href="https://conda.io/docs/intro.html">conda</a> package management system. We recommend installing conda with the <a href="https://conda.io/miniconda.html">Miniconda</a> package. Note that the choice of Miniconda only affects the Python version in root environment. We recommend installing Miniconda using Python 3.8 64-bit Linux <a href="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh">installer</a>.</p>
+<h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h3>
+<p>The Bioconda-based gNALI installation involves the following:</p>
+<ol>
+<li>Installing <a href="https://bioconda.github.io/">Bioconda</a></li>
+<li>Installing the "gNALI" Bioconda package (<code>conda install gnali</code>).</li>
+</ol>
+<p>We provide detailed instructions below.</p>
+<h3 id="miniconda-python-38">Miniconda (Python 3.8)<a class="headerlink" href="#miniconda-python-38" title="Permanent link">&para;</a></h3>
+<p><a href="https://bioconda.github.io/">Bioconda</a> requires conda to be installed and we recommend using the <a href="https://conda.io/miniconda.html">Miniconda</a> package. Miniconda may be installed with the follow instructions:</p>
+<pre><code class="language-bash">wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+chmod 755 Miniconda3-latest-Linux-x86_64.sh
+./Miniconda3-latest-Linux-x86_64.sh
+</code></pre>
+<p>You will likely want Miniconda to append the install location to your PATH and will need to select this option during the installation process. After installation, you will then need to either open a new terminal or source your bashrc file in the current terminal for Miniconda to become available on the PATH:</p>
+<pre><code class="language-bash">source ~/.bashrc
+</code></pre>
+<p>You can check if your Miniconda installation was successful with the following:</p>
+<pre><code class="language-bash">conda --version
+</code></pre>
+<h3 id="bioconda_1">Bioconda<a class="headerlink" href="#bioconda_1" title="Permanent link">&para;</a></h3>
+<p>You will need to add the following channels to conda. They must be added in this order so that priority is set correctly.</p>
+<pre><code class="language-bash">conda config --add channels conda-forge
+conda config --add channels defaults
+conda config --add channels anaconda
+conda config --add channels bioconda
+</code></pre>
+<h3 id="gnali-miniconda-38">gNALI (Miniconda 3.8)<a class="headerlink" href="#gnali-miniconda-38" title="Permanent link">&para;</a></h3>
+<p>The follwing instructions assume you are using the Python 3.8 version of Miniconda. In this circumstance, we need to install gNALI within a Python 3.7 environment:</p>
+<pre><code class="language-bash">conda create --name gnali-env python=3.7 gNALI
+</code></pre>
+<p>This gNALI environment can be activated with the following:</p>
+<pre><code class="language-bash">conda activate gnali-env
+</code></pre>
+<p>You can check if gNALI was installed correctly with the following:</p>
+<pre><code class="language-bash">gnali --version
+</code></pre>
+<p>After installing, optionally run the command <code>gnali_get_data &lt;reference genome&gt;</code> to download reference files required to add loss-of-function annotations.
+* For use with gnomADv2.1.1 or gnomADv3.1.1, you do not have to run <code>gnali_get_data</code>
+* For use with custom databases WITH loss-of-function annotations, you do not have to run <code>gnali_get_data</code>
+* For use with custom databases WITHOUT loss-of-function annotations, run <code>gnali_get_data grch37</code> or <code>gnali_get_data grch38</code> depending on the reference genome used</p>
+<p>The files downloaded by <code>gnali_get_data</code> for each reference genome require abut 35GB of disk space and took 1.5 hours on our systems with 16GB of RAM and a 3.20GHz processor.</p>
+<p>The current environment may be deactivated with the following:</p>
+<pre><code class="language-bash">conda deactivate
+</code></pre>
+<p>It is important to note that this gNALI Bioconda environment will need to be activated in order to run the gNALI application. However, the benefit is that your system will be shielded from the Python 3.7 installation required by gNALI.</p>
+<h2 id="github">GitHub<a class="headerlink" href="#github" title="Permanent link">&para;</a></h2>
+<p>The following instructions describe how to install gNALI using GitHub.</p>
+<h3 id="overview_1">Overview<a class="headerlink" href="#overview_1" title="Permanent link">&para;</a></h3>
+<p>The GitHub gNALI installation involves the following:</p>
+<ol>
+<li>Installing Python 3.6 or later</li>
+<li>Installing dependencies </li>
+<li>Installing gNALI</li>
+</ol>
+<p>We provide more detailed instructions below.</p>
+<h3 id="python">Python<a class="headerlink" href="#python" title="Permanent link">&para;</a></h3>
+<p>gNALI requires Python 3.6 or later. The following may check your Python version:</p>
+<pre><code class="language-bash">python --version
+</code></pre>
+<h3 id="dependencies">Dependencies<a class="headerlink" href="#dependencies" title="Permanent link">&para;</a></h3>
+<p>Install the following dependencies according to their instructions:</p>
+<ul>
+<li><a href="http://uswest.ensembl.org/info/docs/tools/vep/script/vep_download.html">Ensembl VEP</a></li>
+<li><a href="https://metacpan.org/pod/Bio::DB::BigFile">Bio-BigFile</a></li>
+</ul>
+<p>And the following dependencies using <code>sudo apt install &lt;package&gt;</code> (requires administrative privilages):</p>
+<ul>
+<li><a href="http://www.htslib.org/">Samtools</a></li>
+<li><a href="http://www.htslib.org/doc/tabix.html">Tabix</a></li>
+<li><a href="https://curl.se/libcurl/">Libcurl</a></li>
+<li><a href="https://git-scm.com/">Git</a> (2.0 or later)</li>
+</ul>
+<h3 id="gnali">gNALI<a class="headerlink" href="#gnali" title="Permanent link">&para;</a></h3>
+<p>To install gNALI, get the tarball for the latest <a href="https://github.com/phac-nml/gnali/releases">release</a> and use:</p>
+<pre><code class="language-bash">pip install &lt;link-to-latest-release.tar.gz&gt;
+</code></pre>
+<p>Or, download the latest release and use:</p>
+<pre><code class="language-bash">pip install /path/to/gnali
+</code></pre>
+<p>After installing, optionally run the command <code>gnali_get_data &lt;reference genome&gt;</code> to download reference files required to add loss-of-function annotations.
+* For use with gnomADv2.1.1 or gnomADv3.1.1, you do not have to run <code>gnali_get_data</code>
+* For use with custom databases WITH loss-of-function annotations, you do not have to run <code>gnali_get_data</code>
+* For use with custom databases WITHOUT loss-of-function annotations, run <code>gnali_get_data grch37</code> or <code>gnali_get_data grch38</code> depending on the reference genome used</p>
+<p>The files downloaded by <code>gnali_get_data</code> for each reference genome require abut 35GB of disk space and took 1.5 hours on our systems with 16GB of RAM and a 3.20GHz processor.</p></div>
+        
+        
+    </div>
+
+    
+      <footer class="col-md-12 text-center">
+          
+          
+            <hr>
+            <p>
+            <small>gNALI is licensed under the <a href='https://github.com/phac-nml/gnali/blob/master/LICENSE.txt'>Apache License Version 2.0</a><br>Copyright Government of Canada 2020-2021</small><br>
+            
+            <small>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</small>
+            </p>
+          
+
+          
+          
+      </footer>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="../js/bootstrap-3.0.3.min.js"></script>
+
+    
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/highlight.min.js"></script>
+        
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    <script>var base_url = ".."</script>
+    
+    <script src="../js/base.js"></script>
+    <script src="../search/main.js"></script>
+
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    </body>
+
+</html>
